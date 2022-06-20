@@ -318,6 +318,7 @@ function rgb2light(red: number, green: number, blue: number) {
 }
 
 const parse = (image: HTMLImageElement) => {
+  console.log('parsing image', 'width:', image.width, 'height:', image.height);
   if (image.width !== image.height || image.width < 220) {
     throw new Error('image is not square or too small');
   }
@@ -336,7 +337,7 @@ const parse = (image: HTMLImageElement) => {
 
   const codec = new BitArray(360);
 
-  const threshold = 0.9;
+  const threshold = 0.8;
 
   codec.set(new Array(180).fill(1));
   codec.set(new Array(180).fill(0), 180);
