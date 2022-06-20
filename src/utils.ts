@@ -2,7 +2,9 @@
 
 /* eslint max-classes-per-file: ["error", 3] */
 
-type Bit = 0 | 1;
+import bs58 from 'bs58';
+
+export type Bit = 0 | 1;
 
 const buffers = new WeakMap<ArrayBuffer, Uint32Array>();
 
@@ -68,12 +70,10 @@ const handlers = {
   }),
 };
 
-class BitArray implements Iterable<Bit> {
+export class BitArray implements Iterable<Bit> {
   buffer: ArrayBuffer;
 
   length: number;
-
-  [Symbol.iterator]: () => Iterator<Bit>;
 
   [index: number]: Bit;
 
@@ -87,6 +87,10 @@ class BitArray implements Iterable<Bit> {
 
     // eslint-disable-next-line no-constructor-return
     return Reflect.construct(Proxy, [this, handlers]);
+  }
+  
+  [Symbol.iterator](): Iterator<Bit, any, undefined> {
+    throw new Error("Method not implemented.");
   }
 
   at(index: number): Bit | undefined {
@@ -317,7 +321,7 @@ function rgb2light(red: number, green: number, blue: number) {
   return l;
 }
 
-const parse = (image: HTMLImageElement) => {
+export const parse = (image: HTMLImageElement | HTMLCanvasElement) => {
   console.log('parsing image', 'width:', image.width, 'height:', image.height);
   if (image.width !== image.height || image.width < 220) {
     throw new Error('image is not square or too small');
@@ -389,7 +393,7 @@ const parse = (image: HTMLImageElement) => {
   return decode(codec);
 };
 
-const write = (image: HTMLImageElement, raw: BitArray) => {
+export const write = (image: HTMLImageElement, raw: BitArray) => {
   if (image.width !== image.height || image.width < 220) {
     throw new Error('image is not square or too small');
   }
@@ -468,3 +472,7 @@ const write = (image: HTMLImageElement, raw: BitArray) => {
 
   return cvs;
 };
+
+export const bs58ToHex = (value: string) => {
+  return bs58.decode(value).reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '')
+}
