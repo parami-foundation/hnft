@@ -8,6 +8,13 @@
 # testing
 /coverage
 
+# ide
+.vscode
+
+# contract
+/artifacts
+/cache
+
 # production
 /build
 
