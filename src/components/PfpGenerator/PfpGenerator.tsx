@@ -1,4 +1,4 @@
-import { UploadFile, Form, UploadProps, Upload, Button, Image as AntdImage } from 'antd';
+import { UploadFile, Form, UploadProps, Upload, Button, Image as AntdImage, notification } from 'antd';
 import React, { useState } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
 import { Bit, BitArray, write } from '../../utils';
@@ -48,10 +48,16 @@ export function PfpGenerator({ address, tokenId }: PfpGeneratorProps) {
                 tokenIdStartingIndex
             );
 
-            setTimeout(() => {
+            img.onload = () => {
+                if (img.width !== img.height || img.width < 220) {
+                    notification.warn({
+                        message: 'Image is not square or too small',
+                        description: 'Please try again.'
+                    });
+                }
                 const ringImage = write(img, raw);
                 setWpfpDataUrl(ringImage.toDataURL());
-            }, 300)
+            }
         }
     }
 

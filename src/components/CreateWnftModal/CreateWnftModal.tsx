@@ -38,6 +38,7 @@ export function CreateWnftModal({
     const [loading, setLoading] = useState<boolean>(true);
     const [paramiLinkAddress, setParamiLinkAddress] = useState<string>();
     const [wrappingStep, setWrappingStep] = useState<number>(-1);
+    const [creatingWContract, setCreatingWContract] = useState<boolean>(false);
 
     useEffect(() => {
         if (ethereum && contractAddress) {
@@ -128,6 +129,7 @@ export function CreateWnftModal({
         if (registryContract) {
             try {
                 setLoading(true);
+                setCreatingWContract(true);
                 notification.info({
                     message: 'Creating WNFT Contract...',
                     description: 'Please confirm in your wallet.'
@@ -138,12 +140,14 @@ export function CreateWnftModal({
                 const wAddress = wContractResp.toString();
                 setWcontractAddress(wAddress);
                 setLoading(false);
+                setCreatingWContract(false);
                 notification.success({
                     message: 'Create WContract Success',
                     description: wAddress
                 });
             } catch (e) {
                 setLoading(false);
+                setCreatingWContract(false);
                 notification.error({
                     message: 'Create WContract Failed',
                     description: JSON.stringify(e)
@@ -224,8 +228,8 @@ export function CreateWnftModal({
             onOk={() => handleNextStep(step)} onCancel={onCancel} confirmLoading={loading}
             width={1000} okText={`${step === 2 ? 'Done' : 'Next'}`}>
             <Steps current={step}>
-                <Step title="WNFT Contract" description="Check contract status" icon={step === 0 ? <LoadingOutlined /> : null} />
-                <Step title="Wrap NFT" description="Check token status" icon={step === 1 ? <LoadingOutlined /> : null} />
+                <Step title="WNFT Contract" description="Check contract status" icon={(step === 0 && creatingWContract) ? <LoadingOutlined /> : null} />
+                <Step title="Wrap NFT" description="Check token status" icon={(step === 1 && wrappingStep >= 0) ? <LoadingOutlined /> : null} />
                 <Step title="Done" description="All set!" icon={<SmileOutlined />} />
             </Steps>
             <div style={{ marginTop: '20px' }}>
@@ -237,17 +241,17 @@ export function CreateWnftModal({
                 {step === 0 && createWcontractForm && (
                     <div>
                         <p>Let's Create a WContract for your NFT ({contractAddress})</p>
+                        {creatingWContract && (
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <div>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <Spin size="small" />
+                                    </div>
+                                    <p>Creating WContract. Please wait for transaction confirmation.</p>
+                                </div>
+                            </div>
+                        )}
 
-                        {/* <Form>
-                            <Form.Item
-                                label="Default Link"
-                                name="link"
-                                help="The link that newly wrapped NFTs will be pointing to. This is optional and can be changed later."
-                            >
-                                <Input addonBefore={<LinkPrefixSelect onChange={prefix => setLinkPrefix(prefix)} />}
-                                    placeholder="Optional default url" value={defaultUrl} onChange={e => setDefaultUrl(e.target.value)} />
-                            </Form.Item>
-                        </Form> */}
                     </div>
                 )}
 
@@ -265,7 +269,7 @@ export function CreateWnftModal({
                                         <Step title="Done" />
                                     </Steps>
                                 </Col>
-                                <Col span={16} style={{display: 'flex', alignItems:'center'}}>
+                                <Col span={16} style={{ display: 'flex', alignItems: 'center' }}>
                                     {wrappingStep !== 3 && (<div>
                                         <div style={{ textAlign: 'center' }}>
                                             <Spin size="small" />

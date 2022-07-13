@@ -1,6 +1,6 @@
 import { useMetaMask } from 'metamask-react';
 import React, { useState } from 'react';
-import { Button, Form, Input, Card, Radio, Divider, Tooltip, Collapse } from 'antd';
+import { Button, Form, Input, Card, Radio, Divider, Tooltip, Collapse, Image } from 'antd';
 import './Wnft.scss';
 import { CreateWnftModal } from '../../components/CreateWnftModal';
 import { ContractType, NftInfo, WnftData } from '../../models/wnft';
@@ -8,7 +8,6 @@ import { WnftCard } from '../../components/WnftCard';
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
 import { SupportedNetworkName } from '../../models/contract';
-
 
 export interface WnftProps { }
 
@@ -19,7 +18,7 @@ export function Wnft({ }: WnftProps) {
     const [osUrl, setOsUrl] = useState<string>();
     const [form] = Form.useForm();
 
-    const { status, ethereum, account, chainId } = useMetaMask();
+    const { status, ethereum, chainId } = useMetaMask();
     const chainName = SupportedNetworkName[parseInt(chainId as string, 16)];
 
     const onFinish = (values: any) => {
@@ -51,13 +50,29 @@ export function Wnft({ }: WnftProps) {
         if (osUrl?.startsWith('https://opensea.io/assets/ethereum') || osUrl?.startsWith('https://testnets.opensea.io/assets/rinkeby')) {
             const parts = osUrl.split('/').filter(Boolean);
 
+            const address = parts[parts.length - 2];
+
             form.setFieldsValue({
-                contractType: 'NFT',
-                address: parts[parts.length - 2],
+                address,
                 tokenId: parts[parts.length - 1]
             });
+
+            detectContractType(address);
         }
-    }, [osUrl, form])
+    }, [osUrl, form, ethereum]);
+
+    const detectContractType = (address: string) => {
+        const options = { method: 'GET' };
+
+        fetch(`https://testnets-api.opensea.io/api/v1/asset_contract/${address}`, options)
+            .then(response => response.json())
+            .then(response => {
+                form.setFieldsValue({
+                    contractType: response?.name?.startsWith('Wrapped') ? 'WNFT': 'NFT',
+                });
+            })
+            .catch(err => console.error(err));
+    }
 
     const contractTypeOptions = [
         { label: 'NFT', value: 'NFT' },
@@ -76,16 +91,19 @@ export function Wnft({ }: WnftProps) {
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
-                initialValues={{ contractType }}
             >
                 <Form.Item
                     label={`Opensea NFT link`}
                     name="osUrl"
+                    tooltip={<Image
+                        width={220}
+                        src={require('../../assets/osLinkTooltip.jpeg')}
+                      />}
                 >
-                    <Input onChange={e => setOsUrl(e.target.value)} />
+                    <Input onChange={e => setOsUrl(e.target.value)} placeholder={`https://opensea.io/assets/ethereum/0x098583c0cfba50212b421f525b4f7fe46901a0f2/106`}/>
                 </Form.Item>
 
-                <Collapse style={{marginBottom: '24px'}}>
+                <Collapse style={{ marginBottom: '24px' }} ghost className='advanced-settings'>
                     <Collapse.Panel header="advanced settings" key="1" forceRender>
                         <Form.Item
                             label="Contract Type"
@@ -142,15 +160,8 @@ export function Wnft({ }: WnftProps) {
         })}
 
         <Card bordered={false} style={{ marginTop: '20px' }} title="Parami Extension Download">
-            <p>
-                {!chainName && 'Your wallet is connected to an unsupported network. Please switch to Mainnet or Rinkeby testnet.'}
-                {chainName && `Your wallet is connected to ${chainName}. Please download the corresponding version of Parami Extension.`}
-            </p>
-            <Link to="/files/parami-extension-mainnet.zip" target="_blank" download>Click to download Parami Extension - Mainnet</Link>
-            <br></br>
-            <Link to="/files/parami-extension-rinkeby.zip" target="_blank" download>Click to download Parami Extension - Rinkeby</Link>
+            <Link to="/files/parami-extension.zip" target="_blank" download>Click to download Parami Extension</Link>
         </Card>
-
     </div>);
 };
 

@@ -47,10 +47,8 @@ export function LinkManager({ tokenId, contract }: LinkManagerProps) {
                 const ownerLink = (await contract.getValue(ownerTokenIdResp.toString(), paramiLinkContract?.address)).toString();
                 setCurrentLink(ownerLink || 'https://app.parami.io')
             } catch (e) {
-                notification.error({
-                    message: 'Get Current Link Error',
-                    description: JSON.stringify(e)
-                })
+                setCurrentLink('https://app.parami.io');
+                console.error('Get Current Link Error', JSON.stringify(e));
             }
         }
     }
