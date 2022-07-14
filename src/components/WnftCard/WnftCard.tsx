@@ -1,19 +1,21 @@
 import { ethers } from 'ethers';
 import React, { useState } from 'react';
-import { Card, Tooltip, Tag, Button } from 'antd';
+import { Card, Tooltip, Tag, Button, Avatar } from 'antd';
 import { PfpGenerator } from '../PfpGenerator';
 import { LinkManager } from '../LinkManager';
 import { CloseOutlined } from '@ant-design/icons';
 import './WnftCard.scss';
+import { WNFT } from '../../models/wnft';
 
 export interface WnftCardProps {
-    address: string;
-    tokenId: number;
-    contract: ethers.Contract;
+    wnft: WNFT;
     onRemove: () => void;
 }
 
-export function WnftCard({ address, tokenId, contract, onRemove }: WnftCardProps) {
+export function WnftCard({ wnft, onRemove }: WnftCardProps) {
+    const { contractInfo, nft } = wnft;
+    const { contractAddress: address, tokenId, contract } = contractInfo;
+
     const [activeTabKey, setActiveTabKey] = useState<string>('pfp');
 
     const tabList = [
@@ -27,25 +29,19 @@ export function WnftCard({ address, tokenId, contract, onRemove }: WnftCardProps
         },
     ];
 
-    const contentList: Record<string, React.ReactNode> = {
-        pfp: <p>pfp tab</p>,
-        link: <p>link tab</p>,
-    };
-
     return (<div className='wnft-card'>
         <Card
-            title={<>
-                <Tooltip title={address}>
-                    <span>WNFT {`${address.substring(0, 6)}...${address.substring(address.length - 4)}`}</span>
-                </Tooltip>
-                <Tag style={{ marginLeft: '10px' }}>TokenId {tokenId}</Tag>
-            </>}
+            title={<Card.Meta
+                avatar={<Avatar shape="square" size={120} src={nft.image_url} />}
+                title={nft.name}
+                description={nft.description}
+            ></Card.Meta>}
             extra={<Button shape="circle" danger onClick={() => onRemove()} icon={<CloseOutlined />}></Button>}
             tabList={tabList}
             activeTabKey={activeTabKey}
             onTabChange={key => setActiveTabKey(key)}
         >
-            {activeTabKey === 'pfp' && <PfpGenerator address={address} tokenId={tokenId}></PfpGenerator>}
+            {activeTabKey === 'pfp' && <PfpGenerator imgUrl={nft.image_url} address={address} tokenId={tokenId}></PfpGenerator>}
 
             {activeTabKey === 'link' && <LinkManager tokenId={tokenId} contract={contract}></LinkManager>}
         </Card>

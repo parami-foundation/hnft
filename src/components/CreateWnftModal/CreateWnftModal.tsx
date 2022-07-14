@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Steps, Input, notification, Form, Result, Spin, Col, Row } from 'antd';
+import { Modal, Steps, notification, Result, Spin, Col, Row } from 'antd';
 import { LoadingOutlined, SmileOutlined } from '@ant-design/icons';
 import { useMetaMask } from 'metamask-react';
 import RegistryContractAbi from '../../ERC721WRegistry.json';
@@ -8,26 +8,28 @@ import ERC721MockAbi from '../../TestingERC721Contract.json';
 import { ethers } from 'ethers';
 import { useEffect } from 'react';
 import { ParamiLinkContractAddress_Mainnet, ParamiLinkContractAddress_Rinkeby, RegistryContractAddress_Mainnet, RegistryContractAddress_Rinkeby } from '../../models/contract';
-import { ContractType, DEFAULT_LINK, LinkPrefixType, WnftData } from '../../models/wnft';
-import { LinkPrefixSelect } from '../LinkPrefixSelect';
+import { NFT, WnftData } from '../../models/wnft';
 
 const { Step } = Steps;
 
 export interface CreateWnftModalProps {
-    contractType: ContractType;
-    contractAddress: string;
-    tokenId: number;
+    // contractType: ContractType;
+    // contractAddress: string;
+    // tokenId: number;
+    nft: NFT;
     onCancel: () => void;
     onSubmit: (data: WnftData) => void;
 }
 
 export function CreateWnftModal({
-    contractType,
-    contractAddress,
-    tokenId,
+    nft,
     onCancel,
     onSubmit
 }: CreateWnftModalProps) {
+    const contractType = nft.asset_contract.name.startsWith('Wrapped') ? 'WNFT' : 'NFT';
+    const contractAddress = nft.asset_contract.address;
+    const tokenId = +nft.token_id;
+
     const [step, setStep] = useState<number>(0);
     const { ethereum, chainId } = useMetaMask();
     const [registryContract, setRegistryContract] = useState<ethers.Contract>();

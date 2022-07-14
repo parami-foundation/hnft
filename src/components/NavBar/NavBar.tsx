@@ -20,11 +20,11 @@ export function NavBar() {
   
   return (
     <Header className='nav-bar'>
-      <div className="logo" />
+      {/* <div className="logo" /> */}
 
       <Menu mode="horizontal" theme="dark" defaultSelectedKeys={['workshop']}>
         <Menu.Item key="wnft">
-          <Link to="">WNFT</Link>
+          <Link to="">WNFT Generator</Link>
         </Menu.Item>
         {/* <Menu.Item key="pfp">
           <Link to="pfp">PFP</Link>
