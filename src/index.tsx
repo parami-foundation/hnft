@@ -10,7 +10,7 @@ import { PfpGeneratorPage } from './pages/PfpGeneratorPage';
 ReactDOM.render(
   <React.StrictMode>
     <MetaMaskProvider>
-      <BrowserRouter basename="/nft-ring-tool">
+      <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />}>
             <Route path="" element={<Wnft />} />
