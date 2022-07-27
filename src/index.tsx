@@ -5,7 +5,8 @@ import App from './App.tsx';
 import { MetaMaskProvider } from 'metamask-react';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Wnft } from './pages/Wnft';
-import { PfpGeneratorPage } from './pages/PfpGeneratorPage';
+import { Hnft } from './pages/Hnft';
+import { MyNFTs } from './pages/MyNFTs';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -13,7 +14,10 @@ ReactDOM.render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />}>
-            <Route path="" element={<Wnft />} />
+            <Route path="" element={<MyNFTs />} />
+            {/* <Route path="" element={<Wnft />} /> */}
+            {/* <Route path="hnft" element={<Hnft />} /> */}
+
             {/* <Route path="pfp" element={<PfpGeneratorPage />} /> */}
 
             {/* <Route

@@ -1,4 +1,6 @@
 import { useMetaMask } from "metamask-react";
+import { useCallback } from "react";
+import { Collection, NFT } from "../models/wnft";
 
 const OpenseaApiServer = 'https://ipfs.parami.io'
 
@@ -7,36 +9,52 @@ export function useOpenseaApi() {
 
   const chain_id = parseInt(chainId ?? '', 16);
 
-  const retrieveCollections = () => {
+  const retrieveCollections = useCallback(() => {
+    if (!chain_id) {
+      return Promise.resolve([]);
+    }
     const options = { method: 'GET' };
     return fetch(`${OpenseaApiServer}/api/os/collections?chainId=${chain_id}&asset_owner=${account}&offset=0&limit=300`, options)
       .then(response => {
-        console.log(response);
-        return response.json();
+        return response.json() as Promise<Collection[]>;
       })
       .catch(err => console.error(err));
-  }
+  }, [chain_id, account]);
 
-  const retrieveNFTs = (collectionSlug: string) => {
+  const retrieveNFTs = useCallback((searchParams: {
+    collectionSlug?: string,
+    contractAddresses?: string[]
+  } = {}) => {
     const options = { method: 'GET' };
-    return fetch(`${OpenseaApiServer}/api/os/assets?chainId=${chain_id}&owner=${account}&order_direction=desc&offset=0&limit=20&collection=${collectionSlug}&include_orders=false`, options)
-      .then(response => response.json())
-      .catch(err => console.error(err));
-  }
+    let searchParamsString = `chainId=${chain_id}&owner=${account}&order_direction=desc&offset=0&limit=20&include_orders=false`;
 
-  const retrieveAsset = (address: string, tokenId: number) => {
+    if (searchParams.collectionSlug) {
+      searchParamsString += `&collection=${searchParams.collectionSlug}`;
+    }
+
+    if (searchParams.contractAddresses?.length) {
+      searchParamsString += `&${searchParams.contractAddresses.map(addr => `asset_contract_addresses=${addr}`).join('&')}`;
+    }
+
+    return fetch(`${OpenseaApiServer}/api/os/assets?${searchParamsString}`, options)
+      .then(response => response.json())
+      .then(resp => resp.assets ?? [] as NFT[])
+      .catch(err => console.error(err));
+  }, [chain_id, account]);
+
+  const retrieveAsset = useCallback((address: string, tokenId: number) => {
     const options = { method: 'GET' };
     return fetch(`${OpenseaApiServer}/api/os/asset/${address}/${tokenId}?chainId=${chain_id}`, options)
       .then(response => response.json())
       .catch(err => console.error(err));
-  }
+  }, [chain_id]);
 
-  const retrieveContract = (address: string) => {
+  const retrieveContract = useCallback((address: string) => {
     const options = { method: 'GET' };
     return fetch(`${OpenseaApiServer}/api/os/asset_contract/${address}?chainId=${chain_id}`, options)
       .then(response => response.json())
       .catch(err => console.error(err));
-  }
+  }, [chain_id])
 
   return {
     retrieveCollections,

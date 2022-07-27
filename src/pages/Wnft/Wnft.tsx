@@ -26,11 +26,11 @@ export function Wnft({ }: WnftProps) {
     const { status, ethereum, chainId, account } = useMetaMask();
     const { retrieveCollections, retrieveNFTs, retrieveAsset } = useOpenseaApi();
 
-    useEffect(() => {
-        if (ethereum && chainId && account) {
-            retrieveCollections().then(collections => setCollections(collections));
-        }
-    }, [ethereum, chainId, account])
+    // useEffect(() => {
+    //     if (ethereum && chainId && account) {
+    //         retrieveCollections().then(collections => setCollections(collections));
+    //     }
+    // }, [ethereum, chainId, account])
 
     useEffect(() => {
         setSelectedCollection(undefined);
@@ -40,7 +40,7 @@ export function Wnft({ }: WnftProps) {
         setNfts([]);
         setWnft(undefined);
         if (selectedCollection) {
-            retrieveNFTs(selectedCollection.slug).then(nfts => setNfts(nfts?.assets ?? []));
+            retrieveNFTs({ collectionSlug: selectedCollection.slug }).then(nfts => setNfts(nfts?.assets ?? []));
         }
     }, [selectedCollection]);
 
@@ -154,8 +154,6 @@ export function Wnft({ }: WnftProps) {
             ></WnftCard>
         )}
 
-        <Card bordered={false} style={{ marginTop: '20px' }} title="Parami Extension Download">
-            <Link to="/files/parami-extension.zip" target="_blank" download>Click to download Parami Extension</Link>
-        </Card>
+        
     </div>);
 };

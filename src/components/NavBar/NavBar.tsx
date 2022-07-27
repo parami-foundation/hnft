@@ -22,13 +22,10 @@ export function NavBar() {
     <Header className='nav-bar'>
       {/* <div className="logo" /> */}
 
-      <Menu mode="horizontal" theme="dark" defaultSelectedKeys={['workshop']}>
+      <Menu mode="horizontal" theme="dark" defaultSelectedKeys={['wnft']}>
         <Menu.Item key="wnft">
-          <Link to="">WNFT Generator</Link>
+          <Link to="">HNFT</Link>
         </Menu.Item>
-        {/* <Menu.Item key="pfp">
-          <Link to="pfp">PFP</Link>
-        </Menu.Item> */}
 
         <Menu.Item className='right-menu' key="wallet" disabled>
           {status === 'notConnected' && (
@@ -46,6 +43,5 @@ export function NavBar() {
       </Menu>
 
     </Header>
-
   );
 }

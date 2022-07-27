@@ -1,5 +1,4 @@
 import { ethers } from "ethers";
-import { type } from "os";
 
 export type ContractType = 'NFT' | 'WNFT';
 
@@ -24,6 +23,16 @@ export type LinkPrefixType = 'https://' | 'ipfs://' | 'wnft://' | 'did://';
 
 export const DEFAULT_LINK = 'https://app.parami.io';
 
+export const HNFT_IDENTIFIER = 1;
+
+export const hexStartingIndex = 8;
+export const tokenIdStartingIndex = 224;
+
+export interface AssetContract {
+  name: string;
+  address: string;
+}
+
 export interface Collection {
   slug: string;
   name: string;
@@ -31,6 +40,7 @@ export interface Collection {
   featured_image_url?: string;
   image_url?: string;
   description?: string;
+  primary_asset_contracts?: AssetContract[];
 }
 
 export interface NFT {
@@ -38,8 +48,5 @@ export interface NFT {
   image_url: string;
   name: string;
   description: string;
-  asset_contract: {
-    address: string;
-    name: string;
-  }
+  asset_contract: AssetContract
 }

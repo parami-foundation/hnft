@@ -14,24 +14,24 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const RegistryFactory = await hre.ethers.getContractFactory("ERC721WRegistry");
-  const registryContract = await RegistryFactory.deploy();
+  // const RegistryFactory = await hre.ethers.getContractFactory("ERC721WRegistry");
+  // const registryContract = await RegistryFactory.deploy();
 
-  await registryContract.deployed();
+  // await registryContract.deployed();
 
-  const TestWcontractFactory = await hre.ethers.getContractFactory("TestingERC721Contract");
-  const testingContract = await TestWcontractFactory.deploy();
-  await testingContract.deployed();
+  // const TestWcontractFactory = await hre.ethers.getContractFactory("TestingERC721Contract");
+  // const testingContract = await TestWcontractFactory.deploy();
+  // await testingContract.deployed();
 
-  console.log("registryContract deployed to:", registryContract.address);
-  console.log("testing erc721 contract deployed to:", testingContract.address);
+  // console.log("registryContract deployed to:", registryContract.address);
+  // console.log("testing erc721 contract deployed to:", testingContract.address);
 
-  // const WContractFactory = await hre.ethers.getContractFactory("ERC721WContract");
-  // const wContract = await WContractFactory.deploy();
+  const HCollectionFactory = await hre.ethers.getContractFactory("ERC721HCollection");
+  const hCollection = await HCollectionFactory.deploy();
 
-  // await wContract.deployed();
+  await hCollection.deployed();
 
-  // console.log("wContract deployed to:", wContract.address);
+  console.log("hCollection deployed to:", hCollection.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

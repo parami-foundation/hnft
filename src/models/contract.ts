@@ -32,4 +32,12 @@ export const ParamiLinkContractAddress_Rinkeby = '0x7F1Ae9F3740A9192fb10Ec8Cff48
 
 export const ParamiLinkContractAddress_Mainnet = '0x955A4432662Cf9F5A2d06FfEBff712bDCAfEA55F';
 
-export const OpenSeaApiKey = '0d0da09a5c24466080309329af512ac8';
+export const HNFTCollectionContractAddress = {
+  1: '0x1234',
+  4: '0x0A55482AF06d17973EB1fFBB5E379845F2d2C631'
+}
+
+export const ParamiLinkContractAddress = {
+  1: '0x955A4432662Cf9F5A2d06FfEBff712bDCAfEA55F',
+  4: '0x7F1Ae9F3740A9192fb10Ec8Cff48B9401f61f74A'
+}
