@@ -34,7 +34,7 @@ export const ParamiLinkContractAddress_Mainnet = '0x955A4432662Cf9F5A2d06FfEBff7
 
 export const HNFTCollectionContractAddress = {
   1: '0x1234',
-  4: '0x0A55482AF06d17973EB1fFBB5E379845F2d2C631'
+  4: '0x0a55482af06d17973eb1ffbb5e379845f2d2c631'
 }
 
 export const ParamiLinkContractAddress = {

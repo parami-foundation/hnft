@@ -1,4 +1,4 @@
-import { Button, Card, notification } from 'antd';
+import { Button, Card } from 'antd';
 import { ethers } from 'ethers';
 import { useMetaMask } from 'metamask-react';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -19,7 +19,6 @@ export function MyNFTs({ }: MyNFTsProps) {
     const { ethereum, chainId, status, account } = useMetaMask();
     const { retrieveCollections, retrieveNFTs } = useOpenseaApi();
     const [hnftContract, setHnftContract] = useState<ethers.Contract>();
-    const [newHNFT, setNewHNFT] = useState<NFT>();
     const [hnfts, setHnfts] = useState<NFT[]>([]);
 
     const chain_id = parseInt(chainId ?? '1', 16);
@@ -53,12 +52,9 @@ export function MyNFTs({ }: MyNFTsProps) {
                 contractAddresses
             });
         }).then(nfts => {
-            if (newHNFT) {
-                nfts.unshift(newHNFT);
-            }
-            setHnfts([...nfts]);
-        })
-    }, [retrieveCollections, chainId, newHNFT]);
+            setHnfts([...(nfts ?? [])]);
+        });
+    }, [retrieveCollections, chainId]);
 
     const onCreateNewHNFT = useCallback(async () => {
         setCreateHNFTModal(false);
@@ -70,7 +66,7 @@ export function MyNFTs({ }: MyNFTsProps) {
 
                 const tokenMetadata = JSON.parse(atob(tokenUri.substring(29)));
 
-                setNewHNFT({
+                const newHNFT = {
                     name: tokenMetadata.name,
                     token_id: tokenId,
                     image_url: tokenMetadata.image,
@@ -79,12 +75,19 @@ export function MyNFTs({ }: MyNFTsProps) {
                         address: hnftContract.address,
                         name: tokenMetadata.name
                     }
-                })
+                };
+
+                setHnfts([newHNFT, ...hnfts]);
             } catch (e) {
                 console.error('Fetch new HNFT Error', JSON.stringify(e))
             }
         }
-    }, [hnftContract, account]);
+    }, [hnftContract, account, hnfts]);
+
+    const onCreateNewWNFT = useCallback((wnft: NFT) => {
+        setHnfts([wnft, ...hnfts]);
+        setSelectNFTModal(false);
+    }, [hnfts])
 
     const removeNft = (removed: NFT) => {
         setHnfts([...hnfts.filter(nft => !(nft.name === removed.name && nft.token_id === removed.token_id))])
@@ -107,7 +110,7 @@ export function MyNFTs({ }: MyNFTsProps) {
             <Link to="/files/parami-extension.zip" target="_blank" download>Click to download Parami Extension</Link>
         </Card>
 
-        {selectNFTModal && <Wnft />}
+        {selectNFTModal && <Wnft onCancel={() => setSelectNFTModal(false)} onCreateWNFT={(nft) => onCreateNewWNFT(nft)} />}
         {createHNFTModal && <Hnft onCancel={() => setCreateHNFTModal(false)} onCreate={onCreateNewHNFT} />}
     </div>);
 };
