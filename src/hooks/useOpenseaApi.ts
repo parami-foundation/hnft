@@ -2,7 +2,8 @@ import { useMetaMask } from "metamask-react";
 import { useCallback } from "react";
 import { Collection, NFT } from "../models/wnft";
 
-const OpenseaApiServer = 'https://ipfs.parami.io'
+const OpenseaApiServer = 'https://ipfs.parami.io';
+// const OpenseaApiServer = 'http://localhost:8081';
 
 export function useOpenseaApi() {
   const { chainId, account } = useMetaMask();
@@ -10,7 +11,7 @@ export function useOpenseaApi() {
   const chain_id = parseInt(chainId ?? '', 16);
 
   const retrieveCollections = useCallback(() => {
-    if (!chain_id) {
+    if (!chain_id || !account) {
       return Promise.resolve([]);
     }
     const options = { method: 'GET' };
@@ -25,6 +26,9 @@ export function useOpenseaApi() {
     collectionSlug?: string,
     contractAddresses?: string[]
   } = {}) => {
+    if (!chain_id || !account) {
+      return Promise.resolve([]);
+    }
     const options = { method: 'GET' };
     let searchParamsString = `chainId=${chain_id}&owner=${account}&order_direction=desc&offset=0&limit=20&include_orders=false`;
 
