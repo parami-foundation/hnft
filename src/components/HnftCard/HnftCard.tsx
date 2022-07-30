@@ -1,32 +1,21 @@
-import { Avatar, Card, Modal, notification, Spin, Tooltip, Typography, Upload, UploadProps } from 'antd';
+import { Avatar, Button, Card, Col, Dropdown, Menu, Modal, notification, Row, Spin, Typography, Upload, UploadProps } from 'antd';
 import { ethers } from 'ethers';
 import { useMetaMask } from 'metamask-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { NFT } from '../../models/wnft';
 import ERC721WContract from '../../ERC721WContract.json';
-import { LinkOutlined, TwitterCircleFilled, LogoutOutlined, UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { TwitterCircleFilled, LogoutOutlined, UploadOutlined, ExclamationCircleOutlined, FormOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { RingPFP } from '../RingPFP';
 import { HNFTCollectionContractAddress } from '../../models/contract';
 import './HnftCard.scss';
 import { ChangeLinkModal } from '../ChangeLinkModal';
 
-const { Paragraph } = Typography;
+const { Paragraph, Title } = Typography;
 
 export interface HnftCardProps {
     hnft: NFT,
     unwrapped: () => void
 }
-
-const tabList = [
-    {
-        key: 'pfp',
-        tab: 'PFP Generator',
-    },
-    {
-        key: 'link',
-        tab: 'Link Manager',
-    },
-];
 
 export function HnftCard({ hnft, unwrapped }: HnftCardProps) {
     const contractAddress = hnft.asset_contract.address;
@@ -80,26 +69,6 @@ export function HnftCard({ hnft, unwrapped }: HnftCardProps) {
         fileList: []
     };
 
-    const actions = [
-        <Tooltip title="Update Twitter Profile">
-            <TwitterCircleFilled className='actionIcon' onClick={() => console.log('Update Twitter Profile')} />
-        </Tooltip>,
-        <Tooltip title="Upload New Image">
-            <Upload {...props}>
-                <UploadOutlined className='actionIcon' />
-            </Upload>
-        </Tooltip>,
-        <Tooltip title="Update Link">
-            <LinkOutlined className='actionIcon' onClick={() => setChangeLinkModal(true)} />
-        </Tooltip>
-    ];
-
-    if (canUnwrap) {
-        actions.push(<Tooltip title="Unwrap">
-            <LogoutOutlined className='actionIcon' onClick={() => showUnwrapConfirm()} />
-        </Tooltip>);
-    }
-
     const showUnwrapConfirm = () => {
         if (hnftContract) {
             Modal.confirm({
@@ -126,29 +95,71 @@ export function HnftCard({ hnft, unwrapped }: HnftCardProps) {
                 onCancel() { },
             });
         }
-
     };
+
+    const dropdownMenuItems = [
+        {
+            key: 'upload',
+            label: (
+                <Upload {...props}>
+                    Use different image
+                </Upload>
+            ),
+            icon: <UploadOutlined />
+        }
+    ];
+
+    if (canUnwrap) {
+        dropdownMenuItems.push(
+            {
+                key: 'unwrap',
+                label: (
+                    <a onClick={() => showUnwrapConfirm()}>
+                        Unwrap
+                    </a>
+                ),
+                icon: <LogoutOutlined />
+            }
+        );
+    }
 
     return (<>
         <Card
             className='hnftCard'
-            style={{ width: 400, display: 'inline-block' }}
-            cover={
-                <div style={{ height: 400 }}>
-                    <RingPFP tokenId={tokenId} address={contractAddress} imgUrl={coverImageUrl ?? hnft.image_url} fallbackImageUrl={hnft.image_url}></RingPFP>
-                </div>
-            }
-            actions={actions}
         >
-            <Card.Meta
-                avatar={<Avatar size="large" shape='square' src={hnft.image_url} />}
-                title={hnft.name}
-                description={<>
-                    <Paragraph ellipsis={{ rows: 1, expandable: false, symbol: 'more' }}>{hnft.description ?? ''}</Paragraph>
-                    {currentLink && <p><a href={currentLink} target="_blank">{currentLink}</a></p>}
-                    {!currentLink && <Spin></Spin>}
-                </>}
-            />
+            <div className='pfp-container'>
+                <RingPFP tokenId={tokenId} address={contractAddress} imgUrl={coverImageUrl ?? hnft.image_url} fallbackImageUrl={hnft.image_url}></RingPFP>
+            </div>
+
+            <div className='nft-info'>
+                <Row>
+                    <Col span={4}>
+                        <Avatar size="large" shape='square' src={hnft.image_url} />
+                    </Col>
+                    <Col span={20}>
+                        <Title level={5}>
+                            {hnft.name}
+                            <Dropdown overlay={<Menu items={dropdownMenuItems} />}>
+                                <Button className='action-button float-right' shape='circle' icon={<EllipsisOutlined />}></Button>
+                            </Dropdown>
+                        </Title>
+                        <Paragraph ellipsis={{ rows: 2, expandable: false, symbol: 'more' }}>{hnft.description ?? ''}</Paragraph>
+                        <div>
+                            {currentLink && <>
+                                <a href={currentLink} target="_blank">{currentLink}</a>
+                                <Button className='action-button' shape='circle' onClick={() => setChangeLinkModal(true)} icon={<FormOutlined />}></Button>
+                            </>}
+                            {!currentLink && <Spin></Spin>}
+                        </div>
+                    </Col>
+                </Row>
+            </div>
+
+            <div className='menu'>
+                <Button disabled>
+                    <TwitterCircleFilled />Set Twitter Profile Image
+                </Button>
+            </div>
         </Card>
 
         {changeLinkModal && !!hnftContract &&

@@ -17,7 +17,7 @@ function App() {
           <Outlet></Outlet>
         </Content>
 
-        <Footer style={{ textAlign: 'center' }}>Parami Foundation</Footer>
+        <Footer className='footer'>Made with ❤️ by Parami Foundation</Footer>
       </Layout>
     </div>
   );

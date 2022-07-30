@@ -1,9 +1,48 @@
 @import url("https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap");
 @import "antd/dist/antd.css";
+@import "styles.scss";
 
 .app {
+  .ant-layout {
+    background: #fff;
+  }
+
   .content {
     padding: 50px 50px 0 50px;
     margin-top: 64px;
+  }
+
+  .footer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 35px !important;
+    text-align: center;
+    color: rgba(153, 153, 153, 0.6) !important;
+    font-size: 13px;
+    background-color: transparent !important;
+  }
+
+  button.ant-btn {
+    height: 40px;
+    border-radius: 20px;
+    color: #fff;
+    background: $parami-red;
+    text-shadow: 0 -1px 0 rgb(0 0 0 / 12%);
+    font-size: 16px;
+    border: none;
+    -webkit-box-shadow: 0 4px 14px 0 rgb(255 91 0 / 39%);
+    box-shadow: 0 4px 14px 0 rgba(255,91,0,.39);
+
+    &:hover {
+      background: $parami-red-hover;
+    }
+  }
+
+  .ant-card {
+    border-radius: 16px !important;
+    -webkit-box-shadow: 0 25px 50px -12px rgb(0 0 0 / 25%);
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 25%);
   }
 }

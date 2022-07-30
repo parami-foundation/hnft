@@ -54,10 +54,6 @@ export function RingPFP({ address, tokenId, imgUrl, fallbackImageUrl }: RingPFPP
     }, [imgUrl])
 
     return <>
-        <AntdImage style={{ width: '100%' }} src={ringPfpUrl || fallbackImageUrl} preview={false}/>
-        {/* <img
-            style={{ width: '100%' }}
-            src={ringPfpUrl || fallbackImageUrl}
-        /> */}
+        <AntdImage className='ring-pfp' style={{ width: '100%' }} src={ringPfpUrl || fallbackImageUrl} preview={false}/>
     </>;
 };

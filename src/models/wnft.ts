@@ -23,6 +23,10 @@ export type LinkPrefixType = 'https://' | 'ipfs://' | 'wnft://' | 'did://';
 
 export const DEFAULT_LINK = 'https://app.parami.io';
 
+export const IPFS_ENDPOINT = 'https://ipfs.parami.io/ipfs/';
+
+export const IPFS_UPLOAD = 'https://ipfs.parami.io/api/v0/add?stream-channels=true';
+
 export const HNFT_IDENTIFIER = 1;
 
 export const hexStartingIndex = 8;

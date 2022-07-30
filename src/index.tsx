@@ -15,15 +15,6 @@ ReactDOM.render(
         <Routes>
           <Route path="/" element={<App />}>
             <Route path="" element={<MyNFTs />} />
-            {/* <Route path="" element={<Wnft />} /> */}
-            {/* <Route path="hnft" element={<Hnft />} /> */}
-
-            {/* <Route path="pfp" element={<PfpGeneratorPage />} /> */}
-
-            {/* <Route
-              path=""
-              element={<Navigate to="wnft" replace />}
-            /> */}
           </Route>
         </Routes>
       </BrowserRouter>

@@ -2,9 +2,7 @@ import './NavBar.scss';
 import { useMetaMask } from 'metamask-react';
 import { createAvatar } from '@dicebear/avatars';
 import * as style from '@dicebear/avatars-identicon-sprites';
-import { Layout, Menu, Button, Avatar, Tooltip } from 'antd';
-import { Link } from "react-router-dom";
-
+import { Layout, Button, Avatar, Tooltip } from 'antd';
 
 const { Header } = Layout;
 
@@ -17,31 +15,26 @@ export function NavBar() {
       dataUri: true
     });
   }
-  
+
   return (
     <Header className='nav-bar'>
-      {/* <div className="logo" /> */}
+      <div className="logo">
+        <img src="/images/logo-text.svg" />
+      </div>
 
-      <Menu mode="horizontal" theme="dark" defaultSelectedKeys={['wnft']}>
-        <Menu.Item key="wnft">
-          <Link to="">HNFT</Link>
-        </Menu.Item>
+      <div className='user'>
+        {status === 'notConnected' && (
+          <Button onClick={() => connect()}>Connect Wallet</Button>
+        )}
 
-        <Menu.Item className='right-menu' key="wallet" disabled>
-          {status === 'notConnected' && (
-            <Button ghost onClick={() => connect()}>Connect Wallet</Button>
-          )}
+        {status === 'connecting' && <Button loading>Connecting</Button>}
 
-          {status === 'connecting' && <Button ghost loading>Connecting</Button>}
-
-          {status === 'connected' && account && (
-            <Tooltip title={`${account.substring(0, 4)}...${account.substring(account.length - 4)}`} color="#108ee9" placement="bottom">
-              <Avatar className='avatar' shape="square" size={32} src={createAvatorUri(account)} />
-            </Tooltip>
-          )}
-        </Menu.Item>
-      </Menu>
-
+        {status === 'connected' && account && (
+          <Tooltip title={`${account.substring(0, 8)}...${account.substring(account.length - 6)}`} color="#ff5b00" placement="bottomLeft">
+            <Avatar className='avatar' shape="square" size={36} src={createAvatorUri(account)} />
+          </Tooltip>
+        )}
+      </div>
     </Header>
   );
 }

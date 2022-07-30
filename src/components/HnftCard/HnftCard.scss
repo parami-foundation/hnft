@@ -1,4 +1,57 @@
+@import '../../styles.scss';
+
 .hnftCard {
+  max-width: 450px;
+  width: 100%;
+
+  .pfp-container {
+    width: 100%;
+
+    .ring-pfp {
+      border-radius: 8px;
+    }
+  }
+
+  .nft-info {
+    .ant-row {
+      margin-top: 20px;
+    }
+
+    .float-right {
+      float: right;
+    }
+
+    .action-button {
+      margin-left: 15px;
+
+      border: 1px solid rgba(31, 47, 70, .12);
+      background: #fff;
+      color: rgba(0, 0, 0, .85);
+      height: 32px;
+      border-radius: 50%;
+      box-shadow: none;
+      -webkit-box-shadow: none;
+
+      &:hover {
+        background: #fff;
+        color: $parami-red;
+        -webkit-box-shadow: 0 2px 7px 0 rgb(0 0 0 / 10%);
+        box-shadow: 0 2px 7px 0 rgb(0 0 0 / 10%);
+      }
+    }
+  }
+
+  .menu {
+    display: flex;
+    flex-direction: column;
+    
+    button.ant-btn {
+      font-size: 14px !important;
+      height: 30px;
+      margin-top: 10px;
+    }
+  }
+
   .actionIcon {
     font-size: 20px !important;
   }

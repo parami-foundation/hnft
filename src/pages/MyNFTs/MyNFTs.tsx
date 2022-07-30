@@ -1,4 +1,4 @@
-import { Button, Card } from 'antd';
+import { Button, Card, Typography, Image, Spin } from 'antd';
 import { ethers } from 'ethers';
 import { useMetaMask } from 'metamask-react';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -10,6 +10,9 @@ import { Wnft } from '../Wnft';
 import ERC721HCollection from '../../ERC721HCollection.json';
 import { NFT } from '../../models/wnft';
 import { HnftCard } from '../../components/HnftCard';
+import './MyNFTs.scss';
+
+const { Title } = Typography;
 
 export interface MyNFTsProps { }
 
@@ -20,6 +23,7 @@ export function MyNFTs({ }: MyNFTsProps) {
     const { retrieveCollections, retrieveNFTs } = useOpenseaApi();
     const [hnftContract, setHnftContract] = useState<ethers.Contract>();
     const [hnfts, setHnfts] = useState<NFT[]>([]);
+    const [loadingNfts, setLoadingNfts] = useState<boolean>(true);
 
     const chain_id = parseInt(chainId ?? '1', 16);
 
@@ -53,6 +57,7 @@ export function MyNFTs({ }: MyNFTsProps) {
             });
         }).then(nfts => {
             setHnfts([...(nfts ?? [])]);
+            setLoadingNfts(false);
         });
     }, [retrieveCollections, chainId]);
 
@@ -93,20 +98,57 @@ export function MyNFTs({ }: MyNFTsProps) {
         setHnfts([...hnfts.filter(nft => !(nft.name === removed.name && nft.token_id === removed.token_id))])
     }
 
-    return (<div>
-        <Card>
+    const buttons = (
+        <div className='buttons'>
             {status !== 'connected' && (
                 <p>Connect your wallet and start managing your HNFTs!</p>
             )}
-            <Button onClick={() => setSelectNFTModal(true)}>Wrapping your NFT</Button>
+            <Button onClick={() => setSelectNFTModal(true)}>Wrap your NFT</Button>
             <Button onClick={() => setCreateHNFTModal(true)}>Create new HNFT</Button>
-        </Card>
+        </div>
+    )
 
-        <Card title="My HNFTs">
-            {hnfts.length > 0 && hnfts?.map(hnft => <HnftCard key={`${hnft.name}${hnft.token_id}`} hnft={hnft} unwrapped={() => removeNft(hnft)}/>)}
-        </Card>
+    return (<div className='my-nfts'>
+        <div className='title-container'>
+            <Title
+                level={2}
+                className='title'
+            >
+                <Image
+                    className='title-icon'
+                    src='/images/icon/vip.svg'
+                    preview={false}
+                />
+                HNFTs
+            </Title>
 
-        <Card bordered={false} style={{ marginTop: '20px' }} title="Parami Extension Download">
+            <div className='sub-title'>
+                Unlock the power of hyperlink with HNFT
+            </div>
+
+            {/* todo: connect wallet here */}
+        </div>
+
+        {loadingNfts && (<div className='loading-container'>
+            <Spin tip="Loading..." />
+        </div>)}
+
+        {!loadingNfts && !hnfts.length && (
+            <div className='no-nfts-container'>
+                <Image src='/images/icon/query.svg' style={{ width: '120px' }} preview={false}></Image>
+                <div style={{ marginTop: '20px', fontWeight: '600' }}>You do not have any HNFTs</div>
+                {buttons}
+            </div>
+        )}
+
+        {!loadingNfts && hnfts.length > 0 && (
+            <div className='nfts-container'>
+                {hnfts?.map(hnft => <HnftCard key={`${hnft.name}${hnft.token_id}`} hnft={hnft} unwrapped={() => removeNft(hnft)} />)}
+                {buttons}
+            </div>
+        )}
+
+        <Card style={{ marginTop: '40px' }} title="Parami Extension Download">
             <Link to="/files/parami-extension.zip" target="_blank" download>Click to download Parami Extension</Link>
         </Card>
 
