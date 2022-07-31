@@ -9,7 +9,7 @@ import { useOpenseaApi } from '../../hooks/useOpenseaApi';
 import { ImportNftModal } from '../../components/ImportNftModal';
 import { HNFTCollectionContractAddress } from '../../models/contract';
 
-const { Paragraph } = Typography;
+const { Paragraph, Title } = Typography;
 
 export interface WnftProps {
     onCancel: () => void,
@@ -59,80 +59,72 @@ export function Wnft({ onCancel, onCreateWNFT }: WnftProps) {
     }
 
     return (
-        <Modal visible centered width={1000} onCancel={onCancel}>
+        <Modal visible centered width={1000} onCancel={onCancel} title="Wrap NFT">
             <div className='wnft'>
-                <Card bordered={false} title="Your NFT Collections">
-                    {status === 'notConnected' && <p>Connect wallet and start managing your WNFTs!</p>}
+                {collections.length > 0 && (<>
+                    <Title level={5}>Select Collection</Title>
+                    <List
+                        itemLayout="vertical"
+                        size="large"
+                        grid={{ column: 2 }}
+                        pagination={{
+                            pageSize: 6,
+                        }}
+                        footer={
+                            <div>
+                                Couldn't find your NFT? <a href='javascript:void(0)' onClick={() => setManualImport(true)}>Import NFT manually</a>
+                            </div>
+                        }
+                        dataSource={collections}
+                        renderItem={item => (
+                            <List.Item
+                                key={item.slug}
+                            >
+                                <Card hoverable className={`collection-card ${selectedCollection?.slug === item.slug ? 'selected' : ''}`} onClick={() => setSelectedCollection(item)} bodyStyle={{ padding: '14px' }}>
+                                    <Card.Meta
+                                        avatar={<Avatar size="large" shape="square" src={item.image_url} />}
+                                        title={item.name}
+                                        description={<Paragraph style={{ margin: 0 }} ellipsis={{ rows: 2, expandable: true, symbol: 'more' }}>{item.description ?? ''}</Paragraph>}
+                                    />
+                                </Card>
+                            </List.Item>
+                        )}
+                    />
+                </>)}
 
-                    {collections.length > 0 && (
+
+                {selectedCollection && (<>
+                    <Title level={5}>{selectedCollection.name}</Title>
+                    {nfts.length === 0 && (
+                        <div style={{ width: '100%', textAlign: 'center' }}>
+                            <Spin />
+                        </div>
+                    )}
+                    {nfts.length > 0 && (
                         <List
                             itemLayout="vertical"
                             size="large"
-                            grid={{ gutter: 4, column: 2 }}
+                            grid={{ column: 3 }}
                             pagination={{
-                                onChange: page => {
-                                    console.log(page);
-                                },
-                                pageSize: 6,
+                                pageSize: 3,
                             }}
-                            footer={
-                                <div>
-                                    Couldn't find your NFT? <a href='javascript:void(0)' onClick={() => setManualImport(true)}>Import NFT manually</a>
-                                </div>
-                            }
-                            dataSource={collections}
+                            dataSource={nfts}
                             renderItem={item => (
                                 <List.Item
-                                    key={item.slug}
+                                    key={item.token_id}
                                 >
-                                    <Card hoverable onClick={() => setSelectedCollection(item)}>
+                                    <Card hoverable onClick={() => setSelectedNft(item)} cover={<img src={item.image_url} />}>
                                         <Card.Meta
-                                            avatar={<Avatar size="large" shape="square" src={item.image_url} />}
                                             title={item.name}
-                                            description={<Paragraph ellipsis={{ rows: 2, expandable: true, symbol: 'more' }}>{item.description ?? ''}</Paragraph>}
+                                            description={<Paragraph ellipsis={{ rows: 4, expandable: true, symbol: 'more' }}>{item.description ?? ''}</Paragraph>}
                                         />
                                     </Card>
                                 </List.Item>
                             )}
                         />
                     )}
-                </Card>
 
-                {selectedCollection && (
-                    <Card bordered={false} title={selectedCollection.name}>
-                        {nfts.length === 0 && (
-                            <div style={{ width: '100%', textAlign: 'center' }}>
-                                <Spin />
-                            </div>
-                        )}
-                        {nfts.length > 0 && (
-                            <List
-                                itemLayout="vertical"
-                                size="large"
-                                grid={{ gutter: 2, column: 3 }}
-                                pagination={{
-                                    onChange: page => {
-                                        console.log(page);
-                                    },
-                                    pageSize: 8,
-                                }}
-                                dataSource={nfts}
-                                renderItem={item => (
-                                    <List.Item
-                                        key={item.token_id}
-                                    >
-                                        <Card hoverable onClick={() => setSelectedNft(item)} cover={<img src={item.image_url} />}>
-                                            <Card.Meta
-                                                title={item.name}
-                                                description={<Paragraph ellipsis={{ rows: 4, expandable: true, symbol: 'more' }}>{item.description ?? ''}</Paragraph>}
-                                            />
-                                        </Card>
-                                    </List.Item>
-                                )}
-                            />
-                        )}
-                    </Card>
-                )}
+                </>)}
 
                 {manualImport && (
                     <Form.Provider

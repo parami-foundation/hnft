@@ -13,9 +13,6 @@ import { NFT, WnftData } from '../../models/wnft';
 const { Step } = Steps;
 
 export interface CreateWnftModalProps {
-    // contractType: ContractType;
-    // contractAddress: string;
-    // tokenId: number;
     nft: NFT;
     onCancel: () => void;
     onSubmit: (data: WnftData) => void;

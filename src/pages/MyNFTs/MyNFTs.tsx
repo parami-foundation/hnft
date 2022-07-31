@@ -119,7 +119,7 @@ export function MyNFTs({ }: MyNFTsProps) {
                     src='/images/icon/vip.svg'
                     preview={false}
                 />
-                HNFTs
+                HNFT
             </Title>
 
             <div className='sub-title'>
