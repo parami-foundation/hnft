@@ -1,4 +1,3 @@
-import { useMetaMask } from 'metamask-react';
 import React, { useState } from 'react';
 import { Form, Card, Spin, List, Avatar, Typography, Modal } from 'antd';
 import './Wnft.scss';
@@ -8,6 +7,7 @@ import { useEffect } from 'react';
 import { useOpenseaApi } from '../../hooks/useOpenseaApi';
 import { ImportNftModal } from '../../components/ImportNftModal';
 import { HNFTCollectionContractAddress } from '../../models/contract';
+import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
 
 const { Paragraph, Title } = Typography;
 
@@ -25,7 +25,7 @@ export function Wnft({ onCancel, onCreateWNFT }: WnftProps) {
     const [nfts, setNfts] = useState<NFT[]>([]);
     const [selectedNft, setSelectedNft] = useState<NFT>();
 
-    const { status, ethereum, chainId, account } = useMetaMask();
+    const { ethereum, chainId, account } = useCustomMetaMask();
     const { retrieveCollections, retrieveNFTs, retrieveAsset } = useOpenseaApi();
 
     useEffect(() => {
@@ -33,7 +33,7 @@ export function Wnft({ onCancel, onCreateWNFT }: WnftProps) {
             retrieveCollections().then(collections => {
                 const nftCollections = (collections ?? []).filter(collection => {
                     return !collection.name.startsWith('Wrapped')
-                        && !collection.primary_asset_contracts?.find(contract => contract.address === HNFTCollectionContractAddress[parseInt(chainId ?? '1', 16) as 1 | 4])
+                        && !collection.primary_asset_contracts?.find(contract => contract.address === HNFTCollectionContractAddress[chainId as 1 | 4])
                 });
                 setCollections(nftCollections);
             });

@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Modal, Steps, notification, Result, Spin, Col, Row } from 'antd';
 import { LoadingOutlined, SmileOutlined } from '@ant-design/icons';
-import { useMetaMask } from 'metamask-react';
 import RegistryContractAbi from '../../ERC721WRegistry.json';
 import WContractAbi from '../../ERC721WContract.json';
 import ERC721MockAbi from '../../TestingERC721Contract.json';
 import { ethers } from 'ethers';
 import { useEffect } from 'react';
-import { ParamiLinkContractAddress_Mainnet, ParamiLinkContractAddress_Rinkeby, RegistryContractAddress_Mainnet, RegistryContractAddress_Rinkeby } from '../../models/contract';
+import { LegacyRegistryContractAddress, ParamiLinkContractAddress, ParamiLinkContractAddress_Mainnet, ParamiLinkContractAddress_Rinkeby, RegistryContractAddress_Mainnet, RegistryContractAddress_Rinkeby } from '../../models/contract';
 import { NFT, WnftData } from '../../models/wnft';
+import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
 
 const { Step } = Steps;
 
@@ -28,7 +28,7 @@ export function CreateWnftModal({
     const tokenId = +nft.token_id;
 
     const [step, setStep] = useState<number>(0);
-    const { ethereum, chainId } = useMetaMask();
+    const { ethereum, chainId } = useCustomMetaMask();
     const [registryContract, setRegistryContract] = useState<ethers.Contract>();
     const [wContractAddress, setWcontractAddress] = useState<string>();
     const [wContract, setWcontract] = useState<ethers.Contract>();
@@ -55,8 +55,7 @@ export function CreateWnftModal({
 
     useEffect(() => {
         if (ethereum && chainId) {
-            const chainIdNum = parseInt(chainId, 16);
-            if (chainIdNum !== 1 && chainIdNum !== 4) {
+            if (chainId !== 1 && chainId !== 4) {
                 notification.error({
                     message: 'Chain Not Supported',
                     description: `ChainId: ${chainId}`
@@ -64,11 +63,11 @@ export function CreateWnftModal({
                 return;
             }
             setRegistryContract(new ethers.Contract(
-                chainIdNum === 1 ? RegistryContractAddress_Mainnet : RegistryContractAddress_Rinkeby,
+                LegacyRegistryContractAddress[chainId],
                 RegistryContractAbi.abi,
                 new ethers.providers.Web3Provider(ethereum).getSigner()
             ));
-            setParamiLinkAddress(chainIdNum === 1 ? ParamiLinkContractAddress_Mainnet : ParamiLinkContractAddress_Rinkeby);
+            setParamiLinkAddress(ParamiLinkContractAddress[chainId]);
         }
     }, [ethereum, chainId]);
 

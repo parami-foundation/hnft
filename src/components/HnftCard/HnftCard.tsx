@@ -1,6 +1,5 @@
 import { Avatar, Button, Card, Col, Dropdown, Menu, Modal, notification, Row, Spin, Typography, Upload, UploadProps } from 'antd';
 import { ethers } from 'ethers';
-import { useMetaMask } from 'metamask-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { NFT } from '../../models/wnft';
 import ERC721WContract from '../../ERC721WContract.json';
@@ -9,6 +8,7 @@ import { RingPFP } from '../RingPFP';
 import { HNFTCollectionContractAddress } from '../../models/contract';
 import './HnftCard.scss';
 import { ChangeLinkModal } from '../ChangeLinkModal';
+import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
 
 const { Paragraph, Title } = Typography;
 
@@ -21,13 +21,13 @@ export function HnftCard({ hnft, unwrapped }: HnftCardProps) {
     const contractAddress = hnft.asset_contract.address;
     const tokenId = +hnft.token_id;
 
-    const { ethereum, account, chainId } = useMetaMask();
+    const { ethereum, account, chainId } = useCustomMetaMask();
     const [hnftContract, setHnftContract] = useState<ethers.Contract>();
     const [currentLink, setCurrentLink] = useState<string>();
     const [coverImageUrl, setCoverImageUrl] = useState<string>();
     const [changeLinkModal, setChangeLinkModal] = useState<boolean>(false);
 
-    const canUnwrap = contractAddress !== HNFTCollectionContractAddress[parseInt(chainId ?? '1', 16) as 1 | 4];
+    const canUnwrap = (chainId === 1 || chainId === 4) &&  contractAddress !== HNFTCollectionContractAddress[chainId];
 
     useEffect(() => {
         if (ethereum) {

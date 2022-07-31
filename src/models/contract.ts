@@ -37,6 +37,11 @@ export const LegacyRegistryContractAddress = {
   4: '0xc0981bf737f5d4e1af738133b787693b17aa7dce'
 }
 
+export const RegistryContractAddress = {
+  1: '0x1234', // todo: deploy mainnet
+  4: '0xbf9009DB1E3934F48a5Ce038cC3aca8a20e3cD8E'
+}
+
 export const HNFTCollectionContractAddress = {
   1: '0x1234',
   4: '0x0a55482af06d17973eb1ffbb5e379845f2d2c631'

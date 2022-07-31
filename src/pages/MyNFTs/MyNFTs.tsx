@@ -1,6 +1,5 @@
 import { Button, Card, Typography, Image, Spin } from 'antd';
 import { ethers } from 'ethers';
-import { useMetaMask } from 'metamask-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useOpenseaApi } from '../../hooks/useOpenseaApi';
@@ -11,6 +10,7 @@ import ERC721HCollection from '../../ERC721HCollection.json';
 import { NFT } from '../../models/wnft';
 import { HnftCard } from '../../components/HnftCard';
 import './MyNFTs.scss';
+import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
 
 const { Title } = Typography;
 
@@ -19,29 +19,27 @@ export interface MyNFTsProps { }
 export function MyNFTs({ }: MyNFTsProps) {
     const [selectNFTModal, setSelectNFTModal] = useState<boolean>();
     const [createHNFTModal, setCreateHNFTModal] = useState<boolean>();
-    const { ethereum, chainId, status, account } = useMetaMask();
+    const { ethereum, chainId, status, account } = useCustomMetaMask();
     const { retrieveCollections, retrieveNFTs } = useOpenseaApi();
     const [hnftContract, setHnftContract] = useState<ethers.Contract>();
     const [hnfts, setHnfts] = useState<NFT[]>([]);
     const [loadingNfts, setLoadingNfts] = useState<boolean>(true);
 
-    const chain_id = parseInt(chainId ?? '1', 16);
-
     useEffect(() => {
-        if (ethereum && (chain_id === 1 || chain_id === 4)) {
+        if (ethereum && (chainId === 1 || chainId === 4)) {
             setHnftContract(new ethers.Contract(
-                HNFTCollectionContractAddress[chain_id],
+                HNFTCollectionContractAddress[chainId],
                 ERC721HCollection.abi,
                 new ethers.providers.Web3Provider(ethereum).getSigner()
             ));
         }
-    }, [ethereum, chain_id]);
+    }, [ethereum, chainId]);
 
     useEffect(() => {
         retrieveCollections().then(collections => {
             const hnftCollections = (collections ?? []).filter(collection => {
                 return collection?.name?.startsWith('Wrapped') ||
-                    collection?.primary_asset_contracts?.find(contract => contract.address === HNFTCollectionContractAddress[parseInt(chainId ?? '1', 16) as 1 | 4])
+                    collection?.primary_asset_contracts?.find(contract => contract.address === HNFTCollectionContractAddress[chainId as 1 | 4])
             });
 
             const contractAddresses = hnftCollections.map(collection => {

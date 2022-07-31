@@ -1,13 +1,13 @@
 import './NavBar.scss';
-import { useMetaMask } from 'metamask-react';
 import { createAvatar } from '@dicebear/avatars';
 import * as style from '@dicebear/avatars-identicon-sprites';
 import { Layout, Button, Avatar, Tooltip } from 'antd';
+import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
 
 const { Header } = Layout;
 
 export function NavBar() {
-  const { status, connect, account } = useMetaMask();
+  const { status, connect, account } = useCustomMetaMask();
 
   function createAvatorUri(seed: string): string {
     return createAvatar(style, {

@@ -2,12 +2,12 @@ import { Button, message, notification, Upload, Modal, Image as AntdImage } from
 import React, { useCallback, useEffect, useState } from 'react';
 import type { RcFile, UploadProps } from 'antd/es/upload/interface';
 import { CloudUploadOutlined } from '@ant-design/icons';
-import { useMetaMask } from 'metamask-react';
 import { ethers } from 'ethers';
 import { HNFTCollectionContractAddress, ParamiLinkContractAddress } from '../../models/contract';
 import ERC721HCollection from '../../ERC721HCollection.json';
 import { IPFS_ENDPOINT, IPFS_UPLOAD } from '../../models/wnft';
 import './Hnft.scss';
+import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
 
 const { Dragger } = Upload;
 
@@ -20,31 +20,29 @@ const tokenUriMock = 'https://ipfs.parami.io/ipfs/' + 'QmR76hWfwgdKnbH4jLsaqw9jp
 
 export function Hnft({ onCancel, onCreate }: HnftProps) {
     const [loading, setLoading] = useState<boolean>(false);
-    const { ethereum, chainId } = useMetaMask();
+    const { ethereum, chainId } = useCustomMetaMask();
     const [createHnftLoading, setCreateHnftLoading] = useState<boolean>(false);
     const [hnftContract, setHnftContract] = useState<ethers.Contract>();
     const [imageUri, setImageUri] = useState<string>();
 
-    const chain_id = parseInt(chainId ?? '1', 16);
-
     useEffect(() => {
-        if (ethereum && (chain_id === 1 || chain_id === 4)) {
+        if (ethereum && (chainId === 1 || chainId === 4)) {
             setHnftContract(new ethers.Contract(
-                HNFTCollectionContractAddress[chain_id],
+                HNFTCollectionContractAddress[chainId],
                 ERC721HCollection.abi,
                 new ethers.providers.Web3Provider(ethereum).getSigner()
             ));
         }
-    }, [ethereum, chain_id]);
+    }, [ethereum, chainId]);
 
     const createHnft = useCallback(async (imageUri: string) => {
-        if (hnftContract && (chain_id === 1 || chain_id === 4)) {
+        if (hnftContract && (chainId === 1 || chainId === 4)) {
             try {
                 notification.info({
                     message: 'Creating HNFT',
                     description: 'Please confirm in your wallet'
                 })
-                const resp = await hnftContract.mintAndAuthorizeTo(imageUri, ParamiLinkContractAddress[chain_id]);
+                const resp = await hnftContract.mintAndAuthorizeTo(imageUri, ParamiLinkContractAddress[chainId]);
                 await resp.wait();
                 notification.success({
                     message: 'Create HNFT Success'
@@ -60,7 +58,7 @@ export function Hnft({ onCancel, onCreate }: HnftProps) {
             }
         }
 
-    }, [hnftContract, chain_id]);
+    }, [hnftContract, chainId]);
 
     const props: UploadProps = {
         name: 'file',
