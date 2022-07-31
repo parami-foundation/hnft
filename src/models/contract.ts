@@ -24,14 +24,6 @@ export const SupportedNetworkName: {[id: number]: string} = {
   4: 'Rinkeby Testnet'
 }
 
-export const RegistryContractAddress_Rinkeby = '0xc0981bf737f5d4e1af738133b787693b17aa7dce';
-
-export const RegistryContractAddress_Mainnet = '0x0833624A59E827203965bC1eb866eEe1B2D2E49B';
-
-export const ParamiLinkContractAddress_Rinkeby = '0x7F1Ae9F3740A9192fb10Ec8Cff48B9401f61f74A';
-
-export const ParamiLinkContractAddress_Mainnet = '0x955A4432662Cf9F5A2d06FfEBff712bDCAfEA55F';
-
 export const LegacyRegistryContractAddress = {
   1: '0x0833624A59E827203965bC1eb866eEe1B2D2E49B',
   4: '0xc0981bf737f5d4e1af738133b787693b17aa7dce'
@@ -43,7 +35,7 @@ export const RegistryContractAddress = {
 }
 
 export const HNFTCollectionContractAddress = {
-  1: '0x1234',
+  1: '0x1234', // todo: deploy mainnet
   4: '0x0a55482af06d17973eb1ffbb5e379845f2d2c631'
 }
 

@@ -58,6 +58,10 @@ export function useOpenseaApi() {
       .catch(err => console.error(err));
   }, [chainId])
 
+  if (!chainId || !account) {
+    return {};
+  }
+
   return {
     retrieveCollections,
     retrieveNFTs,

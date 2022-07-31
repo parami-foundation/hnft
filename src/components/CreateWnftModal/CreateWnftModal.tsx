@@ -6,7 +6,7 @@ import WContractAbi from '../../ERC721WContract.json';
 import ERC721MockAbi from '../../TestingERC721Contract.json';
 import { ethers } from 'ethers';
 import { useEffect } from 'react';
-import { LegacyRegistryContractAddress, ParamiLinkContractAddress, ParamiLinkContractAddress_Mainnet, ParamiLinkContractAddress_Rinkeby, RegistryContractAddress_Mainnet, RegistryContractAddress_Rinkeby } from '../../models/contract';
+import { LegacyRegistryContractAddress, ParamiLinkContractAddress } from '../../models/contract';
 import { NFT, WnftData } from '../../models/wnft';
 import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
 

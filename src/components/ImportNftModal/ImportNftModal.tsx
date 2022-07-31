@@ -23,25 +23,28 @@ export function ImportNftModal({ onCancel }: ImportNftModalProps) {
     };
 
     useEffect(() => {
-        // osUrl be like: https://opensea.io/assets/ethereum/0x098583c0cfba50212b421f525b4f7fe46901a0f2/106
-        // https://testnets.opensea.io/assets/rinkeby/0x7bd223a98f9bf0c7862fbcee3622af49a1bf70a5/373
-        if (osUrl?.startsWith('https://opensea.io/assets/ethereum') || osUrl?.startsWith('https://testnets.opensea.io/assets/rinkeby')) {
-            const parts = osUrl.split('/').filter(Boolean);
+        if (retrieveContract) {
+            // osUrl be like: https://opensea.io/assets/ethereum/0x098583c0cfba50212b421f525b4f7fe46901a0f2/106
+            // https://testnets.opensea.io/assets/rinkeby/0x7bd223a98f9bf0c7862fbcee3622af49a1bf70a5/373
+            if (osUrl?.startsWith('https://opensea.io/assets/ethereum') || osUrl?.startsWith('https://testnets.opensea.io/assets/rinkeby')) {
+                const parts = osUrl.split('/').filter(Boolean);
 
-            const address = parts[parts.length - 2];
+                const address = parts[parts.length - 2];
 
-            form.setFieldsValue({
-                address,
-                tokenId: parts[parts.length - 1]
-            });
-
-            retrieveContract(address).then(resp => {
                 form.setFieldsValue({
-                    contractType: resp?.name?.startsWith('Wrapped') ? 'WNFT' : 'NFT',
+                    address,
+                    tokenId: parts[parts.length - 1]
                 });
-            });
+
+                retrieveContract(address).then(resp => {
+                    form.setFieldsValue({
+                        contractType: resp?.name?.startsWith('Wrapped') ? 'WNFT' : 'NFT',
+                    });
+                });
+            }
         }
-    }, [osUrl, form]);
+
+    }, [osUrl, form, retrieveContract]);
 
     return (
         <Modal title="Add WNFT" visible={true} onOk={onOk} onCancel={onCancel} width={600}>

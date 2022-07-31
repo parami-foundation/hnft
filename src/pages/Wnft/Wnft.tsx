@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Form, Card, Spin, List, Avatar, Typography, Modal } from 'antd';
 import './Wnft.scss';
 import { CreateWnftModal } from '../../components/CreateWnftModal';
@@ -8,6 +8,7 @@ import { useOpenseaApi } from '../../hooks/useOpenseaApi';
 import { ImportNftModal } from '../../components/ImportNftModal';
 import { HNFTCollectionContractAddress } from '../../models/contract';
 import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
+import { useWContractAddresses } from '../../hooks/useWContractAddresses';
 
 const { Paragraph, Title } = Typography;
 
@@ -17,28 +18,29 @@ export interface WnftProps {
 }
 
 export function Wnft({ onCancel, onCreateWNFT }: WnftProps) {
-    const [wnft, setWnft] = useState<WNFT>();
     const [manualImport, setManualImport] = useState<boolean>(false);
 
-    const [collections, setCollections] = useState<Collection[]>([]);
+    const [collections, setCollections] = useState<Collection[]>();
     const [selectedCollection, setSelectedCollection] = useState<Collection>();
     const [nfts, setNfts] = useState<NFT[]>([]);
     const [selectedNft, setSelectedNft] = useState<NFT>();
 
-    const { ethereum, chainId, account } = useCustomMetaMask();
+    const { chainId } = useCustomMetaMask();
     const { retrieveCollections, retrieveNFTs, retrieveAsset } = useOpenseaApi();
+    const wAddresses = useWContractAddresses();
 
     useEffect(() => {
-        if (ethereum && chainId && account) {
+        if (retrieveCollections && chainId && wAddresses) {
             retrieveCollections().then(collections => {
                 const nftCollections = (collections ?? []).filter(collection => {
-                    return !collection.name.startsWith('Wrapped')
-                        && !collection.primary_asset_contracts?.find(contract => contract.address === HNFTCollectionContractAddress[chainId as 1 | 4])
+                    return !collection.primary_asset_contracts?.find(contract => {
+                        return [HNFTCollectionContractAddress[chainId as 1 | 4], ...wAddresses].find(wAddr => wAddr === contract.address)
+                    })
                 });
                 setCollections(nftCollections);
             });
         }
-    }, [ethereum, chainId, account]);
+    }, [retrieveCollections, chainId, wAddresses]);
 
     useEffect(() => {
         setSelectedCollection(undefined);
@@ -46,22 +48,31 @@ export function Wnft({ onCancel, onCreateWNFT }: WnftProps) {
 
     useEffect(() => {
         setNfts([]);
-        setWnft(undefined);
-        if (selectedCollection) {
+        if (selectedCollection && retrieveNFTs) {
             retrieveNFTs({ collectionSlug: selectedCollection.slug }).then(nfts => setNfts(nfts));
         }
-    }, [selectedCollection]);
+    }, [selectedCollection, retrieveNFTs]);
 
-    const onAddWnftData = (wnft: WnftData) => {
-        retrieveAsset(wnft.contractAddress, wnft.tokenId).then(nft => {
-            onCreateWNFT(nft);
-        });
-    }
+    const onAddWnftData = useCallback((wnft: WnftData) => {
+        if (retrieveAsset) {
+            retrieveAsset(wnft.contractAddress, wnft.tokenId).then(nft => {
+                onCreateWNFT(nft);
+            });
+        }
+    }, [retrieveAsset])
 
     return (
         <Modal visible centered width={1000} onCancel={onCancel} title="Wrap NFT">
             <div className='wnft'>
-                {collections.length > 0 && (<>
+                {!collections && (
+                    <div className='loading-container'>
+                        <Spin tip="Loading..." />
+                    </div>
+                )}
+                {collections && collections.length === 0 && (
+                    <p>Could not find any NFTs. Please try create HNFT directly.</p>
+                )}
+                {collections && collections.length > 0 && (<>
                     <Title level={5}>Select Collection</Title>
                     <List
                         itemLayout="vertical"
@@ -123,16 +134,17 @@ export function Wnft({ onCancel, onCreateWNFT }: WnftProps) {
                             )}
                         />
                     )}
-
                 </>)}
 
                 {manualImport && (
                     <Form.Provider
-                        onFormFinish={(_name, { values }) => {
-                            retrieveAsset(values.address, +values.tokenId).then(nft => {
-                                setSelectedNft(nft);
-                                setManualImport(false);
-                            });
+                        onFormFinish={(_name: any, { values }: any) => {
+                            if (retrieveAsset) {
+                                retrieveAsset(values.address, +values.tokenId).then(nft => {
+                                    setSelectedNft(nft);
+                                    setManualImport(false);
+                                });
+                            }
                         }}
                     >
                         <ImportNftModal onCancel={() => setManualImport(false)} />

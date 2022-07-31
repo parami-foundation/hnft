@@ -11,6 +11,7 @@ import { NFT } from '../../models/wnft';
 import { HnftCard } from '../../components/HnftCard';
 import './MyNFTs.scss';
 import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
+import { useWContractAddresses } from '../../hooks/useWContractAddresses';
 
 const { Title } = Typography;
 
@@ -22,8 +23,8 @@ export function MyNFTs({ }: MyNFTsProps) {
     const { ethereum, chainId, status, account } = useCustomMetaMask();
     const { retrieveCollections, retrieveNFTs } = useOpenseaApi();
     const [hnftContract, setHnftContract] = useState<ethers.Contract>();
-    const [hnfts, setHnfts] = useState<NFT[]>([]);
-    const [loadingNfts, setLoadingNfts] = useState<boolean>(true);
+    const [hnfts, setHnfts] = useState<NFT[]>();
+    const wContractAddress = useWContractAddresses();
 
     useEffect(() => {
         if (ethereum && (chainId === 1 || chainId === 4)) {
@@ -36,32 +37,34 @@ export function MyNFTs({ }: MyNFTsProps) {
     }, [ethereum, chainId]);
 
     useEffect(() => {
-        retrieveCollections().then(collections => {
-            const hnftCollections = (collections ?? []).filter(collection => {
-                return collection?.name?.startsWith('Wrapped') ||
-                    collection?.primary_asset_contracts?.find(contract => contract.address === HNFTCollectionContractAddress[chainId as 1 | 4])
-            });
+        if (retrieveCollections && chainId && wContractAddress) {
+            retrieveCollections().then(collections => {
+                const hnftCollections = (collections ?? []).filter(collection => {
+                    return collection?.primary_asset_contracts?.find(contract => {
+                        return [HNFTCollectionContractAddress[chainId as 1 | 4], ...wContractAddress].find(addr => contract.address === addr);
+                    })
+                });
 
-            const contractAddresses = hnftCollections.map(collection => {
-                const contracts = collection.primary_asset_contracts;
-                if (contracts?.length) {
-                    return contracts[0].address;
-                }
-                return '';
-            }).filter(Boolean);
+                const contractAddresses = hnftCollections.map(collection => {
+                    const contracts = collection.primary_asset_contracts;
+                    if (contracts?.length) {
+                        return contracts[0].address;
+                    }
+                    return '';
+                }).filter(Boolean);
 
-            return retrieveNFTs({
-                contractAddresses
+                return retrieveNFTs({
+                    contractAddresses
+                });
+            }).then(nfts => {
+                setHnfts([...(nfts ?? [])]);
             });
-        }).then(nfts => {
-            setHnfts([...(nfts ?? [])]);
-            setLoadingNfts(false);
-        });
-    }, [retrieveCollections, chainId]);
+        }
+    }, [retrieveCollections, retrieveNFTs, chainId, wContractAddress]);
 
     const onCreateNewHNFT = useCallback(async () => {
         setCreateHNFTModal(false);
-        if (hnftContract && account) {
+        if (hnftContract && account && hnfts) {
             try {
                 const balance = await hnftContract.balanceOf(account);
                 const tokenId = await hnftContract.tokenOfOwnerByIndex(account, balance - 1);
@@ -88,12 +91,14 @@ export function MyNFTs({ }: MyNFTsProps) {
     }, [hnftContract, account, hnfts]);
 
     const onCreateNewWNFT = useCallback((wnft: NFT) => {
-        setHnfts([wnft, ...hnfts]);
-        setSelectNFTModal(false);
+        if (hnfts) {
+            setHnfts([wnft, ...hnfts]);
+            setSelectNFTModal(false);
+        }
     }, [hnfts])
 
     const removeNft = (removed: NFT) => {
-        setHnfts([...hnfts.filter(nft => !(nft.name === removed.name && nft.token_id === removed.token_id))])
+        setHnfts([...(hnfts ?? []).filter(nft => !(nft.name === removed.name && nft.token_id === removed.token_id))])
     }
 
     const buttons = (
@@ -127,11 +132,11 @@ export function MyNFTs({ }: MyNFTsProps) {
             {/* todo: connect wallet here */}
         </div>
 
-        {loadingNfts && (<div className='loading-container'>
+        {!hnfts && (<div className='loading-container'>
             <Spin tip="Loading..." />
         </div>)}
 
-        {!loadingNfts && !hnfts.length && (
+        {hnfts && hnfts.length === 0 && (
             <div className='no-nfts-container'>
                 <Image src='/images/icon/query.svg' style={{ width: '120px' }} preview={false}></Image>
                 <div style={{ marginTop: '20px', fontWeight: '600' }}>You do not have any HNFTs</div>
@@ -139,7 +144,7 @@ export function MyNFTs({ }: MyNFTsProps) {
             </div>
         )}
 
-        {!loadingNfts && hnfts.length > 0 && (
+        {hnfts && hnfts.length > 0 && (
             <div className='nfts-container'>
                 {hnfts?.map(hnft => <HnftCard key={`${hnft.name}${hnft.token_id}`} hnft={hnft} unwrapped={() => removeNft(hnft)} />)}
                 {buttons}
