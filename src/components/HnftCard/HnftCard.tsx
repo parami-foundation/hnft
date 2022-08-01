@@ -5,7 +5,7 @@ import { NFT } from '../../models/wnft';
 import ERC721WContract from '../../ERC721WContract.json';
 import { TwitterCircleFilled, LogoutOutlined, UploadOutlined, ExclamationCircleOutlined, FormOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { RingPFP } from '../RingPFP';
-import { HNFTCollectionContractAddress } from '../../models/contract';
+import { HNFTCollectionContractAddress, ParamiLinkContractAddress } from '../../models/contract';
 import './HnftCard.scss';
 import { ChangeLinkModal } from '../ChangeLinkModal';
 import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
@@ -40,16 +40,16 @@ export function HnftCard({ hnft, unwrapped }: HnftCardProps) {
     }, [ethereum]);
 
     const updateCurrentLink = useCallback(async () => {
-        if (hnftContract) {
+        if (hnftContract && chainId) {
             try {
-                const link = (await hnftContract.getSlotUri(tokenId, account)).toString();
+                const link = (await hnftContract.getSlotUri(tokenId, ParamiLinkContractAddress[chainId as 1 | 4])).toString();
                 setCurrentLink(link || 'https://app.parami.io');
             } catch (e) {
                 setCurrentLink('https://app.parami.io');
                 console.error('Get Current Link Error', JSON.stringify(e));
             }
         }
-    }, [tokenId, account, hnftContract]);
+    }, [tokenId, account, hnftContract, chainId]);
 
     useEffect(() => {
         if (hnftContract) {

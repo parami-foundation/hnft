@@ -40,6 +40,6 @@ export const HNFTCollectionContractAddress = {
 }
 
 export const ParamiLinkContractAddress = {
-  1: '0x955A4432662Cf9F5A2d06FfEBff712bDCAfEA55F',
-  4: '0x7F1Ae9F3740A9192fb10Ec8Cff48B9401f61f74A'
+  1: '0x955A4432662Cf9F5A2d06FfEBff712bDCAfEA55F', // todo: deploy mainnet
+  4: '0xC6BfB27A439c792Cb919B923305b5f927DA8B58F'
 }

@@ -76,7 +76,6 @@ export function Hnft({ onCancel, onCreate }: HnftProps) {
             }
             if (info.file.status === 'error') {
                 message.error('Upload Image Error');
-                setImageUri(tokenUriMock);
                 setLoading(false);
             }
         },
