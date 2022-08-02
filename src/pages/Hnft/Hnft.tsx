@@ -36,6 +36,7 @@ export function Hnft({ onCancel, onCreate }: HnftProps) {
     const createHnft = useCallback(async (imageUri: string) => {
         if (hnftContract && (chainId === 1 || chainId === 4)) {
             try {
+                setCreateHnftLoading(true);
                 notification.info({
                     message: 'Creating HNFT',
                     description: 'Please confirm in your wallet'
