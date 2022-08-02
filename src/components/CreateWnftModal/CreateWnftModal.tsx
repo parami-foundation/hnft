@@ -127,7 +127,7 @@ export function CreateWnftModal({
                     message: 'Creating WNFT Contract...',
                     description: 'Please confirm in your wallet.'
                 });
-                const createResp = await registryContract.createERC721wContract(contractAddress, '');
+                const createResp = await registryContract.createERC721wContract(contractAddress);
                 await createResp.wait();
                 const wContractResp = await registryContract.getERC721wAddressFor(contractAddress);
                 const wAddress = wContractResp.toString();
