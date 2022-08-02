@@ -16,8 +16,6 @@ export interface HnftProps {
     onCreate: () => void
 }
 
-const tokenUriMock = 'https://ipfs.parami.io/ipfs/' + 'QmR76hWfwgdKnbH4jLsaqw9jpfD6ESCSHL8rw36tTchExc';
-
 export function Hnft({ onCancel, onCreate }: HnftProps) {
     const [loading, setLoading] = useState<boolean>(false);
     const { ethereum, chainId } = useCustomMetaMask();
