@@ -6,7 +6,7 @@ import WContractAbi from '../../ERC721WContract.json';
 import ERC721MockAbi from '../../TestingERC721Contract.json';
 import { ethers } from 'ethers';
 import { useEffect } from 'react';
-import { LegacyRegistryContractAddress, ParamiLinkContractAddress } from '../../models/contract';
+import { ParamiLinkContractAddress, RegistryContractAddress } from '../../models/contract';
 import { NFT, WnftData } from '../../models/wnft';
 import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
 
@@ -23,7 +23,6 @@ export function CreateWnftModal({
     onCancel,
     onSubmit
 }: CreateWnftModalProps) {
-    const contractType = nft.asset_contract.name.startsWith('Wrapped') ? 'WNFT' : 'NFT';
     const contractAddress = nft.asset_contract.address;
     const tokenId = +nft.token_id;
 
@@ -41,17 +40,13 @@ export function CreateWnftModal({
 
     useEffect(() => {
         if (ethereum && contractAddress) {
-            if (contractType === 'NFT') {
-                setNftContract(new ethers.Contract(
-                    contractAddress,
-                    ERC721MockAbi.abi,
-                    new ethers.providers.Web3Provider(ethereum).getSigner()
-                ));
-            } else if (contractType === 'WNFT') {
-                setWcontractAddress(contractAddress);
-            }
+            setNftContract(new ethers.Contract(
+                contractAddress,
+                ERC721MockAbi.abi,
+                new ethers.providers.Web3Provider(ethereum).getSigner()
+            ));
         }
-    }, [ethereum, contractAddress, contractType])
+    }, [ethereum, contractAddress]);
 
     useEffect(() => {
         if (ethereum && chainId) {
@@ -63,7 +58,7 @@ export function CreateWnftModal({
                 return;
             }
             setRegistryContract(new ethers.Contract(
-                LegacyRegistryContractAddress[chainId],
+                RegistryContractAddress[chainId],
                 RegistryContractAbi.abi,
                 new ethers.providers.Web3Provider(ethereum).getSigner()
             ));
@@ -89,10 +84,10 @@ export function CreateWnftModal({
     }
 
     useEffect(() => {
-        if (registryContract && contractType === 'NFT') {
+        if (registryContract) {
             prepareWcontract(registryContract);
         }
-    }, [registryContract, contractType]);
+    }, [registryContract]);
 
     const checkWnftToken = async () => {
         if (wContract) {
@@ -193,7 +188,7 @@ export function CreateWnftModal({
                     message: 'Wrap NFT Success. Authorizing ParamiLink Contract...'
                 });
                 setWrappingStep(2);
-                const authorizeResp = await wContract.authorize(tokenId, paramiLinkAddress);
+                const authorizeResp = await wContract.authorizeSlotTo(tokenId, paramiLinkAddress);
                 await authorizeResp.wait();
                 notification.success({
                     message: 'Authorization Success'
@@ -222,7 +217,7 @@ export function CreateWnftModal({
     }
 
     return (
-        <Modal title="Add WNFT" visible={true}
+        <Modal title="Wrap NFT" visible={true}
             onOk={() => handleNextStep(step)} onCancel={onCancel} confirmLoading={loading}
             width={1000} okText={`${step === 2 ? 'Done' : 'Next'}`}>
             <Steps current={step}>
