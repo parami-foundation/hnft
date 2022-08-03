@@ -144,7 +144,7 @@ export function HnftCard({ hnft, unwrapped }: HnftCardProps) {
                             </Dropdown>
                         </Title>
                         <Paragraph ellipsis={{ rows: 2, expandable: false, symbol: 'more' }}>{hnft.description ?? ''}</Paragraph>
-                        <div>
+                        <div className='link-container'>
                             {currentLink && <>
                                 <a href={currentLink} target="_blank">{currentLink}</a>
                                 <Button className='action-button' shape='circle' onClick={() => setChangeLinkModal(true)} icon={<FormOutlined />}></Button>

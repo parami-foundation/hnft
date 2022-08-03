@@ -21,6 +21,18 @@
       float: right;
     }
 
+    .link-container {
+      display: flex;
+      align-items: center;
+
+      a {
+        display: block;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+
     .action-button {
       margin-left: 15px;
 
@@ -44,7 +56,7 @@
   .menu {
     display: flex;
     flex-direction: column;
-    
+
     button.ant-btn {
       font-size: 14px !important;
       height: 30px;
