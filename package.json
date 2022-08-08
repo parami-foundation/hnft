@@ -29,7 +29,7 @@
   },
   "scripts": {
     "predeploy": "npm run build && cp CNAME build/",
-    "start": "react-scripts start",
+    "start": "PORT=8000 react-scripts start",
     "build": "react-scripts build",
     "deploy": "gh-pages -d build",
     "test": "react-scripts test",

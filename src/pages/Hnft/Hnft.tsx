@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import type { RcFile, UploadProps } from 'antd/es/upload/interface';
 import { CloudUploadOutlined } from '@ant-design/icons';
 import { ethers } from 'ethers';
-import { HNFTCollectionContractAddress, ParamiLinkContractAddress } from '../../models/contract';
+import { HNFTCollectionContractAddress } from '../../models/contract';
 import ERC721HCollection from '../../ERC721HCollection.json';
 import { IPFS_ENDPOINT, IPFS_UPLOAD } from '../../models/wnft';
 import './Hnft.scss';
@@ -40,8 +40,8 @@ export function Hnft({ onCancel, onCreate }: HnftProps) {
                 notification.info({
                     message: 'Creating HNFT',
                     description: 'Please confirm in your wallet'
-                })
-                const resp = await hnftContract.mintAndAuthorizeTo(imageUri, ParamiLinkContractAddress[chainId]);
+                });
+                const resp = await hnftContract.mint(imageUri);
                 await resp.wait();
                 notification.success({
                     message: 'Create HNFT Success'

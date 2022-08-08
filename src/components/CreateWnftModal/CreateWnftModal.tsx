@@ -185,15 +185,9 @@ export function CreateWnftModal({
                 const wrapResp = await wContract.wrap(tokenId);
                 await wrapResp.wait();
                 notification.success({
-                    message: 'Wrap NFT Success. Authorizing ParamiLink Contract...'
+                    message: 'Wrap NFT Success.'
                 });
                 setWrappingStep(2);
-                const authorizeResp = await wContract.authorizeSlotTo(tokenId, paramiLinkAddress);
-                await authorizeResp.wait();
-                notification.success({
-                    message: 'Authorization Success'
-                });
-                setWrappingStep(3);
                 setLoading(false);
                 setStep(2);
             } catch (e) {
@@ -258,12 +252,11 @@ export function CreateWnftModal({
                                     <Steps direction="vertical" size="small" current={wrappingStep}>
                                         <Step title="Approving for Wrapping" />
                                         <Step title="Wrapping NFT" />
-                                        <Step title="Authorizing WNFT Linking System" />
                                         <Step title="Done" />
                                     </Steps>
                                 </Col>
                                 <Col span={16} style={{ display: 'flex', alignItems: 'center' }}>
-                                    {wrappingStep !== 3 && (<div>
+                                    {wrappingStep !== 2 && (<div>
                                         <div style={{ textAlign: 'center' }}>
                                             <Spin size="small" />
                                         </div>
@@ -272,7 +265,6 @@ export function CreateWnftModal({
                                 </Col>
                             </Row>
                         )}
-
                     </div>
                 )}
 
