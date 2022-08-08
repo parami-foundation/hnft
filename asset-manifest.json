@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/static/css/main.d373400f.css",
+    "main.js": "/static/js/main.32006f02.js",
+    "static/media/osLinkTooltip.jpeg": "/static/media/osLinkTooltip.b3a87c9924afd161f279.jpeg",
+    "index.html": "/index.html",
+    "main.d373400f.css.map": "/static/css/main.d373400f.css.map",
+    "main.32006f02.js.map": "/static/js/main.32006f02.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d373400f.css",
+    "static/js/main.32006f02.js"
+  ]
+}
