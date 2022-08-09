@@ -31,15 +31,15 @@ export const LegacyRegistryContractAddress = {
 
 export const RegistryContractAddress = {
   1: '0xecAb9043EEaf6CD621519c19D7E250fD2a056bFf',
-  4: '0x3bd1D1D8bA3c4bB19dAA4139C5e13e807d957bCE'
+  4: '0xAe3F861851Fa7BDD04A8cba2ceB46eCB64c68785'
 }
 
 export const HNFTCollectionContractAddress = {
   1: '0x27783a7efe772338245890331d9519016958bee5',
-  4: '0x7fd8bc0e6a47f4cccee666fc09267ca142069ef9'
+  4: '0x478e54b433ad5774964e76bc56cdf03161c4ece5'
 }
 
 export const ParamiLinkContractAddress = {
   1: '0xEC5ecECBd5375575503130ce6a01166eC875FEcD',
-  4: '0xC6BfB27A439c792Cb919B923305b5f927DA8B58F'
+  4: '0x75EE8Ce53Bd26C21405Def16Dd416C90054E7146'
 }
