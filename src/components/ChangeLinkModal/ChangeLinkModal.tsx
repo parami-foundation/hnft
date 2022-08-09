@@ -18,7 +18,7 @@ export function ChangeLinkModal({ onCancel, hContract, tokenId, linkChanged }: C
     const [loading, setLoading] = useState<boolean>(false);
     const [linkPrefix, setLinkPrefix] = useState<LinkPrefixType>('https://');
     const [form] = Form.useForm();
-    const {chainId, ethereum} = useCustomMetaMask();
+    const { chainId, ethereum } = useCustomMetaMask();
     const [paramiLinkContract, setParamiLinkContract] = useState<ethers.Contract>();
 
     useEffect(() => {
@@ -31,18 +31,24 @@ export function ChangeLinkModal({ onCancel, hContract, tokenId, linkChanged }: C
         }
     }, [chainId, ethereum])
 
-    const onUpdateLink = useCallback(async (value: {link: string}) => {
+    const onUpdateLink = useCallback(async (value: { link: string }) => {
         if (paramiLinkContract) {
             setLoading(true);
             const { link } = value;
-            
+
             try {
                 notification.info({
                     message: 'Updating Link',
                     description: 'Please confirm in your wallet...'
                 });
-                const setLinkResp = await paramiLinkContract.setWNFTLink(hContract.address, +tokenId, `${linkPrefix}${link}`);
-                await setLinkResp.wait();
+                const paramiLinkAuthorized = await hContract.isSlotManager(tokenId, paramiLinkContract.address);
+                if (paramiLinkAuthorized) {
+                    const setLinkResp = await paramiLinkContract.setWNFTLink(hContract.address, tokenId, `${linkPrefix}${link}`);
+                    await setLinkResp.wait();
+                } else {
+                    const authAndSetLink = await hContract.authorizeSlotToWithValue(tokenId, paramiLinkContract.address, `${linkPrefix}${link}`);
+                    await authAndSetLink.wait();
+                }
                 notification.success({
                     message: 'Update Link Success'
                 });
