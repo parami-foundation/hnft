@@ -5,7 +5,7 @@ import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
 import { ParamiLinkContractAddress } from '../../models/contract';
 import { LinkPrefixType } from '../../models/wnft';
 import { LinkPrefixSelect } from '../LinkPrefixSelect';
-import ParamiLink from '../../ParamiLinkMock.json';
+import ParamiLink from '../../ParamiLink.json';
 
 export interface ChangeLinkModalProps {
     onCancel: () => void,
@@ -41,14 +41,10 @@ export function ChangeLinkModal({ onCancel, hContract, tokenId, linkChanged }: C
                     message: 'Updating Link',
                     description: 'Please confirm in your wallet...'
                 });
-                const paramiLinkAuthorized = await hContract.isSlotManager(tokenId, paramiLinkContract.address);
-                if (paramiLinkAuthorized) {
-                    const setLinkResp = await paramiLinkContract.setWNFTLink(hContract.address, tokenId, `${linkPrefix}${link}`);
-                    await setLinkResp.wait();
-                } else {
-                    const authAndSetLink = await hContract.authorizeSlotToWithValue(tokenId, paramiLinkContract.address, `${linkPrefix}${link}`);
-                    await authAndSetLink.wait();
-                }
+
+                const setLinkResp = await paramiLinkContract.setHNFTLink(hContract.address, tokenId, `${linkPrefix}${link}`);
+                await setLinkResp.wait();
+
                 notification.success({
                     message: 'Update Link Success'
                 });
