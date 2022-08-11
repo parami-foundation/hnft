@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { hexStartingIndex, HNFT_IDENTIFIER, tokenIdStartingIndex } from '../../models/wnft';
 import { Bit, BitArray, write } from '../../utils';
-import { Image as AntdImage } from 'antd';
+import { Image as AntdImage, Badge, Tooltip } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 export interface RingPFPProps {
     address: string;
@@ -12,6 +13,7 @@ export interface RingPFPProps {
 
 export function RingPFP({ address, tokenId, imgUrl, fallbackImageUrl }: RingPFPProps) {
     const [ringPfpUrl, setRingPfpUrl] = useState<string>();
+    const [generateWpfpError, setGenerateWpfpError] = useState<string>('');
 
     const generateRawData = (address: string, tokenId: number) => {
         const raw = new BitArray(256);
@@ -40,12 +42,17 @@ export function RingPFP({ address, tokenId, imgUrl, fallbackImageUrl }: RingPFPP
         img.src = imageUrl;
         img.crossOrigin = 'anonymous';
         img.onload = () => {
-            if (img.width !== img.height || img.width < 220) {
-                console.error('Load image error:', 'Image is not square or too small');
+            if (img.width < 220) {
+                setGenerateWpfpError('Image size is too small.');
+                return;
+            }
+            if (img.width !== img.height) {
+                setGenerateWpfpError('Image is not square.');
                 return;
             }
             const ringImage = write(img, generateRawData(address, tokenId));
             setRingPfpUrl(ringImage.toDataURL());
+            setGenerateWpfpError('');
         }
     }
 
@@ -54,6 +61,13 @@ export function RingPFP({ address, tokenId, imgUrl, fallbackImageUrl }: RingPFPP
     }, [imgUrl])
 
     return <>
-        <AntdImage className='ring-pfp' style={{ width: '100%' }} src={ringPfpUrl || fallbackImageUrl} preview={false}/>
+        <Badge count={generateWpfpError.length > 0
+            ? <Tooltip title={`${generateWpfpError} Please try uploading a different one.`}>
+                <ExclamationCircleOutlined style={{ color: '#f5222d', fontSize: '1.5rem', top: '20px', right: '20px' }} />
+            </Tooltip>
+            : ''}
+            >
+            <AntdImage className='ring-pfp' style={{ width: '100%' }} src={ringPfpUrl || fallbackImageUrl} preview={false} />
+        </Badge>
     </>;
 };

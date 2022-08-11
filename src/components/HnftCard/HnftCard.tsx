@@ -9,6 +9,7 @@ import { HNFTCollectionContractAddress, ParamiLinkContractAddress } from '../../
 import './HnftCard.scss';
 import { ChangeLinkModal } from '../ChangeLinkModal';
 import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
+import ImgCrop from 'antd-img-crop';
 
 const { Paragraph, Title } = Typography;
 
@@ -27,7 +28,7 @@ export function HnftCard({ hnft, unwrapped }: HnftCardProps) {
     const [coverImageUrl, setCoverImageUrl] = useState<string>();
     const [changeLinkModal, setChangeLinkModal] = useState<boolean>(false);
 
-    const canUnwrap = (chainId === 1 || chainId === 4) &&  contractAddress !== HNFTCollectionContractAddress[chainId];
+    const canUnwrap = (chainId === 1 || chainId === 4) && contractAddress !== HNFTCollectionContractAddress[chainId];
 
     useEffect(() => {
         if (ethereum) {
@@ -101,9 +102,11 @@ export function HnftCard({ hnft, unwrapped }: HnftCardProps) {
         {
             key: 'upload',
             label: (
-                <Upload {...props}>
-                    Use different image
-                </Upload>
+                <ImgCrop quality={1}>
+                    <Upload {...props}>
+                        Use different image
+                    </Upload>
+                </ImgCrop>
             ),
             icon: <UploadOutlined />
         }

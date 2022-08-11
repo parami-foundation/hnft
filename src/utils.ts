@@ -394,9 +394,6 @@ export const parse = (image: HTMLImageElement | HTMLCanvasElement) => {
 };
 
 export const write = (image: HTMLImageElement, raw: BitArray) => {
-  if (image.width !== image.height || image.width < 220) {
-    throw new Error('image is not square or too small');
-  }
 
   const r = 320;
 

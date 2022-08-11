@@ -14,6 +14,7 @@
     "@types/react": "^18.0.14",
     "@types/react-dom": "^18.0.5",
     "antd": "^4.21.5",
+    "antd-img-crop": "^4.2.4",
     "bs58": "^5.0.0",
     "ethers": "^5.6.9",
     "gh-pages": "^4.0.0",
