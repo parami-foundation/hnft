@@ -53,7 +53,7 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "https://wnft.parami.io/",
+  "homepage": "https://hnft.parami.io/",
   "devDependencies": {
     "@nomiclabs/hardhat-waffle": "^2.0.3",
     "hardhat": "^2.9.9"
