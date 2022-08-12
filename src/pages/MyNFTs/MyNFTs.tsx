@@ -106,8 +106,8 @@ export function MyNFTs({ }: MyNFTsProps) {
             {status !== 'connected' && (
                 <p>Connect your wallet and start managing your HNFTs!</p>
             )}
-            <Button onClick={() => setSelectNFTModal(true)}>Wrap your NFT</Button>
-            <Button onClick={() => setCreateHNFTModal(true)}>Create new HNFT</Button>
+            <Button onClick={() => setCreateHNFTModal(true)}>Mint a new hNFT from an Image</Button>
+            <Button onClick={() => setSelectNFTModal(true)}>Create an hNFT from an Existing NFT</Button>
         </div>
     )
 

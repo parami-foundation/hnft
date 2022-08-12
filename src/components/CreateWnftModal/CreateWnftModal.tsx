@@ -124,7 +124,7 @@ export function CreateWnftModal({
                 setLoading(true);
                 setCreatingWContract(true);
                 notification.info({
-                    message: 'Creating WNFT Contract...',
+                    message: 'Creating hNFT Contract...',
                     description: 'Please confirm in your wallet.'
                 });
                 const createResp = await registryContract.createERC721wContract(contractAddress);
@@ -135,14 +135,14 @@ export function CreateWnftModal({
                 setLoading(false);
                 setCreatingWContract(false);
                 notification.success({
-                    message: 'Create WContract Success',
+                    message: 'Create hNFT Contract Success',
                     description: wAddress
                 });
             } catch (e) {
                 setLoading(false);
                 setCreatingWContract(false);
                 notification.error({
-                    message: 'Create WContract Failed',
+                    message: 'Create hNFT Contract Failed',
                     description: JSON.stringify(e)
                 })
             }
@@ -159,7 +159,7 @@ export function CreateWnftModal({
                 ));
             } catch (e) {
                 notification.error({
-                    message: 'WContract Address Error',
+                    message: 'hNFT Contract Address Error',
                     description: JSON.stringify(e)
                 });
             }
@@ -215,7 +215,7 @@ export function CreateWnftModal({
             onOk={() => handleNextStep(step)} onCancel={onCancel} confirmLoading={loading}
             width={1000} okText={`${step === 2 ? 'Done' : 'Next'}`}>
             <Steps current={step}>
-                <Step title="WNFT Contract" description="Check contract status" icon={(step === 0 && creatingWContract) ? <LoadingOutlined /> : null} />
+                <Step title="hNFT Contract" description="Check contract status" icon={(step === 0 && creatingWContract) ? <LoadingOutlined /> : null} />
                 <Step title="Wrap NFT" description="Check token status" icon={(step === 1 && wrappingStep >= 0) ? <LoadingOutlined /> : null} />
                 <Step title="Done" description="All set!" icon={<SmileOutlined />} />
             </Steps>
@@ -227,14 +227,14 @@ export function CreateWnftModal({
                 )}
                 {step === 0 && createWcontractForm && (
                     <div>
-                        <p>Let's Create a WContract for your NFT ({contractAddress})</p>
+                        <p>Let's Create a hNFT Contract for your NFT ({contractAddress})</p>
                         {creatingWContract && (
                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div>
                                     <div style={{ textAlign: 'center' }}>
                                         <Spin size="small" />
                                     </div>
-                                    <p>Creating WContract. Please wait for transaction confirmation.</p>
+                                    <p>Creating hNFT Contract. Please wait for transaction confirmation.</p>
                                 </div>
                             </div>
                         )}
@@ -244,7 +244,7 @@ export function CreateWnftModal({
 
                 {step === 1 && (
                     <div>
-                        <p>The WContract is ready at: {wContractAddress}</p>
+                        <p>The hNFT Contract is ready at: {wContractAddress}</p>
                         <p>Let's approve and wrap your NFT!</p>
                         {wrappingStep >= 0 && (
                             <Row>
@@ -272,8 +272,8 @@ export function CreateWnftModal({
                     <div>
                         <Result
                             status="success"
-                            title="Successfully added WNFT. You can now close this modal and config your WNFT."
-                            subTitle={`WContract Address: ${wContractAddress}. TokenId: ${tokenId}`}
+                            title="Successfully created hNFT. You can now close this modal and config your hNFT."
+                            subTitle={`hNFT Contract Address: ${wContractAddress}. TokenId: ${tokenId}`}
                         />
                     </div>
                 )}
