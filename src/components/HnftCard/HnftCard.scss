@@ -7,6 +7,11 @@
   .pfp-container {
     width: 100%;
 
+    .ant-badge,
+    .ant-image {
+      width: 100%;
+    }
+
     .ring-pfp {
       border-radius: 8px;
     }

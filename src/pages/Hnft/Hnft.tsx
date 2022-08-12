@@ -8,6 +8,7 @@ import ERC721HCollection from '../../ERC721HCollection.json';
 import { IPFS_ENDPOINT, IPFS_UPLOAD } from '../../models/wnft';
 import './Hnft.scss';
 import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
+import ImgCrop from 'antd-img-crop';
 
 const { Dragger } = Upload;
 
@@ -108,20 +109,22 @@ export function Hnft({ onCancel, onCreate }: HnftProps) {
                 </Button>
             ]}
         >
-            <Dragger {...props} className='upload-dragger'>
-                {imageUri && (
-                    <AntdImage width={200} preview={false} src={imageUri}></AntdImage>
-                )}
-                {!imageUri && (<>
-                    <p className="ant-upload-drag-icon">
-                        <CloudUploadOutlined className='upload-icon' />
-                    </p>
-                    <p className="ant-upload-text">Upload Image to Create HNFT</p>
-                    <p className="ant-upload-hint">
-                        Click or drag file to this area to upload
-                    </p>
-                </>)}
-            </Dragger>
+            <ImgCrop quality={1}>
+                <Dragger {...props} className='upload-dragger'>
+                    {imageUri && (
+                        <AntdImage width={200} preview={false} src={imageUri}></AntdImage>
+                    )}
+                    {!imageUri && (<>
+                        <p className="ant-upload-drag-icon">
+                            <CloudUploadOutlined className='upload-icon' />
+                        </p>
+                        <p className="ant-upload-text">Upload Image to Create HNFT</p>
+                        <p className="ant-upload-hint">
+                            Click or drag file to this area to upload
+                        </p>
+                    </>)}
+                </Dragger>
+            </ImgCrop>
         </Modal>
     </>);
 };
