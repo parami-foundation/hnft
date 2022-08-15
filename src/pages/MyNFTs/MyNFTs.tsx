@@ -152,7 +152,7 @@ export function MyNFTs({ }: MyNFTsProps) {
         )}
 
         <Card style={{ marginTop: '40px' }} title="Parami Extension Download">
-            <Link to="/files/parami-extension.zip" target="_blank" download>Click to download Parami Extension</Link>
+            <Link to="/files/Parami-Extension-v0.0.3.zip" target="_blank" download>Click to download Parami Extension</Link>
         </Card>
 
         {selectNFTModal && <Wnft onCancel={() => setSelectNFTModal(false)} onCreateWNFT={(nft) => onCreateNewWNFT(nft)} />}
