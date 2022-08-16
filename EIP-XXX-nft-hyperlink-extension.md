@@ -43,75 +43,71 @@ The name should be human-readable and can be easily recognized socially. An exam
 A name is represented by a bytes array which is ABI encoded. It **MAY** contain metadata of the name such as the name service the name belongs to.  Examples of the name are "vitalik.eth", "vitalik@0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e", or "qizhou.fb".
 
 ### Interface
-#### INameOwnedAccount
+
+#### IERC721Hyperlink
 ```
-interface INameOwnedAccount {
-    /// @notice This function resolves the _name to its derived address
-    /// @dev The implementation SHOULD avoid collision between name 
-    /// derived address and EOA/CA
-    function addressOfName(bytes memory _name) public view returns(address);
+//SPDX-License-Identifier: Unlicense
+pragma solidity ^0.8.0;
 
-    /// @notice This function returns true if and only if the operator is the owner of the _name
-    /// @dev The ownership MAY be defined by a name service such as ENS
-    function isNameOwner(bytes memory _from, address operator) public view returns(bool);
-}
-```
+interface IERC721H {
+    /**
+     * @dev this event emits when the slot on `tokenId` is authorzized to `slotManagerAddr`
+     */
+    event SlotAuthorizationCreated(uint256 tokenId, address slotManagerAddr);
 
-#### IERC721NOA
-```
-interface IERC721NOA is IERC721, INameOwnedAccount  {
-    /// @notice Transfers the ownership of an NFT from a name to an address
-    /// @dev Throws unless `msg.sender` is the owner of _from. Throw if _from is
-    ///  not the current owner. Throws if `_to` is the zero address. Throws if
-    ///  `_tokenId` is not a valid NFT. When transfer is complete, this function
-    ///  checks if `_to` is a smart contract (code size > 0). If so, it calls
-    ///  `onERC721Received` on `_to` and throws if the return value is not
-    ///  `bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))`.
-    function safeTransferFromName(bytes memory _from, address _to, uint256 _tokenId, bytes _data) public returns(bool);
+    /**
+     * @dev this event emits when the authorization on slot `slotManagerAddr` of token `tokenId` is revoked.
+     * So, the corresponding DApp can handle this to stop on-going incentives or rights
+     */
+    event SlotAuthorizationRevoked(uint256 tokenId, address slotManagerAddr);
 
-   /// @notice Transfers the ownership of an NFT from a name to another address
-    /// @dev This works identically to the other function with an extra data parameter,
-    ///  except this function just sets data to "".
-    function safeTransferFromName(bytes memory _from, address _to, uint256 _tokenId) public returns(bool);
+    /**
+     * @dev this event emits when the uri on slot `slotManagerAddr` of token `tokenId` has been updated to `uri`.
+     */
+    event SlotUriUpdated(uint256 tokenId, address slotManagerAddr, string uri);
 
-    /// @notice Change or reaffirm the approved address for an NFT
-    /// @dev The zero address indicates there is no approved address.
-    ///  Throws unless `msg.sender` is the owner of _owner. Throw if _owner is not
-    ///  the current owner.
-    function approveFromName(bytes memory _owner, address _operator, uint256 _tokenId) public returns(bool);
+    /**
+     * @dev
+     * Authorize a hyperlink slot on `tokenId` to address `slotManagerAddr`.
+     * Indeed slot is an entry in a map whose key is address `slotManagerAddr`.
+     * Only the address `slotManagerAddr` can manage the specific slot.
+     * This method will emit SlotAuthorizationCreated event
+     */
+    function authorizeSlotTo(uint256 tokenId, address slotManagerAddr) external;
 
-    /// @notice Enable or disable approval for a third party ("operator") to manage
-    ///  all of _owner’s assets
-    /// @dev Throws unless `msg.sender` is the owner of _owner. Throw if _owner is not
-    ///  the current owner. Emits the ApprovalForAll event. The contract MUST allow
-    ///  multiple operators per owner.
-    function setApprovalForAllFromName(bytes memory _owner, address _operator, bool _approved) public returns(bool);
-    
-    /// @notice This function returns true if interfaceId is the id of IERC721NOA
-    /// @dev see {IERC165-supportsInterface}
-    function supportsInterface(bytes4 interfaceId) external view returns(bool);
-}
-```
+    /**
+     * @dev
+     * Revoke the authorization of the slot indicated by `slotManagerAddr` on token `tokenId`
+     * This method will emit SlotAuthorizationRevoked event
+     */
+    function revokeAuthorization(uint256 tokenId, address slotManagerAddr) external;
 
-#### IERC20NOA
-```
-interface IERC20NOA is IERC20, INameOwnedAccount {
-    /// @notice Transfers _value amount of tokens from name  _from to address _to, 
-    /// @dev Throws unless `msg.sender` is the owner of _owner. Throw if _owner is not
-    ///  the current owner. Throw if the balance of _from does not have enough tokens to 
-    ///  spend. Emits the Transfer event.  
-    function transferFromName(bytes memory _from, address _to, uint256 _value) public returns(bool);
+    /**
+     * @dev
+     * Revoke all authorizations of slot on token `tokenId`
+     * This method will emit SlotAuthorizationRevoked event for each slot
+     */
+    function revokeAllAuthorizations(uint256 tokenId) external;
 
-    /// @notice Allows _spender to withdraw from _owner multiple times, up to
-    ///  the _value amount.
-    ///  @dev Throws unless `msg.sender` is the owner of _owner. Throw if _owner is 
-    ///  not the current owner. If this function is called again it overwrites the current
-    ///  allowance with _value.
-    function approveFromName(bytes memory _owner, address _spender, uint256 _value) public returns(bool);
-    
-    /// @notice This function returns true if interfaceId is the id of IERC721NOA
-    /// @dev see {IERC165-supportsInterface}
-    function supportsInterface(bytes4 interfaceId) external view returns(bool);
+    /**
+     * @dev
+     * Set uri for a slot on a token, which is indicated by `tokenId` and `slotManagerAddr`
+     * Only the address with authorization through {authorizeSlotTo} can manipulate this slot.
+     * This method will emit SlotUriUpdated event
+     */
+    function setSlotUri(
+        uint256 tokenId,
+        string calldata newUri
+    ) external;
+
+    /**
+     * @dev
+     * returns the latest uri of an slot on a token, which is indicated by `tokenId`, `slotManagerAddr`
+     */
+    function getSlotUri(uint256 tokenId, address slotManagerAddr)
+        external
+        view
+        returns (string memory);
 }
 ```
 
