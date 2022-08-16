@@ -12,25 +12,24 @@ requires: 165, 721
 ---
 
 ## Abstract
-This ERC proposes a new type of account - name-owned account (NOA) that is controlled by the owner of the name besides existing externally-owned account (EOA) and contract account (CA). With the new account type, users will be able to transfer/receive tokens using the name-derived address directly instead of the address of the name owner. A NOA can be as a social identity with all states on-chain even under 3rd-party or self custody. It also simplifies porting the social identity from one custody to another.
+
+This ERC proposes a new extension of NFT(non-fungible token, aka ERC-721) - nft-hyperlink-extension which tries to add hyperlinks to NFTs. With this extension, owners of NFTs can authorize a uri slot to a specific address which can be an externally-owned account (EOA) or a contract account, and they can revoke that authorization as well.
 
 ## Motivation
-A popular way to onboard Web2 users to the Web3 world is custody. However, current custody models have severe drawbacks. Considering the following widely adopted custody models:
-1. The custodian uses one EOA/CA to hold the assets of all users. This is not compatible with on-chain social protocols since all user activities are off-chain.
-2. One EOA per user. The social identity is not portable, which means there is no way for users to migrate their social identity across different custody platforms.
-3. One CA (e.g. Gnosis Safe) per user. The one time deployment cost is super high and the user experience is not good.
+As NFT grows as the most impressive innovation these days, NFTs win more and more attensions, and have more opportunity to exhibit in front of users. When go through all the EIPs relative to NFT, only find limited profitable fashions, such as transfer, rent. There exist a gap between NFT's influence and profitable fashions.
 
-To solve all these problems, this ERC proposes a new type of account - name-owned account (NOA).  Using NOA as social identity instead of EOA/CA brings huge benefits for users:
-- **Easy Web2 user onboarding**. We are providing standard Web2 user experiences with human readable names and 3rd-party custody. Every user of a centralized platform can immediately have a NOA by using the username as the name of NOA custodied by the platform.
-- **On-chain states**. All user states are on-chain even under custody so it’s 100% compatible with social protocols.
-- **Portable Account**. A NOA can be easily ported to different custody platforms by changing the owner.
-- **Flexible Account Management**. We can use one EOA/CA to control any number of NOAs.
+Hyperlink once brought exponential growth to WEB1.0 when html won enough attension. Maybe it's an oppotunity to bring hyperlink extension to NFTs.
+
+The hyperlink extension, tries to make it possible to exersise the `fructus` right, at the same time keeps the `abusus`. With hyperlink extension, NFTs' owners can earn profit by authorize a hyperlink slot to an address.
+
+//TODO: add more explaination on `frustus` and `abusus`.
 
 ## Specification
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119.
 
-### Name-Owned Account
+### NFT hyperlink extension
+// Arrive here
 An NOA has
 1. a name for social identity; and
 2. an address derived from the name to receive tokens; and
