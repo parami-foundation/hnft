@@ -20,7 +20,7 @@ export interface MyNFTsProps { }
 export function MyNFTs({ }: MyNFTsProps) {
     const [selectNFTModal, setSelectNFTModal] = useState<boolean>();
     const [createHNFTModal, setCreateHNFTModal] = useState<boolean>();
-    const { ethereum, chainId, status, account } = useCustomMetaMask();
+    const { ethereum, chainId, status, account, connect } = useCustomMetaMask();
     const { retrieveCollections, retrieveNFTs } = useOpenseaApi();
     const [hnftContract, setHnftContract] = useState<ethers.Contract>();
     const [hnfts, setHnfts] = useState<NFT[]>();
@@ -103,9 +103,6 @@ export function MyNFTs({ }: MyNFTsProps) {
 
     const buttons = (
         <div className='buttons'>
-            {status !== 'connected' && (
-                <p>Connect your wallet and start managing your HNFTs!</p>
-            )}
             <Button onClick={() => setCreateHNFTModal(true)}>Mint a new hNFT from an Image</Button>
             <Button onClick={() => setSelectNFTModal(true)}>Create an hNFT from an Existing NFT</Button>
         </div>
@@ -128,11 +125,15 @@ export function MyNFTs({ }: MyNFTsProps) {
             <div className='sub-title'>
                 Unlock the power of hyperlink with HNFT
             </div>
-
-            {/* todo: connect wallet here */}
         </div>
 
-        {!hnfts && (<div className='loading-container'>
+        {status !== 'connected' && (<div className='connect-wallet-container'>
+            <p>Connect your wallet and start managing your HNFTs!</p>
+            <Button onClick={() => connect()}>Connect Wallet</Button>
+        </div>
+        )}
+
+        {!hnfts && status === 'connected' && (<div className='loading-container'>
             <Spin tip="Loading..." />
         </div>)}
 
@@ -151,9 +152,9 @@ export function MyNFTs({ }: MyNFTsProps) {
             </div>
         )}
 
-        <Card style={{ marginTop: '40px' }} title="Parami Extension Download">
+        {/* <Card style={{ marginTop: '40px' }} title="Parami Extension Download">
             <Link to="/files/Parami-Extension-v0.0.3.zip" target="_blank" download>Click to download Parami Extension</Link>
-        </Card>
+        </Card> */}
 
         {selectNFTModal && <Wnft onCancel={() => setSelectNFTModal(false)} onCreateWNFT={(nft) => onCreateNewWNFT(nft)} />}
         {createHNFTModal && <Hnft onCancel={() => setCreateHNFTModal(false)} onCreate={onCreateNewHNFT} />}
