@@ -1,7 +1,7 @@
 import { Avatar, Button, Card, Col, Dropdown, Menu, Modal, notification, Row, Spin, Typography, Upload, UploadProps } from 'antd';
 import { ethers } from 'ethers';
 import React, { useCallback, useEffect, useState } from 'react';
-import { NFT } from '../../models/wnft';
+import { NFT, PARAMI_AIRDROP } from '../../models/wnft';
 import ERC721WContract from '../../ERC721WContract.json';
 import { TwitterCircleFilled, LogoutOutlined, UploadOutlined, ExclamationCircleOutlined, FormOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { RingPFP } from '../RingPFP';
@@ -27,6 +27,7 @@ export function HnftCard({ hnft, unwrapped }: HnftCardProps) {
     const [currentLink, setCurrentLink] = useState<string>();
     const [coverImageUrl, setCoverImageUrl] = useState<string>();
     const [changeLinkModal, setChangeLinkModal] = useState<boolean>(false);
+    const [ringImageDataUrl, setRingImageDataUrl] = useState<string>();
 
     const canUnwrap = (chainId === 1 || chainId === 4) && contractAddress !== HNFTCollectionContractAddress[chainId];
 
@@ -126,12 +127,60 @@ export function HnftCard({ hnft, unwrapped }: HnftCardProps) {
         );
     }
 
+    const requestTwitterOauthUrl = async () => {
+        try {
+            const resp = await fetch(`${PARAMI_AIRDROP}/request_oauth_token?callbackUrl=${window.origin}/twitter/oauth`);
+            const { oauthUrl } = await resp.json();
+            window.open(oauthUrl);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const updateProfileImage = async (oauth_token: string, oauth_verifier: string, image: string) => {
+        const data = JSON.stringify({ oauth_token, oauth_verifier, image });
+        notification.info({
+            message: 'Updating Profile Image...'
+        });
+        try {
+            const resp = await fetch(`${PARAMI_AIRDROP}/update_profile_image`, {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: data
+            });
+
+            if (resp.status === 200) {
+                notification.success({
+                    message: 'Twitter Profile Image Updated'
+                })
+            }
+        } catch (err) {
+            notification.error({
+                message: 'update_profile_image error'
+            });
+        }
+    }
+
+    const listenPostMessage = (image: string) => {
+        const postMessageHandler = (event: any) => {
+            const { oauth_token, oauth_verifier } = event.data ?? {};
+            if (event.origin === window.origin && oauth_token && oauth_verifier) {
+                updateProfileImage(oauth_token, oauth_verifier, image.substring(22));
+                window.removeEventListener('message', postMessageHandler);
+            }
+        }
+        
+        window.addEventListener('message', postMessageHandler);
+    }
+
     return (<>
         <Card
             className='hnftCard'
         >
             <div className='pfp-container'>
-                <RingPFP tokenId={tokenId} address={contractAddress} imgUrl={coverImageUrl ?? hnft.image_url} fallbackImageUrl={hnft.image_url}></RingPFP>
+                <RingPFP tokenId={tokenId} address={contractAddress} imgUrl={coverImageUrl ?? hnft.image_url} fallbackImageUrl={hnft.image_url} setImageDataUrl={url => setRingImageDataUrl(url)}></RingPFP>
             </div>
 
             <div className='nft-info'>
@@ -159,7 +208,10 @@ export function HnftCard({ hnft, unwrapped }: HnftCardProps) {
             </div>
 
             <div className='menu'>
-                <Button disabled>
+                <Button disabled={!ringImageDataUrl} onClick={() => {
+                    requestTwitterOauthUrl();
+                    listenPostMessage(ringImageDataUrl!);
+                }}>
                     <TwitterCircleFilled />Set Twitter Profile Image
                 </Button>
             </div>

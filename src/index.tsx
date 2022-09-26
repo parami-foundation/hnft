@@ -4,9 +4,8 @@ import './index.scss';
 import App from './App.tsx';
 import { MetaMaskProvider } from 'metamask-react';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { Wnft } from './pages/Wnft';
-import { Hnft } from './pages/Hnft';
 import { MyNFTs } from './pages/MyNFTs';
+import { TwitterOauth } from './pages/TwitterOauth/TwitterOauth';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -15,6 +14,7 @@ ReactDOM.render(
         <Routes>
           <Route path="/" element={<App />}>
             <Route path="" element={<MyNFTs />} />
+            <Route path="/twitter/oauth" element={<TwitterOauth />} />
           </Route>
         </Routes>
       </BrowserRouter>

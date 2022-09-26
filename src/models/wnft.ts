@@ -27,6 +27,8 @@ export const IPFS_ENDPOINT = 'https://ipfs.parami.io/ipfs/';
 
 export const IPFS_UPLOAD = 'https://ipfs.parami.io/api/v0/add?stream-channels=true';
 
+export const PARAMI_AIRDROP = 'https://airdrop.parami.io';
+
 export const HNFT_IDENTIFIER = 1;
 
 export const hexStartingIndex = 8;
