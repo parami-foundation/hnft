@@ -9,9 +9,10 @@ export interface RingPFPProps {
     tokenId: number;
     imgUrl: string;
     fallbackImageUrl: string;
+    setImageDataUrl: (dataUrl: string) => void;
 }
 
-export function RingPFP({ address, tokenId, imgUrl, fallbackImageUrl }: RingPFPProps) {
+export function RingPFP({ address, tokenId, imgUrl, fallbackImageUrl, setImageDataUrl }: RingPFPProps) {
     const [ringPfpUrl, setRingPfpUrl] = useState<string>();
     const [generateWpfpError, setGenerateWpfpError] = useState<string>('');
 
@@ -51,7 +52,9 @@ export function RingPFP({ address, tokenId, imgUrl, fallbackImageUrl }: RingPFPP
                 return;
             }
             const ringImage = write(img, generateRawData(address, tokenId));
-            setRingPfpUrl(ringImage.toDataURL());
+            const imageDataUrl = ringImage.toDataURL();
+            setImageDataUrl(imageDataUrl);
+            setRingPfpUrl(imageDataUrl);
             setGenerateWpfpError('');
         }
     }
