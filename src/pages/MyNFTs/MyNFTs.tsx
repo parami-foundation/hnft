@@ -13,7 +13,13 @@ import './MyNFTs.scss';
 import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
 import { useWContractAddresses } from '../../hooks/useWContractAddresses';
 
-const { Title } = Typography;
+const SupportedNetworkList = [
+  { id: 'ERC-20', value: 'ERC-20', icon: 'erc.svg' },
+  { id: 'ARB-one', value: 'ARB-one', icon: 'arb.svg' },
+  { id: 'Optimism', value: 'Optimism', icon: 'optimism.svg' },
+  { id: 'BEP-20', value: 'BEP-20', icon: 'bep.svg' },
+  { id: 'Sloana', value: 'Sloana', icon: 'sloana.svg' },
+];
 
 export enum MINT_NFT_TYPE {
   IMAGE = 'image',
@@ -29,9 +35,7 @@ export function MyNFTs({}: MyNFTsProps) {
   const { retrieveCollections, retrieveNFTs } = useOpenseaApi();
   const [hnftContract, setHnftContract] = useState<ethers.Contract>();
   const [hnfts, setHnfts] = useState<NFT[]>();
-	const wContractAddress = useWContractAddresses();
-	
-	console.log(chainId, '---chainId---');
+  const wContractAddress = useWContractAddresses();
 
   useEffect(() => {
     if (ethereum && (chainId === 1 || chainId === 5)) {
@@ -166,6 +170,18 @@ export function MyNFTs({}: MyNFTsProps) {
 
       <div className='select-network'>
         <div className='title'>Select Network</div>
+        <div className='network-list'>
+          {SupportedNetworkList.map((ele) => (
+            <div className='network-item'>
+              <Image
+                src={`/images/icon/${ele.icon}`}
+                style={{ width: '45px' }}
+                preview={false}
+              ></Image>
+              <span className='network-name'>{ele.value}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* {!hnfts && (
