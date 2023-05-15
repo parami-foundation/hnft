@@ -25,7 +25,7 @@ export function Hnft({ onCancel, onCreate }: HnftProps) {
     const [imageUri, setImageUri] = useState<string>();
 
     useEffect(() => {
-        if (ethereum && (chainId === 1 || chainId === 4)) {
+      if (ethereum && (chainId === 1 || chainId === 5)) {
             setHnftContract(new ethers.Contract(
                 HNFTCollectionContractAddress[chainId],
                 ERC721HCollection.abi,
@@ -34,8 +34,8 @@ export function Hnft({ onCancel, onCreate }: HnftProps) {
         }
     }, [ethereum, chainId]);
 
-    const createHnft = useCallback(async (imageUri: string) => {
-        if (hnftContract && (chainId === 1 || chainId === 4)) {
+  const createHnft = useCallback(async (imageUri: string) => {
+        if (hnftContract && (chainId === 1 || chainId === 5)) {
             try {
                 setCreateHnftLoading(true);
                 notification.info({
@@ -98,33 +98,52 @@ export function Hnft({ onCancel, onCreate }: HnftProps) {
         disabled: loading || !!imageUri
     };
 
-    return (<>
-        <Modal title='Create HNFT' centered visible onCancel={onCancel}
-            footer={[
-                <Button key="back" onClick={onCancel}>
-                    Cancel
-                </Button>,
-                <Button key="submit" type="primary" disabled={!imageUri} loading={createHnftLoading} onClick={() => createHnft(imageUri!)}>
-                    Create
-                </Button>
-            ]}
+    return (
+      <>
+        <Modal
+          title='Create HNFT'
+          centered
+          open
+          onCancel={onCancel}
+          footer={[
+            <Button key='back' onClick={onCancel}>
+              Cancel
+            </Button>,
+            <Button
+              key='submit'
+              type='primary'
+              disabled={!imageUri}
+              loading={createHnftLoading}
+              onClick={() => createHnft(imageUri!)}
+            >
+              Create
+            </Button>,
+          ]}
         >
-            <ImgCrop quality={1}>
-                <Dragger {...props} className='upload-dragger'>
-                    {imageUri && (
-                        <AntdImage width={200} preview={false} src={imageUri}></AntdImage>
-                    )}
-                    {!imageUri && (<>
-                        <p className="ant-upload-drag-icon">
-                            <CloudUploadOutlined className='upload-icon' />
-                        </p>
-                        <p className="ant-upload-text">Upload Image to Create HNFT</p>
-                        <p className="ant-upload-hint">
-                            Click or drag file to this area to upload
-                        </p>
-                    </>)}
-                </Dragger>
-            </ImgCrop>
+          <ImgCrop quality={1}>
+            <Dragger {...props} className='upload-dragger'>
+              {imageUri && (
+                <AntdImage
+                  width={200}
+                  preview={false}
+                  src={imageUri}
+                  referrerPolicy='no-referrer'
+                ></AntdImage>
+              )}
+              {!imageUri && (
+                <>
+                  <p className='ant-upload-drag-icon'>
+                    <CloudUploadOutlined className='upload-icon' />
+                  </p>
+                  <p className='ant-upload-text'>Upload Image to Create HNFT</p>
+                  <p className='ant-upload-hint'>
+                    Click or drag file to this area to upload
+                  </p>
+                </>
+              )}
+            </Dragger>
+          </ImgCrop>
         </Modal>
-    </>);
+      </>
+    );
 };

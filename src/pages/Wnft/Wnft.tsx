@@ -34,7 +34,7 @@ export function Wnft({ onCancel, onCreateWNFT }: WnftProps) {
             retrieveCollections().then(collections => {
                 const nftCollections = (collections ?? []).filter(collection => {
                     return !collection.primary_asset_contracts?.find(contract => {
-                        return [HNFTCollectionContractAddress[chainId as 1 | 4], ...wAddresses].find(wAddr => wAddr === contract.address)
+                        return [HNFTCollectionContractAddress[chainId as 1 | 5], ...wAddresses].find(wAddr => wAddr === contract.address)
                     })
                 });
                 setCollections(nftCollections);
@@ -62,7 +62,7 @@ export function Wnft({ onCancel, onCreateWNFT }: WnftProps) {
     }, [retrieveAsset])
 
     return (
-        <Modal visible centered width={1000} onCancel={onCancel} title="Wrap NFT">
+        <Modal open centered width={1000} onCancel={onCancel} title="Wrap NFT">
             <div className='wnft'>
                 {!collections && (
                     <div className='loading-container'>

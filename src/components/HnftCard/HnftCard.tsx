@@ -28,7 +28,7 @@ export function HnftCard({ hnft, unwrapped }: HnftCardProps) {
     const [coverImageUrl, setCoverImageUrl] = useState<string>();
     const [changeLinkModal, setChangeLinkModal] = useState<boolean>(false);
 
-    const canUnwrap = (chainId === 1 || chainId === 4) && contractAddress !== HNFTCollectionContractAddress[chainId];
+    const canUnwrap = (chainId === 1 || chainId === 5) && contractAddress !== HNFTCollectionContractAddress[chainId];
 
     useEffect(() => {
         if (ethereum) {

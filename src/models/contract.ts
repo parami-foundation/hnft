@@ -21,7 +21,7 @@ export const networks = {
 
 export const SupportedNetworkName: {[id: number]: string} = {
   1: 'Mainnet',
-  4: 'Rinkeby Testnet'
+  5: 'Goerli Testnet'
 }
 
 export const LegacyRegistryContractAddress = {
@@ -36,8 +36,8 @@ export const RegistryContractAddress = {
 
 export const HNFTCollectionContractAddress = {
   1: '0xfc8db4bc2a48251a921b3ee1392bbded858cc86e',
-  4: '0x478e54b433ad5774964e76bc56cdf03161c4ece5'
-}
+  5: '0x94F25955e84682BbE5301537f29442Ce1D5b7584',
+};
 
 export const ParamiLinkContractAddress = {
   1: '0x7A585595490328503eb3609723B0B16Eb0373013',
