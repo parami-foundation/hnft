@@ -3,20 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^5.0.1",
     "@dicebear/avatars": "^4.10.3",
     "@dicebear/avatars-identicon-sprites": "^4.10.3",
     "@openzeppelin/contracts": "^4.7.0",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^28.1.2",
-    "@types/node": "^18.0.0",
-    "@types/react": "^18.0.14",
-    "@types/react-dom": "^18.0.5",
     "antd": "^4.21.5",
     "antd-img-crop": "^4.2.4",
     "bs58": "^5.0.0",
-    "ethers": "^5.6.9",
+    "ethers": "^5.7.2",
     "gh-pages": "^4.0.0",
     "metamask-react": "^2.4.0",
     "react": "^18.2.0",
@@ -57,6 +54,8 @@
   "homepage": "https://hnft.parami.io/",
   "devDependencies": {
     "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "@types/node": "^20.1.4",
+    "@types/react": "^18.2.6",
     "hardhat": "^2.9.9"
   }
 }

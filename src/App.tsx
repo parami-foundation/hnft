@@ -1,5 +1,5 @@
 import { Layout } from 'antd';
-import { useState } from 'react';
+import React from 'react';
 import { Outlet } from 'react-router-dom';
 import './App.scss';
 import { NavBar } from './components/NavBar';
@@ -9,7 +9,7 @@ const { Content, Footer } = Layout;
 
 function App() {
   return (
-    <div className="app">
+    <div className='app'>
       <Layout>
         <NavBar />
 
