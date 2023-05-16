@@ -1,0 +1,54 @@
+@import '../../styles.scss';
+
+.create-nfts {
+  padding: 0 40px 0 100px;
+
+  &:hover {
+    border-color: $parami-red !important;
+  }
+
+  .ant-upload-drag-icon {
+    .upload-icon {
+      color: $parami-red !important;
+    }
+  }
+
+  .nfts-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .trading-detail {
+    background: #F7F9FD;
+    border-radius: 10px;
+    margin-right: 40px;
+    padding: 24px;
+    margin-top: 24px;
+
+    > div {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 40px;
+    }
+  }
+}
+
+.mint-my-hnft {
+  .ant-modal {
+
+    &-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    &-header {
+      height: 56px;
+    }
+
+    &-body {
+      flex: 1;
+    }
+  }
+}

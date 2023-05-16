@@ -1,17 +1,18 @@
-import { Button, Card, Typography, Image, Spin, message } from 'antd';
+import { Button, Card, Image, message } from 'antd';
 import { ethers } from 'ethers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { isMobile } from 'react-device-detect';
 import { useOpenseaApi } from '../../hooks/useOpenseaApi';
 import { HNFTCollectionContractAddress } from '../../models/contract';
-import { Hnft } from '../Hnft';
-import { Wnft } from '../Wnft';
 import ERC721HCollection from '../../ERC721HCollection.json';
 import { NFT } from '../../models/wnft';
-import { HnftCard } from '../../components/HnftCard';
-import './MyNFTs.scss';
+import './MintHNFT.scss';
 import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
 import { useWContractAddresses } from '../../hooks/useWContractAddresses';
+import { CreateHnftModal } from '../../components/CreateHnftModal';
+
+import './MintHNFT.scss';
 
 const SupportedNetworkList = [
   { id: 'ERC-20', value: 'ERC-20', icon: 'erc.svg' },
@@ -26,11 +27,25 @@ export enum MINT_NFT_TYPE {
   TWITTER = 'twitter',
 }
 
-export interface MyNFTsProps {}
+export const getTwitterOauthUrl = async (tag: string | undefined | null) => {
+  try {
+    const resp = await fetch(
+      `https://staging.parami.io/airdrop/influencemining/api/twitter/login?state=${
+        tag ? `tag_${tag}` : 'gptminer_login'
+      }`
+    );
+    const { oauthUrl } = await resp.json();
+    return oauthUrl;
+  } catch (e) {
+    console.log('request_oauth_token error', e);
+    return;
+  }
+};
 
-export function MyNFTs({}: MyNFTsProps) {
-  const [selectNFTModal, setSelectNFTModal] = useState<boolean>();
-  const [createHNFTModal, setCreateHNFTModal] = useState<boolean>();
+export interface MintHNFTProps {}
+
+export function MintHNFT({}: MintHNFTProps) {
+  const [visible, setVisible] = useState<boolean>(true);
   const { ethereum, chainId, status, account } = useCustomMetaMask();
   const { retrieveCollections, retrieveNFTs } = useOpenseaApi();
   const [hnftContract, setHnftContract] = useState<ethers.Contract>();
@@ -83,8 +98,8 @@ export function MyNFTs({}: MyNFTsProps) {
   }, [retrieveCollections, retrieveNFTs, chainId, wContractAddress]);
 
   const onCreateNewHNFT = useCallback(async () => {
-    setCreateHNFTModal(false);
-    if (hnftContract && account && hnfts) {
+    setVisible(false);
+    if (hnftContract && account) {
       try {
         const balance = await hnftContract.balanceOf(account);
         const tokenId = await hnftContract.tokenOfOwnerByIndex(
@@ -106,30 +121,23 @@ export function MyNFTs({}: MyNFTsProps) {
           },
         };
 
-        setHnfts([newHNFT, ...hnfts]);
+        setHnfts([newHNFT]);
       } catch (e) {
         console.error('Fetch new HNFT Error', JSON.stringify(e));
       }
     }
   }, [hnftContract, account, hnfts]);
 
-  const onCreateNewWNFT = useCallback(
-    (wnft: NFT) => {
-      if (hnfts) {
-        setHnfts([wnft, ...hnfts]);
-        setSelectNFTModal(false);
+  const handleConnectTwitter = async () => {
+    const oauthUrl = await getTwitterOauthUrl(null);
+    if (oauthUrl) {
+      if (isMobile) {
+        window.location.href = `${oauthUrl}`;
+        return;
       }
-    },
-    [hnfts]
-  );
-
-  const removeNft = (removed: NFT) => {
-    setHnfts([
-      ...(hnfts ?? []).filter(
-        (nft) =>
-          !(nft.name === removed.name && nft.token_id === removed.token_id)
-      ),
-    ]);
+      // direct oauth
+      window.location.href = oauthUrl;
+    }
   };
 
   const mintHnft = (mint: MINT_NFT_TYPE) => {
@@ -139,11 +147,11 @@ export function MyNFTs({}: MyNFTsProps) {
     }
 
     if (mint === MINT_NFT_TYPE.IMAGE) {
-      setCreateHNFTModal(true);
+      setVisible(true);
     }
 
     if (mint === MINT_NFT_TYPE.TWITTER) {
-      setSelectNFTModal(true);
+      handleConnectTwitter();
     }
   };
 
@@ -159,10 +167,9 @@ export function MyNFTs({}: MyNFTsProps) {
   );
 
   return (
-    <div className='my-nfts'>
+    <>
       <div className='title-container'>
         <div className='title'>Mint my hNFTs</div>
-
         <div className='sub-title'>Unlock the power of hyperlink with HNFT</div>
 
         {/* todo: connect wallet here */}
@@ -172,7 +179,7 @@ export function MyNFTs({}: MyNFTsProps) {
         <div className='title'>Select Network</div>
         <div className='network-list'>
           {SupportedNetworkList.map((ele) => (
-            <div className='network-item'>
+            <div className='network-item' key={ele.id}>
               <Image
                 src={`/images/icon/${ele.icon}`}
                 style={{ width: '45px' }}
@@ -183,12 +190,6 @@ export function MyNFTs({}: MyNFTsProps) {
           ))}
         </div>
       </div>
-
-      {/* {!hnfts && (
-        <div className='loading-container'>
-          <Spin tip='Loading...' />
-        </div>
-      )} */}
 
       {!hnfts && (
         <div className='no-nfts-container'>
@@ -201,38 +202,12 @@ export function MyNFTs({}: MyNFTsProps) {
           {buttons}
         </div>
       )}
-
-      {hnfts && hnfts.length > 0 && (
-        <div className='nfts-container'>
-          {hnfts?.map((hnft) => (
-            <HnftCard
-              key={`${hnft.name}${hnft.token_id}`}
-              hnft={hnft}
-              unwrapped={() => removeNft(hnft)}
-            />
-          ))}
-          {buttons}
-        </div>
-      )}
-
-      <Card style={{ marginTop: '40px' }} title='Parami Extension Download'>
-        <Link to='/files/Parami-Extension-v0.0.3.zip' target='_blank' download>
-          Click to download Parami Extension
-        </Link>
-      </Card>
-
-      {selectNFTModal && (
-        <Wnft
-          onCancel={() => setSelectNFTModal(false)}
-          onCreateWNFT={(nft) => onCreateNewWNFT(nft)}
-        />
-      )}
-      {createHNFTModal && (
-        <Hnft
-          onCancel={() => setCreateHNFTModal(false)}
+      {visible && (
+        <CreateHnftModal
           onCreate={onCreateNewHNFT}
+          onCancel={() => setVisible(false)}
         />
       )}
-    </div>
+    </>
   );
 }
