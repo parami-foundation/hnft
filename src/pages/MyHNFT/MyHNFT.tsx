@@ -1,36 +1,35 @@
-import { Button, Card } from 'antd';
-import { ethers } from 'ethers';
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
+import { Card, Spin, message } from 'antd';
 import { Link } from 'react-router-dom';
-import { Hnft } from '../Hnft';
-import { NFT } from '../../models/wnft';
 import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
+import { Hnft } from '../Hnft';
+import { useHNFT } from '../../hooks/useHNFT';
 import { MintHNFT } from '../MintHNFT';
 import './MyHNFT.scss';
 
-export interface MyHNFTProps {}
+export function MyHNFT() {
+  const { status } = useCustomMetaMask();
+  const { hnft, loading } = useHNFT();
 
-export function MyHNFT({}: MyHNFTProps) {
-  const { ethereum, chainId, status, account } = useCustomMetaMask();
-  const [hnft, setHnft] = useState<NFT[]>();
-
-  useEffect(() => {
-    if (ethereum && (chainId === 1 || chainId === 5)) {
-      // setHnftContract(
-      //   new ethers.Contract(
-      //     HNFTCollectionContractAddress[chainId],
-      //     ERC721HCollection.abi,
-      //     new ethers.providers.Web3Provider(ethereum).getSigner()
-      //   )
-      // );
+  const renderNFTContent = useMemo(() => {
+    if (status === 'notConnected') {
+      message.warn('Connect Wallet');
+      return;
     }
-  }, [ethereum, chainId]);
+    if (loading) {
+      return <Spin spinning={loading} className='loading-container' />;
+    }
+
+    if (hnft) {
+      return <Hnft config={hnft} />;
+    }
+
+    return <MintHNFT />;
+  }, [loading, hnft, status]);
 
   return (
     <div className='my-nfts'>
-      {hnft ? <Hnft /> : <MintHNFT />}
-      {/* {hnft ? <MintHNFT /> : <Hnft />} */}
-
+      <div className='my-nfts-container'>{renderNFTContent}</div>
       <Card style={{ marginTop: '40px' }} title='Parami Extension Download'>
         <Link to='/files/Parami-Extension-v0.0.3.zip' target='_blank' download>
           Click to download Parami Extension

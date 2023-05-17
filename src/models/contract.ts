@@ -34,7 +34,7 @@ export const RegistryContractAddress = {
   4: '0xAe3F861851Fa7BDD04A8cba2ceB46eCB64c68785'
 }
 
-export const HNFTCollectionContractAddress = {
+export const HNFTCollectionContractAddress: Record<number, string> = {
   1: '0xfc8db4bc2a48251a921b3ee1392bbded858cc86e',
   5: '0x94F25955e84682BbE5301537f29442Ce1D5b7584',
 };

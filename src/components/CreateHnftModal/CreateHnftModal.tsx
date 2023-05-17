@@ -12,9 +12,9 @@ import { CloudUploadOutlined } from '@ant-design/icons';
 import { ethers } from 'ethers';
 import ImgCrop from 'antd-img-crop';
 import { HNFTCollectionContractAddress } from '../../models/contract';
-import EIP5489ForInfluenceMining from '../../EIP5489ForInfluenceMining.json';
+import EIP5489ForInfluenceMining from '../..//EIP5489ForInfluenceMining.json';
 import { IPFS_ENDPOINT, IPFS_UPLOAD } from '../../models/wnft';
-import { HNFT_CONFIG } from '../../models/hnft';
+import { HNFT_CONFIG, BillboardLevel2Name } from '../../models/hnft';
 import { BillboardNftImage } from '../../components/BillboardNftImage';
 import './CreateHnftModal.scss';
 import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
@@ -26,12 +26,15 @@ export interface HnftProps {
   onCreate: () => void;
 }
 
+export type HNFT_RANK = keyof typeof BillboardLevel2Name;
+
 export function CreateHnftModal({ onCancel, onCreate }: HnftProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const { ethereum, chainId } = useCustomMetaMask();
   const [createHnftLoading, setCreateHnftLoading] = useState<boolean>(false);
   const [hnftContract, setHnftContract] = useState<ethers.Contract>();
   const [imageUrl, setimageUrl] = useState<string>();
+  const [selectedLevel, setselectedLevel] = useState<HNFT_RANK>();
 
   useEffect(() => {
     if (ethereum && (chainId === 1 || chainId === 5)) {
@@ -54,7 +57,7 @@ export function CreateHnftModal({ onCancel, onCreate }: HnftProps) {
             message: 'Creating HNFT',
             description: 'Please confirm in your wallet',
           });
-          const resp = await hnftContract.mint(imageUrl, 2);
+          const resp = await hnftContract.mint(imageUrl, selectedLevel);
           await resp.wait();
           notification.success({
             message: 'Create HNFT Success',
@@ -112,6 +115,10 @@ export function CreateHnftModal({ onCancel, onCreate }: HnftProps) {
     disabled: loading || !!imageUrl,
   };
 
+  const handleSelectedLevel = (rank: HNFT_RANK) => {
+    setselectedLevel(rank);
+  };
+
   return (
     <>
       <Modal
@@ -121,22 +128,8 @@ export function CreateHnftModal({ onCancel, onCreate }: HnftProps) {
         onCancel={onCancel}
         width={1117}
         closable={false}
-        wrapClassName="mint-my-hnft"
-        footer={[
-          <Button key='back' onClick={onCancel}>
-            Cancel
-          </Button>,
-          <Button
-            key='submit'
-            type='primary'
-            disabled={!imageUrl}
-            loading={createHnftLoading}
-            onClick={() => createHnft(imageUrl!)}
-          >
-            Create
-          </Button>,
-        ]}
-        // footer={null}
+        wrapClassName='mint-my-hnft'
+        footer={null}
       >
         {!imageUrl && (
           <ImgCrop quality={1} modalTitle='Edit image'>
@@ -168,11 +161,12 @@ export function CreateHnftModal({ onCancel, onCreate }: HnftProps) {
               {HNFT_CONFIG.map((nftOption, index) => {
                 return (
                   <div
-                    // className={`nft ${selectable ? 'selectable' : ''}`}
                     key={index}
                     style={{ minWidth: '50%' }}
+                    onClick={() => handleSelectedLevel(nftOption.level)}
                   >
                     <BillboardNftImage
+                      selected={selectedLevel === nftOption.level}
                       imageUrl={imageUrl}
                       nftOption={nftOption}
                     />
@@ -180,14 +174,30 @@ export function CreateHnftModal({ onCancel, onCreate }: HnftProps) {
                 );
               })}
             </div>
-            <div className='trading-detail'>
-              <div className='gas-fee'>
-                <span>Gas Fee</span>
-                <span>0.0002eth</span>
+            <div className='nfts-footer'>
+              <div className='trading-detail'>
+                <div className='gas-fee'>
+                  <span>Gas Fee</span>
+                  <span>0.0002eth</span>
+                </div>
+                <div className='blance'>
+                  <span>Balance</span>
+                  <span>0.8eth</span>
+                </div>
               </div>
-              <div className='blance'>
-                <span>Balance</span>
-                <span>0.8eth</span>
+              <div className='nfts-buttons'>
+                <Button key='back' onClick={onCancel}>
+                  Cancel
+                </Button>
+                <Button
+                  key='submit'
+                  type='primary'
+                  disabled={!imageUrl}
+                  loading={createHnftLoading}
+                  onClick={() => createHnft(imageUrl!)}
+                >
+                  Create
+                </Button>
               </div>
             </div>
           </div>

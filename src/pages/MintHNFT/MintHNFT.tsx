@@ -49,7 +49,7 @@ export function MintHNFT({}: MintHNFTProps) {
   const { ethereum, chainId, status, account } = useCustomMetaMask();
   const { retrieveCollections, retrieveNFTs } = useOpenseaApi();
   const [hnftContract, setHnftContract] = useState<ethers.Contract>();
-  const [hnfts, setHnfts] = useState<NFT[]>();
+  const [hnft, setHnft] = useState<NFT[]>();
   const wContractAddress = useWContractAddresses();
 
   useEffect(() => {
@@ -92,7 +92,7 @@ export function MintHNFT({}: MintHNFTProps) {
           });
         })
         .then((nfts) => {
-          setHnfts([...(nfts ?? [])]);
+          setHnft([...(nfts ?? [])]);
         });
     }
   }, [retrieveCollections, retrieveNFTs, chainId, wContractAddress]);
@@ -121,12 +121,12 @@ export function MintHNFT({}: MintHNFTProps) {
           },
         };
 
-        setHnfts([newHNFT]);
+        setHnft([newHNFT]);
       } catch (e) {
         console.error('Fetch new HNFT Error', JSON.stringify(e));
       }
     }
-  }, [hnftContract, account, hnfts]);
+  }, [hnftContract, account, hnft]);
 
   const handleConnectTwitter = async () => {
     const oauthUrl = await getTwitterOauthUrl(null);
@@ -191,7 +191,7 @@ export function MintHNFT({}: MintHNFTProps) {
         </div>
       </div>
 
-      {!hnfts && (
+      {!hnft && (
         <div className='no-nfts-container'>
           <Image
             src='/images/icon/vector.svg'
