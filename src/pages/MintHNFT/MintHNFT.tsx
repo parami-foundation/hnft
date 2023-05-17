@@ -45,7 +45,7 @@ export const getTwitterOauthUrl = async (tag: string | undefined | null) => {
 export interface MintHNFTProps {}
 
 export function MintHNFT({}: MintHNFTProps) {
-  const [visible, setVisible] = useState<boolean>(true);
+  const [visible, setVisible] = useState<boolean>(false);
   const { ethereum, chainId, status, account } = useCustomMetaMask();
   const { retrieveCollections, retrieveNFTs } = useOpenseaApi();
   const [hnftContract, setHnftContract] = useState<ethers.Contract>();
@@ -167,12 +167,10 @@ export function MintHNFT({}: MintHNFTProps) {
   );
 
   return (
-    <>
+    <div className='mint-hnft'>
       <div className='title-container'>
         <div className='title'>Mint my hNFTs</div>
         <div className='sub-title'>Unlock the power of hyperlink with HNFT</div>
-
-        {/* todo: connect wallet here */}
       </div>
 
       <div className='select-network'>
@@ -209,11 +207,11 @@ export function MintHNFT({}: MintHNFTProps) {
         />
       )}
 
-      <Card style={{ marginTop: '40px' }} title='Parami Extension Download'>
+      <Card title='Parami Extension Download'>
         <Link to='/files/Parami-Extension-v0.0.3.zip' target='_blank' download>
           Click to download Parami Extension
         </Link>
       </Card>
-    </>
+    </div>
   );
 }

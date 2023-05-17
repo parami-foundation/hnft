@@ -10,7 +10,6 @@
   }
 
   .content {
-    padding: 50px 50px 0 50px;
     margin-top: 64px;
     overflow: auto;
   }
@@ -47,6 +46,7 @@
     border-radius: 16px !important;
     -webkit-box-shadow: 0 25px 50px -12px rgb(0 0 0 / 25%);
     box-shadow: 0 25px 50px -12px rgb(0 0 0 / 25%);
+    margin: 40px 0;
   }
 }
 
