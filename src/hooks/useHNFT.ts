@@ -22,13 +22,17 @@ export interface HNFT {
 }
 
 export const useHNFT = () => {
-  const { ethereum, chainId, account } = useCustomMetaMask();
+  const { ethereum, chainId, account, status } = useCustomMetaMask();
   const [hnft, setHNFT] = useState<HNFT | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (ethereum && (chainId === 1 || chainId === 5)) {
+      if (
+        status === 'connected' &&
+        ethereum &&
+        (chainId === 1 || chainId === 5)
+      ) {
         const hnftContract = new ethers.Contract(
           HNFTCollectionContractAddress[chainId],
           ERC721HCollection.abi,
@@ -42,15 +46,14 @@ export const useHNFT = () => {
           balance - 1
         );
         const tokenUri = await hnftContract.tokenURI(tokenId);
-        
+
         const token = JSON.parse(atob(tokenUri.substring(29)));
-        
+
         const levelString = token.level?.toString() ?? '0';
 
         // const price = hnftContract.level2Price(levelString);
-        
-        console.log(hnftContract, '---hnftContract---');
 
+        console.log(hnftContract, '---hnftContract---');
 
         const hnftData: HNFT = {
           ...token,
@@ -69,7 +72,7 @@ export const useHNFT = () => {
     };
 
     fetchData();
-  }, [ethereum, chainId, account]);
+  }, [ethereum, chainId, account, status]);
 
   return {
     hnft,

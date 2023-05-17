@@ -208,6 +208,12 @@ export function MintHNFT({}: MintHNFTProps) {
           onCancel={() => setVisible(false)}
         />
       )}
+
+      <Card style={{ marginTop: '40px' }} title='Parami Extension Download'>
+        <Link to='/files/Parami-Extension-v0.0.3.zip' target='_blank' download>
+          Click to download Parami Extension
+        </Link>
+      </Card>
     </>
   );
 }
