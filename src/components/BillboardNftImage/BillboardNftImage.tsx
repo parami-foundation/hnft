@@ -20,10 +20,15 @@ export function BillboardNftImage({
       <div
         className={`nft-image-container ${active ? 'active' : ''} ${
           selected ? 'selected' : ''
-          }`}
+        }`}
       >
         <div className='svg-container'>
-          <img className='nft-image' src={imageUrl} alt='' />
+          <img
+            className='nft-image'
+            src={imageUrl}
+            alt=''
+            referrerPolicy='no-referrer'
+          />
           <div className='nft-badge-container'>
             <img src={`/nfts/badge-level-${nftOption.level}.svg`} alt='' />
           </div>

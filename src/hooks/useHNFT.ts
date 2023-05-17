@@ -16,23 +16,19 @@ export interface HNFT {
   name?: string;
   tokenId?: string;
   level?: string;
-  levelName?: string;
+  rank?: string;
   miningPower?: number;
   onWhitelist?: boolean;
 }
 
 export const useHNFT = () => {
-  const { ethereum, chainId, account, status } = useCustomMetaMask();
+  const { ethereum, chainId, account } = useCustomMetaMask();
   const [hnft, setHNFT] = useState<HNFT | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (
-        status === 'connected' &&
-        ethereum &&
-        (chainId === 1 || chainId === 5)
-      ) {
+      if (ethereum && (chainId === 1 || chainId === 5)) {
         const hnftContract = new ethers.Contract(
           HNFTCollectionContractAddress[chainId],
           ERC721HCollection.abi,
@@ -62,7 +58,7 @@ export const useHNFT = () => {
           address: HNFTCollectionContractAddress[chainId],
           balance: balance?.toNumber() ?? 0,
           level: levelString,
-          levelName: BillboardLevel2Name[levelString],
+          rank: BillboardLevel2Name[levelString],
           miningPower: BillboardLevel2MiningPower[levelString],
         };
 
@@ -72,10 +68,10 @@ export const useHNFT = () => {
     };
 
     fetchData();
-  }, [ethereum, chainId, account, status]);
+  }, [ethereum, chainId, account]);
 
   return {
     hnft,
-    loading
-  }
+    loading,
+  };
 };

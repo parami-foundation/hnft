@@ -18,13 +18,17 @@ export interface HnftProps {
 export function Hnft(props: HnftProps) {
   const { config } = props;
 
-  console.log(config, '--config')
-
   return (
     <>
       <div className='hnft'>
-        <div className='title'>my hNFT</div>
-        <BillboardNftImage imageUrl={config.image} nftOption={config} />
+        <div className='my-hnft'>
+          <div className='title'>my hNFT</div>
+          <BillboardNftImage imageUrl={config.image} nftOption={config} />
+        </div>
+        <div className='my-token'>
+          <div className='title'>my Token</div>
+          <div className='token'></div>
+        </div>
       </div>
     </>
   );

@@ -1,10 +1,23 @@
 @import '../../styles.scss';
 
 .hnft {
+  margin: 0 340px;
+
   .title {
     font-size: 36px;
     line-height: 42px;
     color: #10121A;
     font-weight: 600;
+    padding-left: 20px;
+    margin-bottom: 40px;
+  }
+
+  .my-hnft {
+    margin-bottom: 60px;
+  }
+
+  .my-token {
+    padding: 50px 0;
+    border-top: 1px solid rgba(28, 34, 45, 0.1);
   }
 }
