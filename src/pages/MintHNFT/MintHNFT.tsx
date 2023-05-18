@@ -1,16 +1,19 @@
 import { Button, Card, Image, message } from 'antd';
-import { ethers } from 'ethers';
+import { ethers, BigNumber } from 'ethers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
-import { useOpenseaApi } from '../../hooks/useOpenseaApi';
 import { HNFTCollectionContractAddress } from '../../models/contract';
 import ERC721HCollection from '../../ERC721HCollection.json';
-import { NFT } from '../../models/wnft';
+import { HNFT } from '../../hooks/useHNFT';
 import './MintHNFT.scss';
 import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
-import { useWContractAddresses } from '../../hooks/useWContractAddresses';
 import { CreateHnftModal } from '../../components/CreateHnftModal';
+import { MintSuccess } from '../../components/MintSuccess/MintSuccess';
+import {
+  BillboardLevel2MiningPower,
+  BillboardLevel2Name,
+} from '../../models/hnft';
 
 import './MintHNFT.scss';
 
@@ -47,10 +50,8 @@ export interface MintHNFTProps {}
 export function MintHNFT({}: MintHNFTProps) {
   const [visible, setVisible] = useState<boolean>(false);
   const { ethereum, chainId, status, account } = useCustomMetaMask();
-  const { retrieveCollections, retrieveNFTs } = useOpenseaApi();
   const [hnftContract, setHnftContract] = useState<ethers.Contract>();
-  const [hnft, setHnft] = useState<NFT[]>();
-  const wContractAddress = useWContractAddresses();
+  const [hnft, setHnft] = useState<HNFT>();
 
   useEffect(() => {
     if (ethereum && (chainId === 1 || chainId === 5)) {
@@ -64,38 +65,6 @@ export function MintHNFT({}: MintHNFTProps) {
     }
   }, [ethereum, chainId]);
 
-  useEffect(() => {
-    if (retrieveCollections && chainId && wContractAddress) {
-      retrieveCollections()
-        .then((collections) => {
-          const hnftCollections = (collections ?? []).filter((collection) => {
-            return collection?.primary_asset_contracts?.find((contract) => {
-              return [
-                HNFTCollectionContractAddress[chainId as 1 | 5],
-                ...wContractAddress,
-              ].find((addr) => contract.address === addr);
-            });
-          });
-
-          const contractAddresses = hnftCollections
-            .map((collection) => {
-              const contracts = collection.primary_asset_contracts;
-              if (contracts?.length) {
-                return contracts[0].address;
-              }
-              return '';
-            })
-            .filter(Boolean);
-
-          return retrieveNFTs({
-            contractAddresses,
-          });
-        })
-        .then((nfts) => {
-          setHnft([...(nfts ?? [])]);
-        });
-    }
-  }, [retrieveCollections, retrieveNFTs, chainId, wContractAddress]);
 
   const onCreateNewHNFT = useCallback(async () => {
     setVisible(false);
@@ -108,20 +77,20 @@ export function MintHNFT({}: MintHNFTProps) {
         );
         const tokenUri = await hnftContract.tokenURI(tokenId);
 
-        const tokenMetadata = JSON.parse(atob(tokenUri.substring(29)));
+        const token = JSON.parse(atob(tokenUri.substring(29)));
 
-        const newHNFT = {
-          name: tokenMetadata.name,
-          token_id: tokenId,
-          image_url: tokenMetadata.image,
-          description: tokenMetadata.description,
-          asset_contract: {
-            address: hnftContract.address,
-            name: tokenMetadata.name,
-          },
+        const levelString = token.level?.toString() ?? '0';
+
+        const hnftData: HNFT = {
+          ...token,
+          tokenId: tokenId?.toString(),
+          balance: balance?.toNumber() ?? 0,
+          level: levelString,
+          rank: BillboardLevel2Name[levelString],
+          miningPower: BillboardLevel2MiningPower[levelString],
         };
 
-        setHnft([newHNFT]);
+        setHnft(hnftData);
       } catch (e) {
         console.error('Fetch new HNFT Error', JSON.stringify(e));
       }
@@ -179,7 +148,7 @@ export function MintHNFT({}: MintHNFTProps) {
           {SupportedNetworkList.map((ele) => (
             <div className='network-item' key={ele.id}>
               <Image
-                src={`/images/icon/${ele.icon}`}
+                src={`/network/${ele.icon}`}
                 style={{ width: '45px' }}
                 preview={false}
               ></Image>
@@ -192,7 +161,7 @@ export function MintHNFT({}: MintHNFTProps) {
       {!hnft && (
         <div className='no-nfts-container'>
           <Image
-            src='/images/icon/vector.svg'
+            src='/network/vector.svg'
             style={{ width: '120px' }}
             preview={false}
           ></Image>

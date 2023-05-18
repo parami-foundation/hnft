@@ -6,7 +6,8 @@ import {
 } from '../models/hnft';
 import { useCustomMetaMask } from './useCustomMetaMask';
 import { HNFTCollectionContractAddress } from '../models/contract';
-import EIP5489ForInfluenceMining from '../EIP5489ForInfluenceMining.json';
+import HNFTGovernance from '../HNFTGovernance.json';
+import { useHNFT } from './useHNFT';
 
 export interface HNFT {
   address?: string;
@@ -21,9 +22,9 @@ export interface HNFT {
   onWhitelist?: boolean;
 }
 
-export const useHNFT = () => {
+export const useHNFTGovernance = () => {
   const { chainId, account, ethereum } = useCustomMetaMask();
-  const [hnft, setHNFT] = useState<HNFT | null>(null);
+  const { hnft } = useHNFT();
 
   useEffect(() => {
     const fetchHnft = async () => {
@@ -31,34 +32,10 @@ export const useHNFT = () => {
         try {
           const hnftContract = new ethers.Contract(
             HNFTCollectionContractAddress[chainId],
-            EIP5489ForInfluenceMining.abi,
+            HNFTGovernance.abi,
             new ethers.providers.Web3Provider(ethereum).getSigner()
           );
-          const balance = await hnftContract.balanceOf(account);
-
-          const tokenId = await hnftContract.tokenOfOwnerByIndex(
-            account,
-            balance - 1
-          );
-          const tokenUri = await hnftContract.tokenURI(tokenId);
-
-          const token = JSON.parse(atob(tokenUri.substring(29)));
-
-          const levelString = token.level?.toString() ?? '0';
-
-          const price = await hnftContract.level2Price(levelString);
-
-          const hnftData: HNFT = {
-            ...token,
-            price: BigNumber.from(price).toNumber(),
-            tokenId: tokenId?.toString(),
-            address: HNFTCollectionContractAddress[chainId],
-            balance: balance?.toNumber() ?? 0,
-            level: levelString,
-            rank: BillboardLevel2Name[levelString],
-            miningPower: BillboardLevel2MiningPower[levelString],
-          };
-          setHNFT(hnftData);
+          const token = hnftContract.getGovernanceToken(hnft?.tokenId, );
         } catch (error) {
           console.error('Fetch new HNFT Error', error);
         }

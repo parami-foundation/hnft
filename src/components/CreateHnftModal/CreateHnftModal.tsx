@@ -18,6 +18,7 @@ import { HNFT_CONFIG, BillboardLevel2Name } from '../../models/hnft';
 import { BillboardNftImage } from '../../components/BillboardNftImage';
 import './CreateHnftModal.scss';
 import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
+import { MintSuccess } from '../MintSuccess/MintSuccess'
 
 const { Dragger } = Upload;
 
@@ -112,7 +113,6 @@ export function CreateHnftModal({ onCancel, onCreate }: HnftProps) {
   };
 
   const handleSelectedLevel = (rank: HNFT_RANK) => {
-    console.log(rank, '---rank---');
     setselectedLevel(rank);
   };
 

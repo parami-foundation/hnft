@@ -1,0 +1,40 @@
+.mint-success-container {
+  .success-info {
+    width: 100%;
+    min-height: 360px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+
+    .title {
+      font-weight: 700;
+      font-size: 20px;
+      margin-bottom: 122px;
+    }
+  }
+
+  .view-assets {
+    width: 100%;
+    margin-top: 200px;
+    padding: 0 60px;
+
+    >button {
+      width: 100%;
+      font-size: 20px !important;
+      font-weight: 600;
+      height: 46px !important;
+    }
+  }
+
+  .mint-success-hnft {
+    align-items: center;
+    .description {
+      display: none;
+    }
+
+    .svg-container {
+      margin: 0;
+    }
+  }
+}

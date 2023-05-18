@@ -5,7 +5,7 @@
   transition: box-shadow 0.1s ease-in-out;
   position: relative;
   display: flex;
-  align-items: center;
+  // align-items: center;
   justify-content: center;
   padding: 20px;
 
@@ -63,6 +63,25 @@
     .rank {
       color: #10121A;
       font-size: 22px;
+      display: flex;
+      align-items: center;
+    }
+
+    .upgrade {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 10px;
+      color: white;
+      background: #EC672B;
+      border-radius: 23px;
+      padding: 2px 8px;
+      margin-left: 4px;
+      height: 24px;
+
+      >span:first-child {
+        margin-right: 8px;
+      }
     }
 
     .price {
