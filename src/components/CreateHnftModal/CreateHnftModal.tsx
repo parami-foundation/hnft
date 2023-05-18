@@ -53,10 +53,6 @@ export function CreateHnftModal({ onCancel, onCreate }: HnftProps) {
       if (hnftContract && (chainId === 1 || chainId === 5)) {
         try {
           setCreateHnftLoading(true);
-          notification.info({
-            message: 'Creating HNFT',
-            description: 'Please confirm in your wallet',
-          });
           const resp = await hnftContract.mint(imageUrl, selectedLevel);
           await resp.wait();
           notification.success({
@@ -73,7 +69,7 @@ export function CreateHnftModal({ onCancel, onCreate }: HnftProps) {
         }
       }
     },
-    [hnftContract, chainId]
+    [hnftContract, chainId, selectedLevel]
   );
 
   const props: UploadProps = {
@@ -116,6 +112,7 @@ export function CreateHnftModal({ onCancel, onCreate }: HnftProps) {
   };
 
   const handleSelectedLevel = (rank: HNFT_RANK) => {
+    console.log(rank, '---rank---');
     setselectedLevel(rank);
   };
 

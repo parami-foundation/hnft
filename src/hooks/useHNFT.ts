@@ -35,34 +35,38 @@ export const useHNFT = () => {
           new ethers.providers.Web3Provider(ethereum).getSigner()
         );
 
-        const balance = await hnftContract.balanceOf(account);
+        try {
+          const balance = await hnftContract.balanceOf(account);
 
-        const tokenId = await hnftContract.tokenOfOwnerByIndex(
-          account,
-          balance - 1
-        );
-        const tokenUri = await hnftContract.tokenURI(tokenId);
+          const tokenId = await hnftContract.tokenOfOwnerByIndex(
+            account,
+            balance - 1
+          );
+          const tokenUri = await hnftContract.tokenURI(tokenId);
 
-        const token = JSON.parse(atob(tokenUri.substring(29)));
+          const token = JSON.parse(atob(tokenUri.substring(29)));
 
-        const levelString = token.level?.toString() ?? '0';
+          const levelString = token.level?.toString() ?? '0';
 
-        // const price = hnftContract.level2Price(levelString);
+          // const price = hnftContract.level2Price(levelString);
 
-        console.log(hnftContract, '---hnftContract---');
+          console.log(hnftContract, '---hnftContract---');
+          
 
-        const hnftData: HNFT = {
-          ...token,
-          // price,
-          tokenId: tokenId?.toString(),
-          address: HNFTCollectionContractAddress[chainId],
-          balance: balance?.toNumber() ?? 0,
-          level: levelString,
-          rank: BillboardLevel2Name[levelString],
-          miningPower: BillboardLevel2MiningPower[levelString],
-        };
-
-        setHNFT(hnftData);
+          const hnftData: HNFT = {
+            ...token,
+            // price,
+            tokenId: tokenId?.toString(),
+            address: HNFTCollectionContractAddress[chainId],
+            balance: balance?.toNumber() ?? 0,
+            level: levelString,
+            rank: BillboardLevel2Name[levelString],
+            miningPower: BillboardLevel2MiningPower[levelString],
+          };
+          setHNFT(hnftData);
+        } catch (error) {
+          console.error('Fetch new HNFT Error', JSON.stringify(error));
+        }
         setLoading(false);
       }
     };
