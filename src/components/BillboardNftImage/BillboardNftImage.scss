@@ -5,19 +5,8 @@
   transition: box-shadow 0.1s ease-in-out;
   position: relative;
   display: flex;
-  // align-items: center;
   justify-content: center;
   padding: 20px;
-
-  &:hover {
-    cursor: pointer;
-    // box-shadow: 0px 0px 0px 2px #1DA1F2;
-  }
-
-  &.selected {
-    // box-shadow: 0px 0px 0px 4px #1DA1F2 !important;
-    background: rgba(211, 219, 226, 0.4);
-  }
 
   .svg-container {
     border-radius: 22px;
@@ -78,6 +67,10 @@
       padding: 2px 8px;
       margin-left: 4px;
       height: 24px;
+
+      &:hover {
+        cursor: pointer;
+      }
 
       >span:first-child {
         margin-right: 8px;

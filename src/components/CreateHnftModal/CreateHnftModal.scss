@@ -1,7 +1,6 @@
 @import '../../styles.scss';
 
 .create-nfts {
-
   height: 100%;
   overflow: hidden;
   display: flex;
@@ -23,7 +22,30 @@
     flex: 1;
     overflow: auto;
     padding: 0 40px 0 100px;
+
+    .nfts-items {
+      &:hover {
+        cursor: pointer;
+        // box-shadow: 0px 0px 0px 2px #1DA1F2;
+      }
+    }
+
+    .selected {
+      // box-shadow: 0px 0px 0px 4px #1DA1F2 !important;
+      background: rgba(211, 219, 226, 0.4);
+    }
+
+    .disabled {
+      opacity: 0.4;
+
+      &:hover {
+        cursor: default;
+      }
+    }
   }
+
+
+
 
   .nfts-footer {
     min-height: 232px;
@@ -33,7 +55,7 @@
   .nfts-buttons {
     text-align: center;
 
-    > button+button {
+    >button+button {
       margin-left: 12px;
     }
   }

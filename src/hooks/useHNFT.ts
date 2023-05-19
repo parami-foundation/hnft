@@ -7,6 +7,7 @@ import {
 import { useCustomMetaMask } from './useCustomMetaMask';
 import { HNFTCollectionContractAddress } from '../models/contract';
 import EIP5489ForInfluenceMining from '../EIP5489ForInfluenceMining.json';
+import { amountToFloatString } from '../../src/utils/format.util'
 
 export interface HNFT {
   address?: string;
@@ -16,6 +17,7 @@ export interface HNFT {
   name?: string;
   tokenId?: string;
   level?: string;
+  price?: string;
   rank?: string;
   miningPower?: number;
   onWhitelist?: boolean;
@@ -27,10 +29,7 @@ export const useHNFT = () => {
 
   useEffect(() => {
     const fetchHnft = async () => {
-      if (
-        ethereum &&
-        (chainId === 1 || chainId === 5)
-      ) {
+      if (ethereum && (chainId === 1 || chainId === 5)) {
         try {
           const hnftContract = new ethers.Contract(
             HNFTCollectionContractAddress[chainId],
@@ -39,26 +38,26 @@ export const useHNFT = () => {
           );
           const balance = await hnftContract.balanceOf(account);
 
-          const tokenId = await hnftContract.tokenOfOwnerByIndex(
-            account,
-            0
-          );
+          const tokenId = await hnftContract.tokenOfOwnerByIndex(account, 0);
           const tokenUri = await hnftContract.tokenURI(tokenId);
+
+          const level = await hnftContract.token2Level(tokenId);
 
           const token = JSON.parse(atob(tokenUri.substring(29)));
 
-          const levelString = token.level?.toString() ?? '0';
+          const levelString = BigNumber.from(level).toString();
 
           const price = await hnftContract.level2Price(levelString);
 
           const hnftData: HNFT = {
             ...token,
-            price: BigNumber.from(price).toNumber() ?? 0,
+            price:
+              amountToFloatString(BigNumber.from(price).toString(), 21) ?? 0,
             tokenId: tokenId?.toString(),
             address: HNFTCollectionContractAddress[chainId],
             balance: balance?.toNumber() ?? 0,
-            level: levelString,
-            rank: BillboardLevel2Name[levelString],
+            level: 2,
+            rank: BillboardLevel2Name[2],
             miningPower: BillboardLevel2MiningPower[levelString],
           };
           setHNFT(hnftData);

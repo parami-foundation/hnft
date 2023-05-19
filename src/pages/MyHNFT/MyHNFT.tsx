@@ -9,7 +9,6 @@ import './MyHNFT.scss';
 export function MyHNFT() {
   const { status, connect } = useCustomMetaMask();
   const { hnft, loading } = useHNFT();
-  console.log(hnft, '---hnft---')
 
   return (
     <div className='my-nfts'>

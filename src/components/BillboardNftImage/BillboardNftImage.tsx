@@ -1,40 +1,31 @@
 import React, { CSSProperties } from 'react';
 import { ArrowRightOutlined } from '@ant-design/icons';
+import cs from 'classnames';
 import './BillboardNftImage.scss';
 
 export interface BillboardNftImageProps {
   imageUrl?: string;
   level?: number;
-  active?: boolean;
-  selected?: boolean;
   nftOption?: any;
   description?: string;
   upgrade?: boolean;
   style?: CSSProperties;
-  className?: string
+  className?: string;
   onUpgrade?: () => void;
 }
 
 export function BillboardNftImage({
   imageUrl,
-  active,
-  selected,
   nftOption,
   description,
   upgrade = false,
   style,
   className,
-  onUpgrade
+  onUpgrade,
 }: BillboardNftImageProps) {
-
   return (
     <>
-      <div
-        className={`nft-image-container ${active ? 'active' : ''} ${
-          selected ? 'selected' : ''
-        } ${className}`}
-        style={style}
-      >
+      <div className={cs('nft-image-container', className)} style={style}>
         <div className='svg-container'>
           <img
             className='nft-image'
@@ -61,7 +52,7 @@ export function BillboardNftImage({
             {nftOption.price !== '0' && (
               <>
                 <img src='/nfts/triangle.svg' alt='' />
-                <span>{nftOption.price}</span>
+                <span>{nftOption.price * 1000}</span>
               </>
             )}
           </div>

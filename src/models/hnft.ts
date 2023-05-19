@@ -28,7 +28,7 @@ export const HNFT_CONFIG = [
     rank: 'Rare',
     name: 'Rare Billboard',
     boost: 'X5',
-    price: '100',
+    price: '0.1',
     description: 'Rare hyperNFT holders can initiate a group mining',
   },
   {
@@ -36,7 +36,7 @@ export const HNFT_CONFIG = [
     rank: 'Premium',
     name: 'Premium Billboard',
     boost: 'X10',
-    price: '400',
+    price: '0.4',
     description: 'Upgrade to Premium to unlock more features',
   },
   {
@@ -44,7 +44,7 @@ export const HNFT_CONFIG = [
     rank: 'Epic',
     name: 'Epic Billboard',
     boost: 'X20',
-    price: '1600',
+    price: '1.6',
     description: 'Epic hyperNFT makes you a core buidler',
   },
   {
@@ -52,7 +52,15 @@ export const HNFT_CONFIG = [
     rank: 'Legendary',
     name: 'Legendary Billboard',
     boost: 'X40',
-    price: '6400',
+    price: '6.4',
     description: 'The genesis hyperNFT holders are marked as legendary ',
   },
 ];
+
+export const BillboardLevel2Price: { [level: keyof typeof BillboardLevel2Name]: string } = {
+  0: '0',
+  1: '0.1',
+  2: '0.4',
+  3: '1.6',
+  4: '6.4',
+};

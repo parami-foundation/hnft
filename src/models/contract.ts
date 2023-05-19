@@ -39,6 +39,11 @@ export const HNFTCollectionContractAddress: Record<number, string> = {
   5: '0x94F25955e84682BbE5301537f29442Ce1D5b7584',
 };
 
+export const AD3ContractAddress: Record<number, string> = {
+  1: '0xfc8db4bc2a48251a921b3ee1392bbded858cc86e',
+  5: '0xf6b2923717175185a626790FF78B6f37DAbb3565',
+};
+
 export const ParamiLinkContractAddress = {
   1: '0x7A585595490328503eb3609723B0B16Eb0373013',
   4: '0x75EE8Ce53Bd26C21405Def16Dd416C90054E7146'

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BillboardNftImage } from '../../components/BillboardNftImage';
 import { HNFT } from '../../hooks/useHNFT';
 import { CreateHnftModal } from '../../components/CreateHnftModal';
+import { useAD3Blance } from '../../hooks/useAD3Balance';
 import './Hnft.scss';
 
 export interface HnftProps {
@@ -12,8 +13,7 @@ export function Hnft(props: HnftProps) {
   const { config } = props;
   const [visible, setVisible] = useState(false)
 
-  const onCreateNewHNFT = () => {
-    
+  const onUpgradeHNFT = () => {
   }
 
   return (
@@ -48,7 +48,7 @@ export function Hnft(props: HnftProps) {
       {visible && (
         <CreateHnftModal
           upgrade
-          onCreate={onCreateNewHNFT}
+          onCreate={onUpgradeHNFT}
           onCancel={() => setVisible(false)}
         />
       )}

@@ -22,8 +22,8 @@ export function MintSuccess({ hnft }: { hnft: HNFT }) {
             </div>
             <div className='title'>you're done</div>
             <BillboardNftImage
-              className='mint-success-hnft'
               nftOption={hnft}
+              className='mint-success-hnft'
               style={{ flexDirection: 'column', padding: 0 }}
             />
           </div>
