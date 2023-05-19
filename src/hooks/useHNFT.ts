@@ -27,7 +27,10 @@ export const useHNFT = () => {
 
   useEffect(() => {
     const fetchHnft = async () => {
-      if (ethereum && (chainId === 1 || chainId === 5)) {
+      if (
+        ethereum &&
+        (chainId === 1 || chainId === 5)
+      ) {
         try {
           const hnftContract = new ethers.Contract(
             HNFTCollectionContractAddress[chainId],
@@ -38,7 +41,7 @@ export const useHNFT = () => {
 
           const tokenId = await hnftContract.tokenOfOwnerByIndex(
             account,
-            balance - 1
+            0
           );
           const tokenUri = await hnftContract.tokenURI(tokenId);
 
@@ -50,7 +53,7 @@ export const useHNFT = () => {
 
           const hnftData: HNFT = {
             ...token,
-            price: BigNumber.from(price).toNumber(),
+            price: BigNumber.from(price).toNumber() ?? 0,
             tokenId: tokenId?.toString(),
             address: HNFTCollectionContractAddress[chainId],
             balance: balance?.toNumber() ?? 0,

@@ -47,6 +47,7 @@ export function Hnft(props: HnftProps) {
       </div>
       {visible && (
         <CreateHnftModal
+          upgrade
           onCreate={onCreateNewHNFT}
           onCancel={() => setVisible(false)}
         />

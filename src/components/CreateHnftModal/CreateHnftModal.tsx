@@ -18,18 +18,19 @@ import { HNFT_CONFIG, BillboardLevel2Name } from '../../models/hnft';
 import { BillboardNftImage } from '../../components/BillboardNftImage';
 import './CreateHnftModal.scss';
 import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
-import { MintSuccess } from '../MintSuccess/MintSuccess'
+import { MintSuccess } from '../MintSuccess/MintSuccess';
 
 const { Dragger } = Upload;
 
 export interface HnftProps {
   onCancel: () => void;
   onCreate: () => void;
+  upgrade?: boolean;
 }
 
 export type HNFT_RANK = keyof typeof BillboardLevel2Name;
 
-export function CreateHnftModal({ onCancel, onCreate }: HnftProps) {
+export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const { ethereum, chainId } = useCustomMetaMask();
   const [createHnftLoading, setCreateHnftLoading] = useState<boolean>(false);
@@ -119,7 +120,7 @@ export function CreateHnftModal({ onCancel, onCreate }: HnftProps) {
   return (
     <>
       <Modal
-        title='mint my hNFT'
+        title={`${upgrade ? 'Upgrade' : 'Mint'} my hNFT`}
         centered
         open
         onCancel={onCancel}
@@ -128,7 +129,7 @@ export function CreateHnftModal({ onCancel, onCreate }: HnftProps) {
         wrapClassName='mint-my-hnft'
         footer={null}
       >
-        {!imageUrl && (
+        {!imageUrl && !upgrade && (
           <ImgCrop quality={1} modalTitle='Edit image'>
             <Dragger {...props} className='upload-dragger'>
               {/* {imageUrl && (
@@ -152,7 +153,7 @@ export function CreateHnftModal({ onCancel, onCreate }: HnftProps) {
           </ImgCrop>
         )}
 
-        {imageUrl && (
+        {(imageUrl || upgrade) && (
           <div className='create-nfts'>
             <div className='nfts-container'>
               {HNFT_CONFIG.map((nftOption, index) => {
@@ -193,7 +194,7 @@ export function CreateHnftModal({ onCancel, onCreate }: HnftProps) {
                   loading={createHnftLoading}
                   onClick={() => createHnft(imageUrl!)}
                 >
-                  Create
+                  {upgrade ? 'Upgrade' : 'Create'}
                 </Button>
               </div>
             </div>
