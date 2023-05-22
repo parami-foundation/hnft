@@ -30,5 +30,5 @@ export const useAD3Balance = () => {
     fetchAD3Balance();
   }, [account, ethereum]);
 
-  return Number(balance) * 1000;
+  return Number(balance ?? 0) * 1000;
 };

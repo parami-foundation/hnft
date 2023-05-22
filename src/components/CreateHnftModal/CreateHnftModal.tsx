@@ -15,11 +15,12 @@ import cs from 'classnames';
 import {
   EIP5489ForInfluenceMiningContractAddress,
   AD3ContractAddress,
+  HNFT_CONFIG,
+  BillboardLevel2Name,
 } from '../../models/hnft';
-import EIP5489ForInfluenceMining from '../..//EIP5489ForInfluenceMining.json';
+import EIP5489ForInfluenceMining from '../../EIP5489ForInfluenceMining.json';
 import { IPFS_ENDPOINT, IPFS_UPLOAD } from '../../models/wnft';
 import AD3Contract from '../../AD3.json';
-import { HNFT_CONFIG, BillboardLevel2Name } from '../../models/hnft';
 import { BillboardNftImage } from '../../components/BillboardNftImage';
 import './CreateHnftModal.scss';
 import { useAD3Balance, useCustomMetaMask, useHNFT } from '../../hooks';
@@ -101,7 +102,7 @@ export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
   const mintHnftFromImage = async (selectedLevel: HNFT_RANK) => {
     // free mint
     if (hnftContract) {
-      if (selectedLevel === '0') {
+      if (selectedLevel === 0) {
         const resp = await hnftContract.mint(imageUrl, selectedLevel);
         await resp.wait();
       } else {
@@ -117,7 +118,7 @@ export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
       if (hnftContract) {
         try {
           setCreateHnftLoading(true);
-          if (selectedLevel) {
+          if (selectedLevel !== undefined) {
             if (upgrade) {
               await approveAD3(selectedLevel).then(async (res: any) => {
                 await hnftContract
@@ -269,7 +270,7 @@ export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
                 <Button
                   key='submit'
                   type='primary'
-                  disabled={!selectedLevel}
+                  disabled={selectedLevel === undefined}
                   loading={createHnftLoading}
                   onClick={() => createHnft(imageUrl!)}
                 >
