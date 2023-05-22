@@ -40,7 +40,7 @@ export function BillboardNftImage({
         <div className='nft-description'>
           <div className='rank'>
             <span>{nftOption.rank}</span>
-            {upgrade && (
+            {upgrade && nftOption.rank !== 'Legendary' && (
               <div className='upgrade' onClick={onUpgrade}>
                 <span>Can be upgraded</span>
                 <ArrowRightOutlined />

@@ -13,6 +13,12 @@
 
   .my-hnft {
     margin-bottom: 60px;
+
+    .billboard-nft-Legendary {
+      .description {
+        display: none;
+      }
+    }
   }
 
   .my-token {
@@ -37,7 +43,8 @@
       height: 82px;
       border-radius: 10px;
       margin-right: 35px;
-      background: #10121A;
+      background: white;
+      padding: 14px;
 
       > img {
         width: 100%;

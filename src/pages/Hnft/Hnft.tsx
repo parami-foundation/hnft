@@ -32,6 +32,7 @@ export function Hnft(props: HnftProps) {
             upgrade
             nftOption={config}
             style={{ flexDirection: 'column', padding: 0 }}
+            className={`billboard-nft-${hnft?.rank}`}
             description={`Upgrade to ${
               BillboardLevel2Name[Number(config?.level) + 1]
             } to unlock more features`}
@@ -43,7 +44,7 @@ export function Hnft(props: HnftProps) {
           <div className='token'>
             <div className='token-detail'>
               <div className='token-image'>
-                <img src='./images/logo_black.png' alt='' />
+                <img src='/nfts/triangle.svg' alt='' />
               </div>
               <div>
                 <div>$ AD3</div>
