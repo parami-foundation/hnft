@@ -7,7 +7,7 @@ import { formatAd3Amount } from '../utils/format.util';
 
 export const useAD3Balance = () => {
   const { account, ethereum } = useCustomMetaMask();
-  const [balance, setBlance] = useState<string>();
+  const [balance, setBlance] = useState<number>();
 
   useEffect(() => {
     const fetchAD3Balance = async () => {
@@ -30,5 +30,5 @@ export const useAD3Balance = () => {
     fetchAD3Balance();
   }, [account, ethereum]);
 
-  return Number(balance ?? 0) * 1000;
+  return balance ?? 0;
 };

@@ -1,4 +1,4 @@
-import { formatBalance } from '@polkadot/util';
+import { formatBalance, } from '@polkadot/util';
 
 export const formatAd3Amount = (amount: string) => {
   const amountWithUnit = formatBalance(amount, {
@@ -7,7 +7,10 @@ export const formatAd3Amount = (amount: string) => {
   });
   const [price, unit] = amountWithUnit.split(' ');
   // return `${parseFloat(price).toFixed(2)}${unit ? ` ${unit}` : ''}`;
-  return parseFloat(price).toFixed(2);
+  if (unit) {
+    return Number(parseFloat(price).toFixed(2)) * 1000
+  }
+  return Number(parseFloat(price).toFixed(2));
 };
 
 export function inputFloatStringToAmount(

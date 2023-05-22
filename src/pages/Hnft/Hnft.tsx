@@ -61,7 +61,7 @@ export function Hnft(props: HnftProps) {
           onCancel={() => setVisible(false)}
         />
       )}
-      <MintSuccess hnft={hnft!} ref={mintSuccessRef} />
+      <MintSuccess ref={mintSuccessRef} />
     </>
   );
 }

@@ -115,7 +115,7 @@ export function MintHNFT({}: MintHNFTProps) {
         />
       )}
 
-      <MintSuccess hnft={hnft!} ref={mintSuccessRef} />
+      <MintSuccess ref={mintSuccessRef} />
 
       <Card title='Hyperlink NFT Extension'>
         <Link

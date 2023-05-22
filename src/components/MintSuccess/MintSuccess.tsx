@@ -2,11 +2,11 @@ import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import { Button, Modal } from 'antd';
 import type { FC } from 'react'
 import { BillboardNftImage } from '../BillboardNftImage';
-import { HNFT } from '../../hooks';
+import { useHNFT } from '../../hooks';
 import './MintSuccess.scss';
 
-const MintSuccess: FC<{ hnft: HNFT, ref: any }> = forwardRef((props, ref) => {
-  const { hnft } = props;
+const MintSuccess: FC<{ref: any }> = forwardRef((props, ref) => {
+  const { hnft } = useHNFT();
   const [visible, setVisible] = useState(false);
 
   const onCreateSuccess = () => {

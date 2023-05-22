@@ -36,28 +36,26 @@ export const useHNFT = () => {
           );
           const balance = await hnftContract.balanceOf(account);
 
-          const tokenId = await hnftContract.tokenOfOwnerByIndex(account, 0);
-          const tokenUri = await hnftContract.tokenURI(tokenId);
+          if (balance?.toNumber() > 0) {
+            const tokenId = await hnftContract.tokenOfOwnerByIndex(account, 0);
+            const tokenUri = await hnftContract.tokenURI(tokenId);
+            const level = await hnftContract.token2Level(tokenId);
+            const token = JSON.parse(atob(tokenUri.substring(29)));
+            const levelString = BigNumber.from(level).toString();
+            const price = await hnftContract.level2Price(levelString);
 
-          const level = await hnftContract.token2Level(tokenId);
-
-          const token = JSON.parse(atob(tokenUri.substring(29)));
-
-          const levelString = BigNumber.from(level).toString();
-
-          const price = await hnftContract.level2Price(levelString);
-
-          const hnftData: HNFT = {
-            ...token,
-            price:
-              amountToFloatString(BigNumber.from(price).toString(), 18) ?? 0,
-            tokenId: tokenId?.toString(),
-            address: EIP5489ForInfluenceMiningContractAddress,
-            balance: balance?.toNumber() ?? 0,
-            level: levelString,
-            rank: BillboardLevel2Name[levelString],
-          };
-          setHNFT(hnftData);
+            const hnftData: HNFT = {
+              ...token,
+              price:
+                amountToFloatString(BigNumber.from(price).toString(), 18) ?? 0,
+              tokenId: tokenId?.toString(),
+              address: EIP5489ForInfluenceMiningContractAddress,
+              balance: balance?.toNumber() ?? 0,
+              level: levelString,
+              rank: BillboardLevel2Name[levelString],
+            };
+            setHNFT(hnftData);
+          }
           setLoading(false);
         } catch (error) {
           setHNFT(null);

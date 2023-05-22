@@ -75,7 +75,7 @@ export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
       const currentHnftPrice = Number(hnft?.price ?? 0);
       const upgradeHnftPrice = await hnftContract.level2Price(selectedLevel);
       const differencePrice =
-        Number(formatAd3Amount(upgradeHnftPrice)) * 1000 - currentHnftPrice;
+        Number(formatAd3Amount(upgradeHnftPrice)) - currentHnftPrice;
 
       if (blance >= differencePrice) {
         try {
@@ -105,9 +105,14 @@ export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
       if (selectedLevel === 0) {
         const resp = await hnftContract.mint(imageUrl, selectedLevel);
         await resp.wait();
+        return resp;
       } else {
         await approveAD3(selectedLevel).then(async (res: any) => {
-          res && (await hnftContract.mint(imageUrl, selectedLevel));
+          if (res) {
+            const resp = await hnftContract.mint(imageUrl, selectedLevel);
+            await resp.wait();
+            return resp;
+          }
         });
       }
     }
@@ -121,11 +126,14 @@ export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
           if (selectedLevel !== undefined) {
             if (upgrade) {
               await approveAD3(selectedLevel).then(async (res: any) => {
-                await hnftContract
-                  .upgradeTo(hnft?.tokenId, selectedLevel)
-                  .then((res: any) => {
-                    res && onMintSuccess();
-                  });
+                if (res) {
+                  const resp = await hnftContract.upgradeTo(
+                    hnft?.tokenId,
+                    selectedLevel
+                  );
+                  await resp.wait();
+                  onMintSuccess();
+                }
               });
             } else {
               await mintHnftFromImage(selectedLevel).then((res: any) => {
