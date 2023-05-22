@@ -1,28 +1,28 @@
 import { useEffect, useState } from 'react';
 import { ethers, BigNumber } from 'ethers';
 import { useCustomMetaMask } from './useCustomMetaMask';
-import { HNFTGovernanceContractAddress } from '../models/contract';
+import { HNFTGovernanceContractAddress } from '../models/hnft';
 import HNFTGovernance from '../HNFTGovernance.json';
 import { HNFT } from './useHNFT';
 
 export const useHNFTGovernance = (hnft: HNFT) => {
-  const { chainId, account, ethereum } = useCustomMetaMask();
+  const { account, ethereum } = useCustomMetaMask();
   const [token, setToken] = useState<number>();
 
   useEffect(() => {
     const fetchMyToken = async () => {
-      if (ethereum && hnft && (chainId === 1 || chainId === 5)) {
+      if (ethereum && hnft) {
         try {
           const hnftContract = new ethers.Contract(
-            HNFTGovernanceContractAddress[chainId],
+            HNFTGovernanceContractAddress,
             HNFTGovernance.abi,
             new ethers.providers.Web3Provider(ethereum).getSigner()
           );
-          const token = await hnftContract.getGovernanceToken(
+          const tokenAddress = await hnftContract.getGovernanceToken(
             account,
             hnft?.tokenId
           );
-          setToken(BigNumber.from(token).toNumber());
+
         } catch (error) {
           console.error('Fetch My Token Error', error);
         }
@@ -30,7 +30,7 @@ export const useHNFTGovernance = (hnft: HNFT) => {
     };
 
     fetchMyToken();
-  }, [chainId, account, ethereum, hnft]);
+  }, [account, ethereum, hnft]);
 
   return token;
 };

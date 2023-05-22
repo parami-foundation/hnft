@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { BillboardNftImage } from '../../components/BillboardNftImage';
-import { HNFT, useHNFT } from '../../hooks/useHNFT';
 import { CreateHnftModal } from '../../components/CreateHnftModal';
-import { useHNFTGovernance } from '../../hooks/useHNFTGovernance';
+import { useAD3Balance, HNFT, useHNFT } from '../../hooks';
 import { BillboardLevel2Name } from '../../models/hnft';
 import MintSuccess from '../../components/MintSuccess/MintSuccess';
 import './Hnft.scss';
@@ -14,9 +13,9 @@ export interface HnftProps {
 export function Hnft(props: HnftProps) {
   const { config } = props;
   const [visible, setVisible] = useState(false);
-  const { hnft } = useHNFT();
-  const token = useHNFTGovernance(hnft!);
   const mintSuccessRef = useRef<HTMLDivElement>() as any;
+  const { hnft } = useHNFT();
+  const blance = useAD3Balance();
 
   const onCreateSuccess = () => {
     setVisible(false);
@@ -51,7 +50,7 @@ export function Hnft(props: HnftProps) {
                 <div className='token-type'>Ethrteum</div>
               </div>
             </div>
-            <div className='token-price'>{token}</div>
+            <div className='token-price'>{blance}</div>
           </div>
         </div>
       </div>

@@ -2,24 +2,11 @@ import { Button, Card, Image, message } from 'antd';
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
-import { useHNFT } from '../../hooks/useHNFT';
-import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
+import { useHNFT, useCustomMetaMask } from '../../hooks';
 import { CreateHnftModal } from '../../components/CreateHnftModal';
 import MintSuccess from '../../components/MintSuccess/MintSuccess';
+import { NETWORK_CONFIG, MINT_NFT_TYPE } from '../../models/hnft';
 import './MintHNFT.scss';
-
-const SupportedNetworkList = [
-  { id: 'ERC-20', value: 'ERC-20', icon: 'erc.svg' },
-  { id: 'ARB-one', value: 'ARB-one', icon: 'arb.svg' },
-  { id: 'Optimism', value: 'Optimism', icon: 'optimism.svg' },
-  { id: 'BEP-20', value: 'BEP-20', icon: 'bep.svg' },
-  { id: 'Sloana', value: 'Sloana', icon: 'sloana.svg' },
-];
-
-export enum MINT_NFT_TYPE {
-  IMAGE = 'image',
-  TWITTER = 'twitter',
-}
 
 export const getTwitterOauthUrl = async (tag: string | undefined | null) => {
   try {
@@ -97,7 +84,7 @@ export function MintHNFT({}: MintHNFTProps) {
       <div className='select-network'>
         <div className='title'>Select Network</div>
         <div className='network-list'>
-          {SupportedNetworkList.map((ele) => (
+          {NETWORK_CONFIG.map((ele: any) => (
             <div className='network-item' key={ele.id}>
               <Image
                 src={`/network/${ele.icon}`}
@@ -130,9 +117,12 @@ export function MintHNFT({}: MintHNFTProps) {
 
       <MintSuccess hnft={hnft!} ref={mintSuccessRef} />
 
-      <Card title='Parami Extension Download'>
-        <Link to='/files/Parami-Extension-v0.0.3.zip' target='_blank' download>
-          Click to download Parami Extension
+      <Card title='Hyperlink NFT Extension'>
+        <Link
+          to='https://chrome.google.com/webstore/detail/hyperlink-nft-extension/gilmlbeecofjmogfkaocnjmbiblmifad'
+          target='_blank'
+        >
+          Click to install Hyperlink NFT Extension
         </Link>
       </Card>
     </div>

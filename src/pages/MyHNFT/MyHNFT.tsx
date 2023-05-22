@@ -1,14 +1,23 @@
-import React from 'react';
-import { Spin, Button } from 'antd';
+import React, { useEffect } from 'react';
+import { Spin, Button, notification } from 'antd';
 import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
 import { Hnft } from '../Hnft';
-import { useHNFT } from '../../hooks/useHNFT';
+import { useHNFT } from '../../hooks';
 import { MintHNFT } from '../MintHNFT';
 import './MyHNFT.scss';
 
 export function MyHNFT() {
-  const { status, connect } = useCustomMetaMask();
+  const { status, connect, chainId } = useCustomMetaMask();
   const { hnft, loading } = useHNFT();
+
+  useEffect(() => {
+    if (status === 'connected' && chainId !== 5) {
+      notification.info({
+        message: ' Unsupported network',
+        description: 'Please switch to the test network goerli',
+      });
+    }
+  }, [chainId, status]);
 
   return (
     <div className='my-nfts'>
@@ -22,7 +31,7 @@ export function MyHNFT() {
         </div>
       )}
 
-      {status === 'connected' && (
+      {status === 'connected' && chainId === 5 && (
         <div className='my-nfts-container'>
           <Spin spinning={loading} className='loading-container'>
             {!loading && (

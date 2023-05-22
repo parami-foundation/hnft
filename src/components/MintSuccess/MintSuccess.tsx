@@ -2,7 +2,7 @@ import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import { Button, Modal } from 'antd';
 import type { FC } from 'react'
 import { BillboardNftImage } from '../BillboardNftImage';
-import { HNFT } from '../../hooks/useHNFT';
+import { HNFT } from '../../hooks';
 import './MintSuccess.scss';
 
 const MintSuccess: FC<{ hnft: HNFT, ref: any }> = forwardRef((props, ref) => {
