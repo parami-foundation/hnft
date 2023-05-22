@@ -47,4 +47,10 @@ export const AD3ContractAddress: Record<number, string> = {
 export const ParamiLinkContractAddress = {
   1: '0x7A585595490328503eb3609723B0B16Eb0373013',
   4: '0x75EE8Ce53Bd26C21405Def16Dd416C90054E7146'
-}
+};
+
+
+export const HNFTGovernanceContractAddress = {
+  1: '0x7A585595490328503eb3609723B0B16Eb0373013',
+  5: '0x7c3826180814518C7d7765b1ECE11eDB708a7850',
+};

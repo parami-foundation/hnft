@@ -1,20 +1,11 @@
 import { Button, Card, Image, message } from 'antd';
-import { ethers, BigNumber } from 'ethers';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
-import { HNFTCollectionContractAddress } from '../../models/contract';
-import ERC721HCollection from '../../ERC721HCollection.json';
-import { HNFT } from '../../hooks/useHNFT';
-import './MintHNFT.scss';
+import { useHNFT } from '../../hooks/useHNFT';
 import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
 import { CreateHnftModal } from '../../components/CreateHnftModal';
-import { MintSuccess } from '../../components/MintSuccess/MintSuccess';
-import {
-  BillboardLevel2MiningPower,
-  BillboardLevel2Name,
-} from '../../models/hnft';
-
+import MintSuccess from '../../components/MintSuccess/MintSuccess';
 import './MintHNFT.scss';
 
 const SupportedNetworkList = [
@@ -49,53 +40,9 @@ export interface MintHNFTProps {}
 
 export function MintHNFT({}: MintHNFTProps) {
   const [visible, setVisible] = useState<boolean>(false);
-  const { ethereum, chainId, status, account } = useCustomMetaMask();
-  const [hnftContract, setHnftContract] = useState<ethers.Contract>();
-  const [hnft, setHnft] = useState<HNFT>();
-
-  useEffect(() => {
-    if (ethereum && (chainId === 1 || chainId === 5)) {
-      setHnftContract(
-        new ethers.Contract(
-          HNFTCollectionContractAddress[chainId],
-          ERC721HCollection.abi,
-          new ethers.providers.Web3Provider(ethereum).getSigner()
-        )
-      );
-    }
-  }, [ethereum, chainId]);
-
-
-  const onCreateNewHNFT = useCallback(async () => {
-    setVisible(false);
-    if (hnftContract && account) {
-      try {
-        const balance = await hnftContract.balanceOf(account);
-        const tokenId = await hnftContract.tokenOfOwnerByIndex(
-          account,
-          balance - 1
-        );
-        const tokenUri = await hnftContract.tokenURI(tokenId);
-
-        const token = JSON.parse(atob(tokenUri.substring(29)));
-
-        const levelString = token.level?.toString() ?? '0';
-
-        const hnftData: HNFT = {
-          ...token,
-          tokenId: tokenId?.toString(),
-          balance: balance?.toNumber() ?? 0,
-          level: levelString,
-          rank: BillboardLevel2Name[levelString],
-          miningPower: BillboardLevel2MiningPower[levelString],
-        };
-
-        setHnft(hnftData);
-      } catch (e) {
-        console.error('Fetch new HNFT Error', JSON.stringify(e));
-      }
-    }
-  }, [hnftContract, account, hnft]);
+  const { hnft } = useHNFT();
+  const { status } = useCustomMetaMask();
+  const mintSuccessRef = useRef<HTMLDivElement>() as any;
 
   const handleConnectTwitter = async () => {
     const oauthUrl = await getTwitterOauthUrl(null);
@@ -123,6 +70,11 @@ export function MintHNFT({}: MintHNFTProps) {
       handleConnectTwitter();
     }
   };
+
+   const onCreateSuccess = () => {
+     setVisible(false);
+     mintSuccessRef?.current?.onCreateSuccess();
+   };
 
   const buttons = (
     <div className='buttons'>
@@ -171,10 +123,12 @@ export function MintHNFT({}: MintHNFTProps) {
       )}
       {visible && (
         <CreateHnftModal
-          onCreate={onCreateNewHNFT}
+          onCreate={onCreateSuccess}
           onCancel={() => setVisible(false)}
         />
       )}
+
+      <MintSuccess hnft={hnft!} ref={mintSuccessRef} />
 
       <Card title='Parami Extension Download'>
         <Link to='/files/Parami-Extension-v0.0.3.zip' target='_blank' download>

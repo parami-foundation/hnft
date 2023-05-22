@@ -1,52 +1,36 @@
 import { useEffect, useState } from 'react';
 import { ethers, BigNumber } from 'ethers';
-import {
-  BillboardLevel2MiningPower,
-  BillboardLevel2Name,
-} from '../models/hnft';
 import { useCustomMetaMask } from './useCustomMetaMask';
-import { HNFTCollectionContractAddress } from '../models/contract';
+import { HNFTGovernanceContractAddress } from '../models/contract';
 import HNFTGovernance from '../HNFTGovernance.json';
-import { useHNFT } from './useHNFT';
+import { HNFT } from './useHNFT';
 
-export interface HNFT {
-  address?: string;
-  balance?: number;
-  description?: string;
-  image: string;
-  name?: string;
-  tokenId?: string;
-  level?: string;
-  rank?: string;
-  miningPower?: number;
-  onWhitelist?: boolean;
-}
-
-export const useHNFTGovernance = () => {
+export const useHNFTGovernance = (hnft: HNFT) => {
   const { chainId, account, ethereum } = useCustomMetaMask();
-  const { hnft } = useHNFT();
+  const [token, setToken] = useState<number>();
 
   useEffect(() => {
-    const fetchHnft = async () => {
-      if (ethereum && (chainId === 1 || chainId === 5)) {
+    const fetchMyToken = async () => {
+      if (ethereum && hnft && (chainId === 1 || chainId === 5)) {
         try {
           const hnftContract = new ethers.Contract(
-            HNFTCollectionContractAddress[chainId],
+            HNFTGovernanceContractAddress[chainId],
             HNFTGovernance.abi,
             new ethers.providers.Web3Provider(ethereum).getSigner()
           );
-          const token = hnftContract.getGovernanceToken(hnft?.tokenId, );
+          const token = await hnftContract.getGovernanceToken(
+            account,
+            hnft?.tokenId
+          );
+          setToken(BigNumber.from(token).toNumber());
         } catch (error) {
-          console.error('Fetch new HNFT Error', error);
+          console.error('Fetch My Token Error', error);
         }
       }
     };
 
-    fetchHnft();
-  }, [chainId, account, ethereum]);
+    fetchMyToken();
+  }, [chainId, account, ethereum, hnft]);
 
-  return {
-    hnft,
-    loading: !hnft,
-  };
+  return token;
 };

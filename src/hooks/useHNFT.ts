@@ -56,8 +56,8 @@ export const useHNFT = () => {
             tokenId: tokenId?.toString(),
             address: HNFTCollectionContractAddress[chainId],
             balance: balance?.toNumber() ?? 0,
-            level: 2,
-            rank: BillboardLevel2Name[2],
+            level: levelString,
+            rank: BillboardLevel2Name[levelString],
             miningPower: BillboardLevel2MiningPower[levelString],
           };
           setHNFT(hnftData);

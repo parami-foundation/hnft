@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { BillboardNftImage } from '../../components/BillboardNftImage';
-import { HNFT } from '../../hooks/useHNFT';
+import { HNFT, useHNFT } from '../../hooks/useHNFT';
 import { CreateHnftModal } from '../../components/CreateHnftModal';
-import { useAD3Blance } from '../../hooks/useAD3Balance';
+import { useHNFTGovernance } from '../../hooks/useHNFTGovernance';
+import { BillboardLevel2Name } from '../../models/hnft';
+import MintSuccess from '../../components/MintSuccess/MintSuccess';
 import './Hnft.scss';
 
 export interface HnftProps {
@@ -11,10 +13,15 @@ export interface HnftProps {
 
 export function Hnft(props: HnftProps) {
   const { config } = props;
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
+  const { hnft } = useHNFT();
+  const token = useHNFTGovernance(hnft!);
+  const mintSuccessRef = useRef<HTMLDivElement>() as any;
 
-  const onUpgradeHNFT = () => {
-  }
+  const onCreateSuccess = () => {
+    setVisible(false);
+    mintSuccessRef?.current?.onCreateSuccess();
+  };
 
   return (
     <>
@@ -25,7 +32,9 @@ export function Hnft(props: HnftProps) {
             upgrade
             nftOption={config}
             style={{ flexDirection: 'column', padding: 0 }}
-            description='Upgrade to Premium to unlock more features'
+            description={`Upgrade to ${
+              BillboardLevel2Name[Number(config?.level) + 1]
+            } to unlock more features`}
             onUpgrade={() => setVisible(true)}
           />
         </div>
@@ -41,17 +50,18 @@ export function Hnft(props: HnftProps) {
                 <div className='token-type'>Ethrteum</div>
               </div>
             </div>
-            <div className='token-price'>1234</div>
+            <div className='token-price'>{token}</div>
           </div>
         </div>
       </div>
       {visible && (
         <CreateHnftModal
           upgrade
-          onCreate={onUpgradeHNFT}
+          onCreate={onCreateSuccess}
           onCancel={() => setVisible(false)}
         />
       )}
+      <MintSuccess hnft={hnft!} ref={mintSuccessRef} />
     </>
   );
 }
