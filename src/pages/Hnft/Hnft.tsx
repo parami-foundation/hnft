@@ -1,4 +1,7 @@
 import React, { useState, useRef } from 'react';
+import { isMobile } from 'react-device-detect';
+import cs from 'classnames';
+import { Button } from 'antd'
 import { BillboardNftImage } from '../../components/BillboardNftImage';
 import { CreateHnftModal } from '../../components/CreateHnftModal';
 import { useAD3Balance, HNFT, useHNFT } from '../../hooks';
@@ -31,7 +34,10 @@ export function Hnft(props: HnftProps) {
             upgrade
             nftOption={config}
             style={{ flexDirection: 'column', padding: 0 }}
-            className={`billboard-nft-${hnft?.rank}`}
+            className={cs(
+              `billboard-nft-${hnft?.rank}`,
+              isMobile && 'mobile-billboard-nft-image'
+            )}
             description={`Upgrade to ${
               BillboardLevel2Name[Number(config?.level) + 1]
             } to unlock more features`}
@@ -53,6 +59,11 @@ export function Hnft(props: HnftProps) {
             <div className='token-price'>{blance}</div>
           </div>
         </div>
+        {isMobile && (
+          <div className='issue-my-first-token token'>
+            <Button>Issue my first token</Button>
+          </div>
+        )}
       </div>
       {visible && (
         <CreateHnftModal

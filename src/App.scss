@@ -4,6 +4,7 @@
 
 .app {
   height: 100%;
+
   .ant-layout {
     background: #fff;
     height: 100%;
@@ -35,21 +36,39 @@
     font-size: 16px;
     border: none;
     -webkit-box-shadow: 0 4px 14px 0 rgb(255 91 0 / 39%);
-    box-shadow: 0 4px 14px 0 rgba(255,91,0,.39);
-  
+    box-shadow: 0 4px 14px 0 rgba(255, 91, 0, .39);
+
     &:hover {
       background: $parami-red-hover;
     }
   }
-  
+
   .ant-card {
     border-radius: 16px !important;
     -webkit-box-shadow: 0 25px 50px -12px rgb(0 0 0 / 25%);
     box-shadow: 0 25px 50px -12px rgb(0 0 0 / 25%);
     margin: 40px 0;
   }
+
+  .mobile-footer {
+    background: #10121A;
+    border: 0.6px solid #1C1E25;
+    border-radius: 10px;
+    padding: 16px 80px;
+    font-size: 15px;
+    color: white;
+  }
 }
 
 #root {
   height: 100%;
+}
+
+@media only screen and (max-width: 991px) {
+  .app {
+    .footer {
+      padding: 20px !important;
+      border-top: 1px solid #E2E2E2;;
+    }
+  }
 }
