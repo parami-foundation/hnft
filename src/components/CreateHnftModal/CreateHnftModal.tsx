@@ -17,10 +17,11 @@ import {
   AD3ContractAddress,
   HNFT_CONFIG,
   BillboardLevel2Name,
+  AuctionContractAddress,
 } from '../../models/hnft';
-import EIP5489ForInfluenceMining from '../../EIP5489ForInfluenceMining.json';
+import EIP5489ForInfluenceMining from '../../contracts/EIP5489ForInfluenceMining.json';
+import AD3Contract from '../../contracts/AD3.json';
 import { IPFS_ENDPOINT, IPFS_UPLOAD } from '../../models/wnft';
-import AD3Contract from '../../AD3.json';
 import { BillboardNftImage } from '../../components/BillboardNftImage';
 import './CreateHnftModal.scss';
 import { useAD3Balance, useCustomMetaMask, useHNFT } from '../../hooks';
@@ -137,7 +138,13 @@ export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
               });
             } else {
               await mintHnftFromImage(selectedLevel).then((res: any) => {
-                res && onMintSuccess();
+                if (res) {
+                  hnftContract.authorizeSlotTo(
+                    hnft?.tokenId,
+                    AuctionContractAddress
+                  );
+                  onMintSuccess()
+                }
               });
             }
           }

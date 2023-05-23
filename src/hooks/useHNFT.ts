@@ -3,7 +3,7 @@ import { ethers, BigNumber } from 'ethers';
 import { BillboardLevel2Name } from '../models/hnft';
 import { useCustomMetaMask } from './useCustomMetaMask';
 import { EIP5489ForInfluenceMiningContractAddress } from '../models/hnft';
-import EIP5489ForInfluenceMining from '../EIP5489ForInfluenceMining.json';
+import EIP5489ForInfluenceMining from '../contracts/EIP5489ForInfluenceMining.json';
 import { amountToFloatString } from '../../src/utils/format.util';
 
 export interface HNFT {

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ethers, BigNumber } from 'ethers';
 import { useCustomMetaMask } from './useCustomMetaMask';
 import { HNFTGovernanceContractAddress } from '../models/hnft';
-import HNFTGovernance from '../HNFTGovernance.json';
+import HNFTGovernance from '../contracts/HNFTGovernance.json';
 import { HNFT } from './useHNFT';
 
 export const useHNFTGovernance = (hnft: HNFT) => {

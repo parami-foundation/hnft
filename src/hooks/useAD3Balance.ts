@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { useCustomMetaMask } from './useCustomMetaMask';
 import { AD3ContractAddress } from '../models/hnft';
-import AD3Contract from '../AD3.json';
+import AD3Contract from '../contracts/AD3.json';
 import { formatAd3Amount } from '../utils/format.util';
 
 export const useAD3Balance = () => {
