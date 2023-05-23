@@ -104,7 +104,7 @@ export function MintHNFT({}: MintHNFTProps) {
             style={{ width: '120px' }}
             preview={false}
           ></Image>
-          <div className='tips'>You do not have any HNFTs</div>
+          <div className='tips'>You don't have any Hnft</div>
           {buttons}
         </div>
       )}

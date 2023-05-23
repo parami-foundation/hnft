@@ -1,4 +1,4 @@
-import { Layout, Button } from 'antd';
+import { Layout } from 'antd';
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
