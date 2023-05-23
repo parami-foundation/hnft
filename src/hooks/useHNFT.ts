@@ -21,13 +21,13 @@ export interface HNFT {
 }
 
 export const useHNFT = () => {
-  const { account, ethereum } = useCustomMetaMask();
+  const { account, ethereum, chainId } = useCustomMetaMask();
   const [hnft, setHNFT] = useState<HNFT | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchHnft = async () => {
-      if (ethereum) {
+      if (ethereum && chainId === 5) {
         try {
           const hnftContract = new ethers.Contract(
             EIP5489ForInfluenceMiningContractAddress,
@@ -66,7 +66,7 @@ export const useHNFT = () => {
     };
 
     fetchHnft();
-  }, [account, ethereum]);
+  }, [account, ethereum, chainId]);
 
   return {
     hnft,

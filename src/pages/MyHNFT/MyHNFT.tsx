@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Spin, Button, notification } from 'antd';
+import { useMetaMask } from 'metamask-react';
 import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
 import { Hnft } from '../Hnft';
 import { useHNFT } from '../../hooks';
@@ -9,13 +10,16 @@ import './MyHNFT.scss';
 export function MyHNFT() {
   const { status, connect, chainId } = useCustomMetaMask();
   const { hnft, loading } = useHNFT();
+  const metamask = useMetaMask();
 
   useEffect(() => {
     if (status === 'connected' && chainId !== 5) {
       notification.info({
-        message: ' Unsupported network',
+        message: 'Unsupported network',
         description: 'Please switch to the test network goerli',
       });
+
+      metamask.switchChain('0x5');
     }
   }, [chainId, status]);
 
