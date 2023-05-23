@@ -3,11 +3,11 @@ import { ethers } from 'ethers';
 import { useCustomMetaMask } from './useCustomMetaMask';
 import { AD3ContractAddress } from '../models/hnft';
 import AD3Contract from '../contracts/AD3.json';
-import { formatAd3Amount } from '../utils/format.util';
+import { amountToFloatString } from '../utils/format.util';
 
 export const useAD3Balance = () => {
   const { account, ethereum } = useCustomMetaMask();
-  const [balance, setBlance] = useState<number>();
+  const [balance, setBlance] = useState<string>();
 
   useEffect(() => {
     const fetchAD3Balance = async () => {
@@ -20,7 +20,7 @@ export const useAD3Balance = () => {
           );
           const balance = await hnftContract.balanceOf(account);
 
-          setBlance(formatAd3Amount(balance));
+          setBlance(amountToFloatString(balance));
         } catch (error) {
           console.error('Fetch new HNFT Error', error);
         }
@@ -30,5 +30,5 @@ export const useAD3Balance = () => {
     fetchAD3Balance();
   }, [account, ethereum]);
 
-  return balance ?? 0;
+  return Number(balance ?? 0);
 };

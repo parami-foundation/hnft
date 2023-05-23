@@ -6,11 +6,7 @@ export const formatAd3Amount = (amount: string) => {
     decimals: 18,
   });
   const [price, unit] = amountWithUnit.split(' ');
-  // return `${parseFloat(price).toFixed(2)}${unit ? ` ${unit}` : ''}`;
-  if (unit) {
-    return Number(parseFloat(price).toFixed(2)) * 1000
-  }
-  return Number(parseFloat(price).toFixed(2));
+  return `${parseFloat(price).toFixed(2)}${unit ? ` ${unit}` : ''}`;
 };
 
 export function inputFloatStringToAmount(

@@ -25,7 +25,7 @@ import { IPFS_ENDPOINT, IPFS_UPLOAD } from '../../models/wnft';
 import { BillboardNftImage } from '../../components/BillboardNftImage';
 import './CreateHnftModal.scss';
 import { useAD3Balance, useCustomMetaMask, useHNFT } from '../../hooks';
-import { formatAd3Amount } from '../../utils/format.util';
+import { amountToFloatString } from '../../utils/format.util';
 
 const { Dragger } = Upload;
 
@@ -76,7 +76,7 @@ export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
       const currentHnftPrice = Number(hnft?.price ?? 0);
       const upgradeHnftPrice = await hnftContract.level2Price(selectedLevel);
       const differencePrice =
-        Number(formatAd3Amount(upgradeHnftPrice)) - currentHnftPrice;
+        Number(amountToFloatString(upgradeHnftPrice)) - currentHnftPrice;
 
       if (blance >= differencePrice) {
         try {
