@@ -9,6 +9,7 @@ import {
 import React, { useCallback, useEffect, useState } from 'react';
 import type { RcFile, UploadProps } from 'antd/es/upload/interface';
 import { CloudUploadOutlined } from '@ant-design/icons';
+import { isMobile } from 'react-device-detect';
 import { ethers } from 'ethers';
 import ImgCrop from 'antd-img-crop';
 import cs from 'classnames';
@@ -23,6 +24,7 @@ import EIP5489ForInfluenceMining from '../../contracts/EIP5489ForInfluenceMining
 import AD3Contract from '../../contracts/AD3.json';
 import { IPFS_ENDPOINT, IPFS_UPLOAD } from '../../models/wnft';
 import { BillboardNftImage } from '../../components/BillboardNftImage';
+import MobileDrawer from '../MobileDrawer/MobileDrawer';
 import './CreateHnftModal.scss';
 import { useAD3Balance, useCustomMetaMask, useHNFT } from '../../hooks';
 import { amountToFloatString } from '../../utils/format.util';
@@ -143,7 +145,7 @@ export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
                     hnft?.tokenId,
                     AuctionContractAddress
                   );
-                  onMintSuccess()
+                  onMintSuccess();
                 }
               });
             }
@@ -206,22 +208,12 @@ export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
     setselectedLevel(rank);
   };
 
-  return (
+  const renderCreateHNFT = () => (
     <>
-      <Modal
-        title={`${upgrade ? 'Upgrade' : 'Mint'} my hNFT`}
-        centered
-        open
-        onCancel={onCancel}
-        width={1117}
-        closable={false}
-        wrapClassName='mint-my-hnft'
-        footer={null}
-      >
-        {!imageUrl && !upgrade && (
-          <ImgCrop quality={1} modalTitle='Edit image'>
-            <Dragger {...props} className='upload-dragger'>
-              {/* {imageUrl && (
+      {!imageUrl && !upgrade && (
+        <ImgCrop quality={1} modalTitle='Edit image'>
+          <Dragger {...props} className='upload-dragger'>
+            {/* {imageUrl && (
               <AntdImage
                 width={200}
                 preview={false}
@@ -229,73 +221,102 @@ export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
                 referrerPolicy='no-referrer'
               ></AntdImage>
             )} */}
-              <>
-                <p className='ant-upload-drag-icon'>
-                  <CloudUploadOutlined className='upload-icon' />
-                </p>
-                <p className='ant-upload-text'>Upload Image to Create HNFT</p>
-                <p className='ant-upload-hint'>
-                  Click or drag file to this area to upload
-                </p>
-              </>
-            </Dragger>
-          </ImgCrop>
-        )}
+            <>
+              <p className='ant-upload-drag-icon'>
+                <CloudUploadOutlined className='upload-icon' />
+              </p>
+              <p className='ant-upload-text'>Upload Image to Create HNFT</p>
+              <p className='ant-upload-hint'>
+                Click or drag file to this area to upload
+              </p>
+            </>
+          </Dragger>
+        </ImgCrop>
+      )}
 
-        {(imageUrl || upgrade) && (
-          <div className='create-nfts'>
-            <div className='nfts-container'>
-              {HNFT_CONFIG.map((nftOption, index) => {
-                return (
-                  <div
-                    key={index}
-                    style={{ minWidth: '50%' }}
-                    onClick={() => handleSelectedLevel(nftOption.level)}
-                    className={cs(
-                      'nfts-items',
-                      upgrade &&
-                        Number(hnft?.level) >= nftOption.level &&
-                        'disabled',
-                      selectedLevel === nftOption.level && 'selected'
-                    )}
-                  >
-                    <BillboardNftImage
-                      imageUrl={imageUrl}
-                      nftOption={nftOption}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-            <div className='nfts-footer'>
-              <div className='trading-detail'>
-                <div className='gas-fee'>
-                  <span>Gas Fee</span>
-                  <span>0.0002eth</span>
-                </div>
-                <div className='blance'>
-                  <span>Balance</span>
-                  <span>{blance}</span>
-                </div>
-              </div>
-              <div className='nfts-buttons'>
-                <Button key='back' onClick={onCancel}>
-                  Cancel
-                </Button>
-                <Button
-                  key='submit'
-                  type='primary'
-                  disabled={selectedLevel === undefined}
-                  loading={createHnftLoading}
-                  onClick={() => createHnft(imageUrl!)}
+      {(imageUrl || upgrade) && (
+        <div className='create-nfts'>
+          <div className='nfts-container'>
+            {HNFT_CONFIG.map((nftOption, index) => {
+              return (
+                <div
+                  key={index}
+                  style={{ minWidth: '50%' }}
+                  onClick={() => handleSelectedLevel(nftOption.level)}
+                  className={cs(
+                    'nfts-items',
+                    upgrade &&
+                      Number(hnft?.level) >= nftOption.level &&
+                      'disabled',
+                    selectedLevel === nftOption.level && 'selected'
+                  )}
                 >
-                  {upgrade ? 'Upgrade' : 'Create'}
-                </Button>
+                  <BillboardNftImage
+                    imageUrl={imageUrl}
+                    nftOption={nftOption}
+                    className={isMobile ? 'nft-image-container-mobile-create' : ''}
+                  />
+                </div>
+              );
+            })}
+          </div>
+          <div className='nfts-footer'>
+            <div className='trading-detail'>
+              <div className='gas-fee'>
+                <span>Gas Fee</span>
+                <span>0.0002eth</span>
               </div>
+              <div className='blance'>
+                <span>Balance</span>
+                <span>{blance}</span>
+              </div>
+            </div>
+            <div className='nfts-buttons'>
+              <Button key='back' onClick={onCancel}>
+                Cancel
+              </Button>
+              <Button
+                key='submit'
+                type='primary'
+                disabled={selectedLevel === undefined}
+                loading={createHnftLoading}
+                onClick={() => createHnft(imageUrl!)}
+              >
+                {upgrade ? 'Upgrade' : 'Create'}
+              </Button>
             </div>
           </div>
-        )}
-      </Modal>
+        </div>
+      )}
+    </>
+  );
+
+  return (
+    <>
+      {isMobile && (
+        <>
+          <MobileDrawer onClose={onCancel} closable={true}>
+            {renderCreateHNFT()}
+          </MobileDrawer>
+        </>
+      )}
+
+      {!isMobile && (
+        <>
+          <Modal
+            title={`${upgrade ? 'Upgrade' : 'Mint'} my hNFT`}
+            centered
+            open
+            onCancel={onCancel}
+            width={1117}
+            closable={false}
+            wrapClassName='mint-my-hnft'
+            footer={null}
+          >
+            {renderCreateHNFT()}
+          </Modal>
+        </>
+      )}
     </>
   );
 }

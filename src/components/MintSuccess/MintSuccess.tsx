@@ -1,11 +1,13 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import { Button, Modal } from 'antd';
-import type { FC } from 'react'
+import type { FC } from 'react';
+import { isMobile } from 'react-device-detect';
 import { BillboardNftImage } from '../BillboardNftImage';
+import MobileDrawer from '../MobileDrawer/MobileDrawer';
 import { useHNFT } from '../../hooks';
 import './MintSuccess.scss';
 
-const MintSuccess: FC<{ref: any }> = forwardRef((props, ref) => {
+const MintSuccess: FC<{ ref: any }> = forwardRef((props, ref) => {
   const { hnft } = useHNFT();
   const [visible, setVisible] = useState(false);
 
@@ -21,35 +23,48 @@ const MintSuccess: FC<{ref: any }> = forwardRef((props, ref) => {
     onCreateSuccess,
   }));
 
+  const renderMintSuccess = () => (
+    <div className='mint-success-container'>
+      <div className='success-info'>
+        <div style={{ position: 'absolute' }}>
+          <img src='./images/mint_background.png' alt='' />
+        </div>
+        <div className='title'>you're done</div>
+        <BillboardNftImage
+          nftOption={hnft}
+          className='mint-success-hnft'
+          style={{ flexDirection: 'column', padding: 0 }}
+        />
+      </div>
+      <div className='view-assets' onClick={onViewAssets}>
+        <Button>view assets</Button>
+      </div>
+    </div>
+  );
+
   return (
     <>
-      <Modal
-        centered
-        width={596}
-        closable={false}
-        wrapClassName='mint-success'
-        footer={null}
-        open={visible}
-      >
-        <div className='mint-success-container'>
-          <div className='success-info'>
-            <div style={{ position: 'absolute' }}>
-              <img src='./images/mint_background.png' alt='' />
-            </div>
-            <div className='title'>you're done</div>
-            <BillboardNftImage
-              nftOption={hnft}
-              className='mint-success-hnft'
-              style={{ flexDirection: 'column', padding: 0 }}
-            />
-          </div>
-          <div className='view-assets' onClick={onViewAssets}>
-            <Button>view assets</Button>
-          </div>
-        </div>
-      </Modal>
+      {isMobile && (
+        <>
+          <MobileDrawer closable={true} open={visible}>
+            {renderMintSuccess()}
+          </MobileDrawer>
+        </>
+      )}
+      {!isMobile && (
+        <Modal
+          centered
+          width={596}
+          closable={false}
+          wrapClassName='mint-success'
+          footer={null}
+          open={visible}
+        >
+          {renderMintSuccess()}
+        </Modal>
+      )}
     </>
   );
 });
 
-export default MintSuccess
+export default MintSuccess;

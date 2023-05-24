@@ -58,10 +58,10 @@ export function MintHNFT({}: MintHNFTProps) {
     }
   };
 
-   const onCreateSuccess = () => {
-     setVisible(false);
-     mintSuccessRef?.current?.onCreateSuccess();
-   };
+  const onCreateSuccess = () => {
+    setVisible(false);
+    mintSuccessRef?.current?.onCreateSuccess();
+  };
 
   const buttons = (
     <div className='buttons'>

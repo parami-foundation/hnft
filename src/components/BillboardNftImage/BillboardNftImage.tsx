@@ -25,7 +25,13 @@ export function BillboardNftImage({
 }: BillboardNftImageProps) {
   return (
     <>
-      <div className={cs('nft-image-container', className)} style={style}>
+      <div
+        className={cs(
+          'nft-image-container',
+          className,
+        )}
+        style={style}
+      >
         <div className='svg-container'>
           <img
             className='nft-image'

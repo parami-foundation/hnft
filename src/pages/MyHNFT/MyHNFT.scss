@@ -45,5 +45,16 @@
 @media only screen and (max-width: 991px) {
   .my-nfts {
     padding: 24px;
+
+    .connect-wallet {
+      font-size: 18px;
+
+      button {
+        width: 100%;
+        height: 48px;
+        font-size: 18px;
+        margin-top: 40px;
+      }
+    }
   }
 }
