@@ -10,8 +10,8 @@ export interface TwitterUser {
 
 export const requestTwitterOauthUrl = async () => {
   try {
-    const resp = await fetch(`${PARAMI_AIRDROP}/request_oauth_token?callbackUrl=${window.origin}`);
-    const { oauthUrl } = await resp.json();
+    const resp = await fetch(`${PARAMI_AIRDROP}/twitter/api/oauth_url?callbackUrl=${window.origin}`);
+    const oauthUrl = await resp.json();
     return oauthUrl;
   } catch (error) {
     console.log('request twitter oauth url error', error);
@@ -25,7 +25,7 @@ export const fetchTwitterUser = async (oauth_token: string, oauth_verifier: stri
     oauth_verifier
   });
 
-  const resp = await fetch(`${PARAMI_AIRDROP}/twitter/user/info`, {
+  const resp = await fetch(`${PARAMI_AIRDROP}/twitter/api/user/info`, {
     method: 'post',
     headers: {
       'Content-Type': 'application/json'
