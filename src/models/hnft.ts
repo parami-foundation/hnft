@@ -58,11 +58,11 @@ export const HNFT_CONFIG = [
 ];
 
 export const NETWORK_CONFIG = [
-  { id: 'ERC-20', value: 'ERC-20', icon: 'erc.svg' },
-  { id: 'ARB-one', value: 'ARB-one', icon: 'arb.svg' },
-  { id: 'Optimism', value: 'Optimism', icon: 'optimism.svg' },
-  { id: 'BEP-20', value: 'BEP-20', icon: 'bep.svg' },
-  { id: 'Solana', value: 'Solana', icon: 'solana.svg' },
+  { id: 'ethereum', value: 'Ethereum', icon: 'ethereum.svg' },
+  { id: 'arbitrum', value: 'Arbitrum', icon: 'arbitrum.svg' },
+  { id: 'optimism', value: 'Optimism', icon: 'optimism.svg' },
+  { id: 'bsc', value: 'BSC', icon: 'bsc.svg' },
+  { id: 'solana', value: 'Solana', icon: 'solana.svg' },
 ];
 
 export enum MINT_NFT_TYPE {

@@ -24,6 +24,7 @@ export const useHNFT = () => {
   const { account, ethereum, chainId } = useCustomMetaMask();
   const [hnft, setHNFT] = useState<HNFT | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [onWhitelist, setOnWhitelist] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchHnft = async () => {
@@ -35,6 +36,8 @@ export const useHNFT = () => {
             new ethers.providers.Web3Provider(ethereum).getSigner()
           );
           const balance = await hnftContract.balanceOf(account);
+          const whitelistStatus = await hnftContract.kolWhiteList(account);
+          setOnWhitelist(whitelistStatus);
 
           if (balance?.toNumber() > 0) {
             const tokenId = await hnftContract.tokenOfOwnerByIndex(account, 0);
@@ -58,7 +61,6 @@ export const useHNFT = () => {
           }
           setLoading(false);
         } catch (error) {
-          setHNFT(null);
           setLoading(false);
           console.error('Fetch new HNFT Error', error);
         }
@@ -71,5 +73,6 @@ export const useHNFT = () => {
   return {
     hnft,
     loading,
+    onWhitelist,
   };
 };

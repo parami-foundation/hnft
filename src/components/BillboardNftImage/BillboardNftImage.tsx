@@ -2,6 +2,8 @@ import React, { CSSProperties } from 'react';
 import { ArrowRightOutlined } from '@ant-design/icons';
 import cs from 'classnames';
 import './BillboardNftImage.scss';
+import { useHNFT } from '../../hooks';
+import { isMobile } from 'react-device-detect';
 
 export interface BillboardNftImageProps {
   imageUrl?: string;
@@ -23,15 +25,55 @@ export function BillboardNftImage({
   className,
   onUpgrade,
 }: BillboardNftImageProps) {
+  const { onWhitelist } = useHNFT();
+
+  const renderPrice = () => {
+    if (nftOption.price === '0') return <>Free</>;
+    
+    if (onWhitelist && nftOption?.rank === 'Rare') {
+      return (
+        <>
+          Free
+          {!isMobile && (
+            <>
+              {nftOption?.rank === 'Rare' && (
+                <div className='nft-special-badge'>
+                  {onWhitelist
+                    ? 'You are a whitelisted user'
+                    : 'Whitelisting is free'}
+                </div>
+              )}
+            </>
+          )}
+        </>
+      );
+    }
+
+    return (
+      <>
+        <img src='/nfts/triangle.svg' alt='' />
+        <span>{nftOption?.price}</span>
+        {!isMobile && (
+          <>
+            {nftOption?.rank === 'Rare' && (
+              <div className='nft-special-badge'>
+                {onWhitelist
+                  ? 'You are a whitelisted user'
+                  : 'Whitelisting is free'}
+              </div>
+            )}
+            {nftOption?.rank === 'Legendary' && (
+              <div className='nft-special-badge'>already superlativ</div>
+            )}
+          </>
+        )}
+      </>
+    );
+  };
+
   return (
     <>
-      <div
-        className={cs(
-          'nft-image-container',
-          className,
-        )}
-        style={style}
-      >
+      <div className={cs('nft-image-container', className)} style={style}>
         <div className='svg-container'>
           <img
             className='nft-image'
@@ -53,15 +95,26 @@ export function BillboardNftImage({
               </div>
             )}
           </div>
-          <div className='price'>
-            {nftOption?.price === '0' && <>Free</>}
-            {nftOption?.price !== '0' && (
-              <>
-                <img src='/nfts/triangle.svg' alt='' />
-                <span>{nftOption?.price}</span>
-              </>
-            )}
-          </div>
+
+          {isMobile && (
+            <>
+              {nftOption?.rank === 'Rare' && (
+                <span className='nft-special-badge-mobile'>
+                  {onWhitelist
+                    ? 'You are a whitelisted user'
+                    : 'Whitelisting is free'}
+                </span>
+              )}
+
+              {nftOption?.rank === 'Legendary' && (
+                <span className='nft-special-badge-mobile'>
+                  already superlative
+                </span>
+              )}
+            </>
+          )}
+
+          <div className='price'>{renderPrice()}</div>
           <span className='description'>
             {description || nftOption?.description}
           </span>

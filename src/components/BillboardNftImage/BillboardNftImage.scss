@@ -6,7 +6,7 @@
   position: relative;
   display: flex;
   justify-content: center;
-  padding: 20px;
+  padding: 20px 16px;
 
   .svg-container {
     border-radius: 22px;
@@ -42,7 +42,7 @@
 
     .description {
       display: inline-block;
-      max-width: 200px;
+      max-width: 230px;
       color: #10121A;
       opacity: 0.4;
       font-weight: normal;
@@ -83,6 +83,26 @@
 
       >span {
         margin-left: 12px;
+      }
+    }
+
+    .nft-special-badge {
+      font-size: 10px;
+      font-family: 'Gilroy';
+      padding: 4px 8px;
+      color: white;
+      background: rgba(236, 103, 43, 1);
+      border-radius: 30px;
+      margin-left: 4px;
+      font-weight: 500;
+
+      &-mobile {
+        font-weight: 500;
+        background: rgba(236, 103, 43, 1);
+        border-radius: 30px;
+        padding: 4px 6px;
+        color: white;
+        font-size: 10px;
       }
     }
   }

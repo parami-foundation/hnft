@@ -47,7 +47,7 @@ export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
   const [imageUrl, setimageUrl] = useState<string>();
   const [selectedLevel, setselectedLevel] = useState<HNFT_RANK>();
   const blance = useAD3Balance();
-  const { hnft } = useHNFT();
+  const { hnft, onWhitelist } = useHNFT();
 
   useEffect(() => {
     if (hnft) {
@@ -105,7 +105,7 @@ export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
   const mintHnftFromImage = async (selectedLevel: HNFT_RANK) => {
     // free mint
     if (hnftContract) {
-      if (selectedLevel === 0) {
+      if (selectedLevel === 0 || (selectedLevel === 1 && onWhitelist)) {
         const resp = await hnftContract.mint(imageUrl, selectedLevel);
         await resp.wait();
         return resp;
@@ -254,7 +254,9 @@ export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
                   <BillboardNftImage
                     imageUrl={imageUrl}
                     nftOption={nftOption}
-                    className={isMobile ? 'nft-image-container-mobile-create' : ''}
+                    className={
+                      isMobile ? 'nft-image-container-mobile-create' : ''
+                    }
                   />
                 </div>
               );

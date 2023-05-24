@@ -53,7 +53,7 @@ export function Hnft(props: HnftProps) {
               </div>
               <div>
                 <div>$ AD3</div>
-                <div className='token-type'>Ethrteum</div>
+                <div className='token-type'>Ethereum</div>
               </div>
             </div>
             <div className='token-price'>{blance}</div>
