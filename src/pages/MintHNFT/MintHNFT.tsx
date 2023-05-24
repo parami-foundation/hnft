@@ -1,5 +1,5 @@
 import { Button, Card, Image, message } from 'antd';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
 import { useHNFT, useCustomMetaMask } from '../../hooks';
@@ -7,32 +7,35 @@ import { CreateHnftModal } from '../../components/CreateHnftModal';
 import MintSuccess from '../../components/MintSuccess/MintSuccess';
 import { NETWORK_CONFIG, MINT_NFT_TYPE } from '../../models/hnft';
 import './MintHNFT.scss';
+import { useSearchParams } from 'react-router-dom';
+import { fetchTwitterUser, requestTwitterOauthUrl, TwitterUser } from '../../services/twitter.service';
 
-export const getTwitterOauthUrl = async (tag: string | undefined | null) => {
-  try {
-    const resp = await fetch(
-      `https://staging.parami.io/airdrop/influencemining/api/twitter/login?state=${
-        tag ? `tag_${tag}` : 'gptminer_login'
-      }`
-    );
-    const { oauthUrl } = await resp.json();
-    return oauthUrl;
-  } catch (e) {
-    console.log('request_oauth_token error', e);
-    return;
-  }
-};
+export interface MintHNFTProps { }
 
-export interface MintHNFTProps {}
-
-export function MintHNFT({}: MintHNFTProps) {
+export function MintHNFT({ }: MintHNFTProps) {
   const [visible, setVisible] = useState<boolean>(false);
   const { hnft } = useHNFT();
   const { status } = useCustomMetaMask();
   const mintSuccessRef = useRef<HTMLDivElement>() as any;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [twitterUser, setTwitterUser] = useState<TwitterUser | null>();
+
+  useEffect(() => {
+    if (searchParams) {
+      const oauth_token = searchParams.get('oauth_token');
+      const oauth_verifier = searchParams.get('oauth_verifier')
+      
+      if (oauth_token && oauth_verifier) {
+        fetchTwitterUser(oauth_token, oauth_verifier).then(twitterUser => {
+          setTwitterUser(twitterUser);
+          setSearchParams({});
+        })
+      }
+    }
+  }, [searchParams]);
 
   const handleConnectTwitter = async () => {
-    const oauthUrl = await getTwitterOauthUrl(null);
+    const oauthUrl = await requestTwitterOauthUrl();
     if (oauthUrl) {
       if (isMobile) {
         window.location.href = `${oauthUrl}`;
