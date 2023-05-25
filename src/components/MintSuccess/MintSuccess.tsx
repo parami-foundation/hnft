@@ -2,6 +2,7 @@ import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import { Button, Modal } from 'antd';
 import type { FC } from 'react';
 import { isMobile } from 'react-device-detect';
+import { useNavigate } from 'react-router-dom';
 import { BillboardNftImage } from '../BillboardNftImage';
 import MobileDrawer from '../MobileDrawer/MobileDrawer';
 import { useHNFT } from '../../hooks';
@@ -10,6 +11,7 @@ import './MintSuccess.scss';
 const MintSuccess: FC<{ ref: any }> = forwardRef((props, ref) => {
   const { hnft } = useHNFT();
   const [visible, setVisible] = useState(false);
+  const navigate = useNavigate();
 
   const onCreateSuccess = () => {
     setVisible(true);
@@ -37,7 +39,7 @@ const MintSuccess: FC<{ ref: any }> = forwardRef((props, ref) => {
         />
       </div>
       <div className='view-assets' onClick={onViewAssets}>
-        <Button>view assets</Button>
+        <Button onClick={() => navigate('/issue')}>authorization</Button>
       </div>
     </div>
   );
