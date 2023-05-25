@@ -202,6 +202,11 @@ export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
   };
 
   const handleSelectedLevel = (rank: HNFT_RANK) => {
+    if (Number(rank) > 1) {
+      message.info('coming soon')
+      return
+    }
+    
     if (upgrade && Number(hnft?.level) >= Number(rank)) {
       return;
     }
@@ -248,7 +253,8 @@ export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
                     upgrade &&
                       Number(hnft?.level) >= nftOption.level &&
                       'disabled',
-                    selectedLevel === nftOption.level && 'selected'
+                    selectedLevel === nftOption.level && 'selected',
+                    nftOption?.rank
                   )}
                 >
                   <BillboardNftImage
@@ -263,7 +269,7 @@ export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
             })}
           </div>
           <div className='nfts-footer'>
-            <div className='trading-detail'>
+            {/* <div className='trading-detail'>
               <div className='gas-fee'>
                 <span>Gas Fee</span>
                 <span>0.0002eth</span>
@@ -272,7 +278,7 @@ export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
                 <span>Balance</span>
                 <span>{blance}</span>
               </div>
-            </div>
+            </div> */}
             <div className='nfts-buttons'>
               <Button key='back' onClick={onCancel}>
                 Cancel

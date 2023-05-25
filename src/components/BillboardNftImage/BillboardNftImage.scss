@@ -6,7 +6,7 @@
   position: relative;
   display: flex;
   justify-content: center;
-  padding: 20px 16px;
+  padding: 12px 12px 18px 12px;
 
   .svg-container {
     border-radius: 22px;
@@ -42,7 +42,7 @@
 
     .description {
       display: inline-block;
-      max-width: 230px;
+      max-width: 224px;
       color: #10121A;
       opacity: 0.4;
       font-weight: normal;

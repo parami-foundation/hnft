@@ -29,7 +29,7 @@ export function BillboardNftImage({
 
   const renderPrice = () => {
     if (nftOption.price === '0') return <>Free</>;
-    
+
     if (onWhitelist && nftOption?.rank === 'Rare') {
       return (
         <>
@@ -62,7 +62,7 @@ export function BillboardNftImage({
                   : 'Whitelisting is free'}
               </div>
             )}
-            {nftOption?.rank === 'Legendary' && (
+            {nftOption?.rank === 'Legendary' && upgrade && (
               <div className='nft-special-badge'>already superlativ</div>
             )}
           </>
@@ -106,7 +106,7 @@ export function BillboardNftImage({
                 </span>
               )}
 
-              {nftOption?.rank === 'Legendary' && (
+              {nftOption?.rank === 'Legendary' && upgrade && (
                 <span className='nft-special-badge-mobile'>
                   already superlative
                 </span>

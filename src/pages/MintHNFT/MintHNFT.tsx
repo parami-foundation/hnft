@@ -2,12 +2,12 @@ import { Button, Card, Image, message } from 'antd';
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
+import { useSearchParams } from 'react-router-dom';
 import { useHNFT, useCustomMetaMask } from '../../hooks';
 import { CreateHnftModal } from '../../components/CreateHnftModal';
 import MintSuccess from '../../components/MintSuccess/MintSuccess';
 import { NETWORK_CONFIG, MINT_NFT_TYPE } from '../../models/hnft';
 import './MintHNFT.scss';
-import { useSearchParams } from 'react-router-dom';
 import { fetchTwitterUser, requestTwitterOauthUrl, TwitterUser } from '../../services/twitter.service';
 
 export interface MintHNFTProps { }
