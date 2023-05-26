@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { isMobile } from 'react-device-detect';
 import cs from 'classnames';
-import { Button } from 'antd'
+import { Button } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import { BillboardNftImage } from '../../components/BillboardNftImage';
 import { CreateHnftModal } from '../../components/CreateHnftModal';
 import { useAD3Balance, HNFT, useHNFT } from '../../hooks';
@@ -19,6 +20,7 @@ export function Hnft(props: HnftProps) {
   const mintSuccessRef = useRef<HTMLDivElement>() as any;
   const { hnft } = useHNFT();
   const blance = useAD3Balance();
+  const navigate = useNavigate();
 
   const onCreateSuccess = () => {
     setVisible(false);
@@ -61,7 +63,7 @@ export function Hnft(props: HnftProps) {
         </div>
         {isMobile && (
           <div className='issue-my-first-token token'>
-            <Button>Issue my first token</Button>
+            <Button onClick={() => navigate('/issue')}>Issue my first token</Button>
           </div>
         )}
       </div>

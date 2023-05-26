@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Breadcrumb, Button, Form, Input } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import {
+  fetchTwitterUser,
+  TwitterUser,
+} from '../../services/twitter.service';
 import './IssueToken.scss';
 
 export interface IssueTokenProps {}
@@ -8,6 +12,24 @@ export interface IssueTokenProps {}
 export function IssueToken({}: IssueTokenProps) {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [twitterUser, setTwitterUser] = useState<TwitterUser | null>();
+
+  useEffect(() => {
+    if (searchParams) {
+      const oauth_token = searchParams.get('oauth_token');
+      const oauth_verifier = searchParams.get('oauth_verifier');
+
+      if (oauth_token && oauth_verifier) {
+        fetchTwitterUser(oauth_token, oauth_verifier).then((twitterUser) => {
+          setTwitterUser(twitterUser);
+          setSearchParams({});
+        });
+      }
+    }
+  }, [searchParams]);
+
+  console.log(twitterUser, '---twitterUser---');
   
   return (
     <>
