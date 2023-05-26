@@ -18,17 +18,20 @@ export function MintHNFT({ }: MintHNFTProps) {
   const { status } = useCustomMetaMask();
   const mintSuccessRef = useRef<HTMLDivElement>() as any;
   const [searchParams, setSearchParams] = useSearchParams();
-  const [twitterUser, setTwitterUser] = useState<TwitterUser | null>();
+  const [twitterUser, setTwitterUser] = useState<TwitterUser | null >();
 
   useEffect(() => {
     if (searchParams) {
       const oauth_token = searchParams.get('oauth_token');
-      const oauth_verifier = searchParams.get('oauth_verifier')
+      const oauth_verifier = searchParams.get('oauth_verifier');
       
       if (oauth_token && oauth_verifier) {
         fetchTwitterUser(oauth_token, oauth_verifier).then(twitterUser => {
           setTwitterUser(twitterUser);
           setSearchParams({});
+          setVisible(true);
+          window.localStorage.setItem('name', `${twitterUser?.name}`);
+          window.localStorage.setItem('symbol', `${twitterUser?.username}`);
         })
       }
     }
@@ -113,6 +116,7 @@ export function MintHNFT({ }: MintHNFTProps) {
       )}
       {visible && (
         <CreateHnftModal
+          twitterUser={twitterUser}
           onCreate={onCreateSuccess}
           onCancel={() => setVisible(false)}
         />

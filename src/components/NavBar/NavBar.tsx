@@ -12,14 +12,14 @@ export function NavBar() {
   function createAvatorUri(seed: string): string {
     return createAvatar(style, {
       seed,
-      dataUri: true
+      dataUri: true,
     });
   }
 
   return (
     <Header className='nav-bar'>
-      <div className="logo">
-        <img src="/images/logo-text.svg" />
+      <div className='logo'>
+        <img src='/images/logo-text.svg' alt='' />
       </div>
 
       <div className='user'>
@@ -30,8 +30,19 @@ export function NavBar() {
         {status === 'connecting' && <Button loading>Connecting</Button>}
 
         {status === 'connected' && account && (
-          <Tooltip title={`${account.substring(0, 8)}...${account.substring(account.length - 6)}`} color="#ff5b00" placement="bottomLeft">
-            <Avatar className='avatar' shape="square" size={36} src={createAvatorUri(account)} />
+          <Tooltip
+            title={`${account.substring(0, 8)}...${account.substring(
+              account.length - 6
+            )}`}
+            color='#ff5b00'
+            placement='bottomLeft'
+          >
+            <Avatar
+              className='avatar'
+              shape='square'
+              size={36}
+              src={createAvatorUri(account)}
+            />
           </Tooltip>
         )}
       </div>

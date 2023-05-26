@@ -1,10 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Breadcrumb, Button, Form, Input } from 'antd';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import {
-  fetchTwitterUser,
-  TwitterUser,
-} from '../../services/twitter.service';
+import { useNavigate } from 'react-router-dom';
 import './IssueToken.scss';
 
 export interface IssueTokenProps {}
@@ -12,25 +8,12 @@ export interface IssueTokenProps {}
 export function IssueToken({}: IssueTokenProps) {
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [twitterUser, setTwitterUser] = useState<TwitterUser | null>();
 
-  useEffect(() => {
-    if (searchParams) {
-      const oauth_token = searchParams.get('oauth_token');
-      const oauth_verifier = searchParams.get('oauth_verifier');
+  const onFinish = () => {
+    form.validateFields().then(async (values: any) => {
+    });
+  };
 
-      if (oauth_token && oauth_verifier) {
-        fetchTwitterUser(oauth_token, oauth_verifier).then((twitterUser) => {
-          setTwitterUser(twitterUser);
-          setSearchParams({});
-        });
-      }
-    }
-  }, [searchParams]);
-
-  console.log(twitterUser, '---twitterUser---');
-  
   return (
     <>
       <div className='issue-token'>
@@ -44,27 +27,27 @@ export function IssueToken({}: IssueTokenProps) {
         </div>
         <div className='issue-token-content'>
           <div className='title'>NFT power Details</div>
-          <Form
-            form={form}
-            layout='vertical'
-            // onFinish={onFinish}
-            autoComplete='off'
-            // onValuesChange={handelValuesChanged}
-          >
+          <Form form={form} layout='vertical' autoComplete='off'>
             <Form.Item
               name='name'
               label='NFT power name'
               required
               help='Choose a name for your NFT power.'
+              initialValue={window.localStorage.getItem('name')}
             >
               <Input className='issue-token-input' />
             </Form.Item>
-            <Form.Item name='symbol' label='NFT power symbol' required>
+            <Form.Item
+              name='symbol'
+              label='NFT power symbol'
+              required
+              initialValue={window.localStorage.getItem('symbol')}
+            >
               <Input className='issue-token-input' />
             </Form.Item>
           </Form>
           <div className='issue-token-footer'>
-            <Button>Confirm</Button>
+            <Button onClick={onFinish}>Confirm</Button>
           </div>
         </div>
       </div>

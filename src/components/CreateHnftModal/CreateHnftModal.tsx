@@ -27,7 +27,13 @@ import { BillboardNftImage } from '../../components/BillboardNftImage';
 import MobileDrawer from '../MobileDrawer/MobileDrawer';
 import './CreateHnftModal.scss';
 import { useAD3Balance, useCustomMetaMask, useHNFT } from '../../hooks';
-import { amountToFloatString } from '../../utils/format.util';
+import {
+  amountToFloatString,
+  formatTwitterImageUrl,
+} from '../../utils/format.util';
+import {
+  TwitterUser,
+} from '../../services/twitter.service';
 
 const { Dragger } = Upload;
 
@@ -35,25 +41,33 @@ export interface HnftProps {
   onCancel: () => void;
   onCreate: () => void;
   upgrade?: boolean;
+  twitterUser?: TwitterUser | null
 }
 
 export type HNFT_RANK = keyof typeof BillboardLevel2Name;
 
-export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
+export function CreateHnftModal({
+  onCancel,
+  onCreate,
+  upgrade,
+  twitterUser,
+}: HnftProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const { ethereum } = useCustomMetaMask();
   const [createHnftLoading, setCreateHnftLoading] = useState<boolean>(false);
   const [hnftContract, setHnftContract] = useState<ethers.Contract>();
   const [imageUrl, setimageUrl] = useState<string>();
   const [selectedLevel, setselectedLevel] = useState<HNFT_RANK>();
-  const blance = useAD3Balance();
   const { hnft, onWhitelist } = useHNFT();
+  const blance = useAD3Balance();
 
   useEffect(() => {
-    if (hnft) {
-      setimageUrl(hnft?.image);
+    if (hnft || twitterUser) {
+      setimageUrl(
+        hnft?.image || formatTwitterImageUrl(twitterUser?.profile_image_url)
+      );
     }
-  }, [hnft]);
+  }, [hnft, twitterUser]);
 
   useEffect(() => {
     if (ethereum) {
@@ -203,10 +217,10 @@ export function CreateHnftModal({ onCancel, onCreate, upgrade }: HnftProps) {
 
   const handleSelectedLevel = (rank: HNFT_RANK) => {
     if (Number(rank) > 1) {
-      message.info('coming soon')
-      return
+      message.info('coming soon');
+      return;
     }
-    
+
     if (upgrade && Number(hnft?.level) >= Number(rank)) {
       return;
     }
