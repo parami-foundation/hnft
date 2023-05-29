@@ -49,6 +49,10 @@
     .connect-wallet {
       font-size: 18px;
 
+      > div {
+        text-align: center;
+      }
+
       button {
         width: 100%;
         height: 48px;
