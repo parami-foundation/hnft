@@ -47,7 +47,7 @@ export function Hnft(props: HnftProps) {
           />
         </div>
         <div className='my-token'>
-          <div className='title'>my Token</div>
+          <div className='title'>My Token</div>
           <div className='token'>
             <div className='token-detail'>
               <div className='token-image'>

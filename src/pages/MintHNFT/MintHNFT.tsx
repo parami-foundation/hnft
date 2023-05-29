@@ -56,6 +56,7 @@ export function MintHNFT({ }: MintHNFTProps) {
     }
 
     if (mint === MINT_NFT_TYPE.IMAGE) {
+      setTwitterUser(null);
       setVisible(true);
     }
 
