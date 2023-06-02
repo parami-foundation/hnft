@@ -2,12 +2,16 @@ import './NavBar.scss';
 import { createAvatar } from '@dicebear/avatars';
 import * as style from '@dicebear/avatars-identicon-sprites';
 import { Layout, Button, Avatar, Tooltip } from 'antd';
-import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
+import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { InjectedConnector } from 'wagmi/connectors/injected';
 
 const { Header } = Layout;
 
 export function NavBar() {
-  const { status, connect, account } = useCustomMetaMask();
+  const { address, isConnected, status } = useAccount();
+  const { connect } = useConnect({
+    connector: new InjectedConnector(),
+  });
 
   function createAvatorUri(seed: string): string {
     return createAvatar(style, {
@@ -16,6 +20,8 @@ export function NavBar() {
     });
   }
 
+  console.log(status, '---status---');
+
   return (
     <Header className='nav-bar'>
       <div className='logo'>
@@ -23,16 +29,16 @@ export function NavBar() {
       </div>
 
       <div className='user'>
-        {status === 'notConnected' && (
+        {status === 'disconnected' && (
           <Button onClick={() => connect()}>Connect Wallet</Button>
         )}
 
         {status === 'connecting' && <Button loading>Connecting</Button>}
 
-        {status === 'connected' && account && (
+        {status === 'connected' && address && (
           <Tooltip
-            title={`${account.substring(0, 8)}...${account.substring(
-              account.length - 6
+            title={`${address.substring(0, 8)}...${address.substring(
+              address.length - 6
             )}`}
             color='#ff5b00'
             placement='bottomLeft'
@@ -41,7 +47,7 @@ export function NavBar() {
               className='avatar'
               shape='square'
               size={36}
-              src={createAvatorUri(account)}
+              src={createAvatorUri(address)}
             />
           </Tooltip>
         )}
