@@ -25,12 +25,12 @@ export function BillboardNftImage({
   className,
   onUpgrade,
 }: BillboardNftImageProps) {
-  const { onWhitelist } = useHNFT();
+  const hnft = useHNFT();
 
   const renderPrice = () => {
     if (nftOption.price === '0') return <>Free</>;
 
-    if (onWhitelist && nftOption?.rank === 'Rare') {
+    if (hnft.onWhitelist && nftOption?.rank === 'Rare') {
       return (
         <>
           Free
@@ -38,7 +38,7 @@ export function BillboardNftImage({
             <>
               {nftOption?.rank === 'Rare' && (
                 <div className='nft-special-badge'>
-                  {onWhitelist
+                  {hnft.onWhitelist
                     ? 'You are a whitelisted user'
                     : 'Whitelisting is free'}
                 </div>
@@ -57,7 +57,7 @@ export function BillboardNftImage({
           <>
             {nftOption?.rank === 'Rare' && (
               <div className='nft-special-badge'>
-                {onWhitelist
+                {hnft.onWhitelist
                   ? 'You are a whitelisted user'
                   : 'Whitelisting is free'}
               </div>
@@ -100,7 +100,7 @@ export function BillboardNftImage({
             <>
               {nftOption?.rank === 'Rare' && (
                 <span className='nft-special-badge-mobile'>
-                  {onWhitelist
+                  {hnft.onWhitelist
                     ? 'You are a whitelisted user'
                     : 'Whitelisting is free'}
                 </span>

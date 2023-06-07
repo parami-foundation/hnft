@@ -1,38 +1,43 @@
-import { Button, Card, Image, message } from 'antd';
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
+import { useAccount } from 'wagmi';
 import { useSearchParams } from 'react-router-dom';
-import { useHNFT, useCustomMetaMask } from '../../hooks';
+import { Button, Card, Image, message } from 'antd';
+import { useHNFT } from '../../hooks';
 import { CreateHnftModal } from '../../components/CreateHnftModal';
 import MintSuccess from '../../components/MintSuccess/MintSuccess';
 import { NETWORK_CONFIG, MINT_NFT_TYPE } from '../../models/hnft';
 import './MintHNFT.scss';
-import { fetchTwitterUser, requestTwitterOauthUrl, TwitterUser } from '../../services/twitter.service';
+import {
+  fetchTwitterUser,
+  requestTwitterOauthUrl,
+  TwitterUser,
+} from '../../services/twitter.service';
 
-export interface MintHNFTProps { }
+export interface MintHNFTProps {}
 
-export function MintHNFT({ }: MintHNFTProps) {
+export function MintHNFT({}: MintHNFTProps) {
   const [visible, setVisible] = useState<boolean>(false);
-  const { hnft } = useHNFT();
-  const { status } = useCustomMetaMask();
+  const hnft = useHNFT();
+  const { status } = useAccount();
   const mintSuccessRef = useRef<HTMLDivElement>() as any;
   const [searchParams, setSearchParams] = useSearchParams();
-  const [twitterUser, setTwitterUser] = useState<TwitterUser | null >();
+  const [twitterUser, setTwitterUser] = useState<TwitterUser | null>();
 
   useEffect(() => {
     if (searchParams) {
       const oauth_token = searchParams.get('oauth_token');
       const oauth_verifier = searchParams.get('oauth_verifier');
-      
+
       if (oauth_token && oauth_verifier) {
-        fetchTwitterUser(oauth_token, oauth_verifier).then(twitterUser => {
+        fetchTwitterUser(oauth_token, oauth_verifier).then((twitterUser) => {
           setTwitterUser(twitterUser);
           setSearchParams({});
           setVisible(true);
           window.localStorage.setItem('name', `${twitterUser?.name}`);
           window.localStorage.setItem('symbol', `${twitterUser?.username}`);
-        })
+        });
       }
     }
   }, [searchParams]);

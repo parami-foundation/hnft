@@ -1,26 +1,24 @@
-import './NavBar.scss';
-import { createAvatar } from '@dicebear/avatars';
-import * as style from '@dicebear/avatars-identicon-sprites';
+import { createAvatar } from '@dicebear/core';
+import { lorelei } from '@dicebear/collection';
 import { Layout, Button, Avatar, Tooltip } from 'antd';
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { useAccount, useConnect } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
+import './NavBar.scss';
 
 const { Header } = Layout;
 
 export function NavBar() {
-  const { address, isConnected, status } = useAccount();
-  const { connect } = useConnect({
+  const { address, status } = useAccount();
+  const { connect, connectors } = useConnect({
     connector: new InjectedConnector(),
   });
 
   function createAvatorUri(seed: string): string {
-    return createAvatar(style, {
+    return createAvatar(lorelei, {
       seed,
-      dataUri: true,
-    });
+      // ... other options
+    }).toString();
   }
-
-  console.log(status, '---status---');
 
   return (
     <Header className='nav-bar'>
@@ -30,7 +28,9 @@ export function NavBar() {
 
       <div className='user'>
         {status === 'disconnected' && (
-          <Button onClick={() => connect()}>Connect Wallet</Button>
+          <Button onClick={() => connect({ connector: connectors[0] })}>
+            Connect Wallet
+          </Button>
         )}
 
         {status === 'connecting' && <Button loading>Connecting</Button>}

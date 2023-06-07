@@ -18,7 +18,7 @@ export function Hnft(props: HnftProps) {
   const { config } = props;
   const [visible, setVisible] = useState(false);
   const mintSuccessRef = useRef<HTMLDivElement>() as any;
-  const { hnft } = useHNFT();
+  const hnft = useHNFT();
   const blance = useAD3Balance();
   const navigate = useNavigate();
 

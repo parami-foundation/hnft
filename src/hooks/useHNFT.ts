@@ -1,78 +1,92 @@
-import { useEffect, useState } from 'react';
-import { ethers, BigNumber } from 'ethers';
+import { useAccount, useContractRead } from 'wagmi';
 import { BillboardLevel2Name } from '../models/hnft';
-import { useCustomMetaMask } from './useCustomMetaMask';
 import { EIP5489ForInfluenceMiningContractAddress } from '../models/hnft';
 import EIP5489ForInfluenceMining from '../contracts/EIP5489ForInfluenceMining.json';
-import { amountToFloatString } from '../../src/utils/format.util';
 
 export interface HNFT {
   address?: string;
   balance?: number;
   description?: string;
-  image: string;
+  image?: string;
   name?: string;
   tokenId?: string;
   level?: string;
-  price?: string;
   rank?: string;
   miningPower?: number;
   onWhitelist?: boolean;
+  refetch: () => void;
 }
 
 export const useHNFT = () => {
-  const { account, ethereum, chainId } = useCustomMetaMask();
-  const [hnft, setHNFT] = useState<HNFT | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [onWhitelist, setOnWhitelist] = useState<boolean>(false);
+  const { address } = useAccount();
 
-  useEffect(() => {
-    const fetchHnft = async () => {
-      if (ethereum && chainId === 5) {
-        try {
-          const hnftContract = new ethers.Contract(
-            EIP5489ForInfluenceMiningContractAddress,
-            EIP5489ForInfluenceMining.abi,
-            new ethers.providers.Web3Provider(ethereum).getSigner()
-          );
-          const balance = await hnftContract.balanceOf(account);
-          const whitelistStatus = await hnftContract.kolWhiteList(account);
-          setOnWhitelist(whitelistStatus);
+  const { data: nftBalance, refetch: refetchBalance } = useContractRead<
+    unknown[],
+    string,
+    BigInt
+  >({
+    address: EIP5489ForInfluenceMiningContractAddress,
+    abi: EIP5489ForInfluenceMining.abi,
+    functionName: 'balanceOf',
+    args: [address],
+  });
 
-          if (balance?.toNumber() > 0) {
-            const tokenId = await hnftContract.tokenOfOwnerByIndex(account, 0);
-            const tokenUri = await hnftContract.tokenURI(tokenId);
-            const level = await hnftContract.token2Level(tokenId);
-            const token = JSON.parse(atob(tokenUri.substring(29)));
-            const levelString = BigNumber.from(level).toString();
-            const price = await hnftContract.level2Price(levelString);
+  const { data: tokenId, refetch: refetchTokenId } = useContractRead({
+    address: EIP5489ForInfluenceMiningContractAddress,
+    abi: EIP5489ForInfluenceMining.abi,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 0],
+  });
 
-            const hnftData: HNFT = {
-              ...token,
-              price:
-                amountToFloatString(BigNumber.from(price).toString(), 18) ?? 0,
-              tokenId: tokenId?.toString(),
-              address: EIP5489ForInfluenceMiningContractAddress,
-              balance: balance?.toNumber() ?? 0,
-              level: levelString,
-              rank: BillboardLevel2Name[levelString],
-            };
-            setHNFT(hnftData);
-          }
-          setLoading(false);
-        } catch (error) {
-          setLoading(false);
-          console.error('Fetch new HNFT Error', error);
-        }
-      }
-    };
+  const { data: tokenUri, refetch: refetchTokenUri } = useContractRead<
+    unknown[],
+    string,
+    string
+  >({
+    address: EIP5489ForInfluenceMiningContractAddress,
+    abi: EIP5489ForInfluenceMining.abi,
+    functionName: 'tokenURI',
+    args: [tokenId],
+  });
 
-    fetchHnft();
-  }, [account, ethereum, chainId]);
+  const { data: level, refetch: refetchLevel } = useContractRead<
+    unknown[],
+    string,
+    string
+  >({
+    address: EIP5489ForInfluenceMiningContractAddress,
+    abi: EIP5489ForInfluenceMining.abi,
+    functionName: 'token2Level',
+    args: [tokenId],
+  });
 
-  return {
-    hnft,
-    loading,
-    onWhitelist,
+  const { data: onWhitelist, refetch: refetchWhitelistStatus } =
+    useContractRead({
+      address: EIP5489ForInfluenceMiningContractAddress,
+      abi: EIP5489ForInfluenceMining.abi,
+      functionName: 'kolWhiteList',
+      args: [address],
+    });
+
+  const token = tokenUri ? JSON.parse(atob(tokenUri.substring(29))) : {};
+  const levelString = Number(level?.toString());
+
+  const hnft: HNFT = {
+    ...token,
+    tokenId: tokenId?.toString(),
+    address: EIP5489ForInfluenceMiningContractAddress,
+    balance: nftBalance?.toString() ?? 0,
+    onWhitelist: onWhitelist,
+    level: levelString,
+    rank: BillboardLevel2Name[levelString],
+    refetch: () => {
+      refetchBalance();
+      refetchTokenId();
+      refetchTokenUri();
+      refetchLevel();
+      refetchWhitelistStatus();
+    },
   };
+
+  return hnft;
 };

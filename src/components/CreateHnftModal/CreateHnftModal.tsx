@@ -14,26 +14,27 @@ import { ethers } from 'ethers';
 import ImgCrop from 'antd-img-crop';
 import cs from 'classnames';
 import {
-  EIP5489ForInfluenceMiningContractAddress,
-  AD3ContractAddress,
   HNFT_CONFIG,
   BillboardLevel2Name,
   AuctionContractAddress,
 } from '../../models/hnft';
-import EIP5489ForInfluenceMining from '../../contracts/EIP5489ForInfluenceMining.json';
-import AD3Contract from '../../contracts/AD3.json';
 import { IPFS_ENDPOINT, IPFS_UPLOAD } from '../../models/wnft';
 import { BillboardNftImage } from '../../components/BillboardNftImage';
 import MobileDrawer from '../MobileDrawer/MobileDrawer';
 import './CreateHnftModal.scss';
-import { useAD3Balance, useCustomMetaMask, useHNFT } from '../../hooks';
+import {
+  useAD3Balance,
+  useHNFT,
+  useApproveAD3,
+  useMintBillboard,
+  useUpgradeBillboard,
+  useBillboardPrices,
+} from '../../hooks';
 import {
   amountToFloatString,
   formatTwitterImageUrl,
 } from '../../utils/format.util';
-import {
-  TwitterUser,
-} from '../../services/twitter.service';
+import { TwitterUser } from '../../services/twitter.service';
 
 const { Dragger } = Upload;
 
@@ -41,7 +42,7 @@ export interface HnftProps {
   onCancel: () => void;
   onCreate: () => void;
   upgrade?: boolean;
-  twitterUser?: TwitterUser | null
+  twitterUser?: TwitterUser | null;
 }
 
 export type HNFT_RANK = keyof typeof BillboardLevel2Name;
@@ -53,13 +54,33 @@ export function CreateHnftModal({
   twitterUser,
 }: HnftProps) {
   const [loading, setLoading] = useState<boolean>(false);
-  const { ethereum } = useCustomMetaMask();
   const [createHnftLoading, setCreateHnftLoading] = useState<boolean>(false);
-  const [hnftContract, setHnftContract] = useState<ethers.Contract>();
   const [imageUrl, setimageUrl] = useState<string>();
-  const [selectedLevel, setselectedLevel] = useState<HNFT_RANK>();
-  const { hnft, onWhitelist } = useHNFT();
+  const [price, setPrice] = useState<string>();
+  const [mintLevel, setMintLevel] = useState<number>();
+  const [upgradeToLevel, setUpgradeToLevel] = useState<HNFT_RANK>();
+  const hnft  = useHNFT();
   const blance = useAD3Balance();
+  const prices = useBillboardPrices();
+
+  const {
+    mint,
+    isSuccess: mintSuccess,
+    isLoading: mintLoading,
+    error: mintError,
+  } = useMintBillboard(mintLevel, imageUrl ?? ''); // default image?
+  const {
+    upgradeHnft,
+    isSuccess: upgradeSuccess,
+    isLoading: upgradeLoading,
+    error: upgradeError,
+  } = useUpgradeBillboard(hnft.tokenId, upgradeToLevel);
+  const {
+    approve,
+    isLoading: approveLoading,
+    isSuccess: approveSuccess,
+    error: approveError,
+  } = useApproveAD3(price);
 
   useEffect(() => {
     if (hnft || twitterUser) {
@@ -70,43 +91,86 @@ export function CreateHnftModal({
   }, [hnft, twitterUser]);
 
   useEffect(() => {
-    if (ethereum) {
-      setHnftContract(
-        new ethers.Contract(
-          EIP5489ForInfluenceMiningContractAddress,
-          EIP5489ForInfluenceMining.abi,
-          new ethers.providers.Web3Provider(ethereum).getSigner()
-        )
-      );
+    if (approveError || mintError || upgradeError) {
+      notification.warning({
+        message:
+          approveError?.message || mintError?.message || upgradeError?.message,
+      });
     }
-  }, [ethereum]);
+  }, [approveError, mintError, upgradeError]);
 
-  const approveAD3 = async (selectedLevel: HNFT_RANK) => {
-    if (hnftContract) {
-      const approveContract = new ethers.Contract(
-        AD3ContractAddress,
-        AD3Contract.abi,
-        new ethers.providers.Web3Provider(ethereum).getSigner()
-      );
+  useEffect(() => {
+    if (mintSuccess || upgradeSuccess) {
+      onMintSuccess();
+    }
+  }, [mintSuccess, upgradeSuccess]);
 
-      const currentHnftPrice = Number(hnft?.price ?? 0);
-      const upgradeHnftPrice = await hnftContract.level2Price(selectedLevel);
-      const differencePrice =
-        Number(amountToFloatString(upgradeHnftPrice)) - currentHnftPrice;
+  useEffect(() => {
+    // if (upgradeToLevel !== undefined) {
+    //   const currentHnftPrice = prices[hnft?.level];
+    //   const upgradeHnftPrice = prices[upgradeToLevel];
+    //   const priceDiff =
+    //     Number(amountToFloatString(upgradeHnftPrice)) - currentHnftPrice;
+      
+    //    setPrice(priceDiff);
+    // }
+  }, [upgradeToLevel]);
 
-      if (blance >= differencePrice) {
-        try {
-          return await approveContract.approve(
-            EIP5489ForInfluenceMiningContractAddress,
-            differencePrice
-          );
-        } catch (error) {}
+  useEffect(() => {
+    // if (price && blance >= price && approve) {
+    //   approve();
+    // }
+  }, [price]);
+
+  useEffect(() => {
+    if (upgradeToLevel !== undefined && upgradeHnft && approveSuccess) {
+      upgradeHnft();
+    }
+  }, [upgradeToLevel, approveSuccess]);
+
+  useEffect(() => {
+    if (mintLevel !== undefined) {
+      const price = prices[mintLevel];
+      if (Number(price) > 0) {
+        setPrice(price);
       } else {
-        setCreateHnftLoading(false);
-        message.warn('insufficient balance');
+        mint?.();
       }
     }
-  };
+  }, [mintLevel]);
+
+  useEffect(() => {
+    if (mintLevel !== undefined && mint && approveSuccess) {
+      mint();
+    }
+  }, [mintLevel, approveSuccess]);
+
+  // const approveAD3 = async (selectedLevel: HNFT_RANK) => {
+  //   if (hnftContract) {
+  //     const approveContract = new ethers.Contract(
+  //       AD3ContractAddress,
+  //       AD3Contract.abi,
+  //       new ethers.providers.Web3Provider(ethereum).getSigner()
+  //     );
+
+  //     const currentHnftPrice = Number(hnft?.price ?? 0);
+  //     const upgradeHnftPrice = await hnftContract.level2Price(selectedLevel);
+  //     const differencePrice =
+  //       Number(amountToFloatString(upgradeHnftPrice)) - currentHnftPrice;
+
+  //     if (blance >= differencePrice) {
+  //       try {
+  //         return await approveContract.approve(
+  //           EIP5489ForInfluenceMiningContractAddress,
+  //           differencePrice
+  //         );
+  //       } catch (error) {}
+  //     } else {
+  //       setCreateHnftLoading(false);
+  //       message.warn('insufficient balance');
+  //     }
+  //   }
+  // };
 
   const onMintSuccess = () => {
     notification.success({
@@ -116,65 +180,64 @@ export function CreateHnftModal({
     onCreate();
   };
 
-  const mintHnftFromImage = async (selectedLevel: HNFT_RANK) => {
-    // free mint
-    if (hnftContract) {
-      if (selectedLevel === 0 || (selectedLevel === 1 && onWhitelist)) {
-        const resp = await hnftContract.mint(imageUrl, selectedLevel);
-        await resp.wait();
-        return resp;
-      } else {
-        await approveAD3(selectedLevel).then(async (res: any) => {
-          if (res) {
-            const resp = await hnftContract.mint(imageUrl, selectedLevel);
-            await resp.wait();
-            return resp;
-          }
-        });
-      }
-    }
-  };
+  // const mintHnftFromImage = async (selectedLevel: HNFT_RANK) => {
+  //   // free mint
+  //   if (hnftContract) {
+  //     if (selectedLevel === 0 || (selectedLevel === 1 && hnft.onWhitelist)) {
+  //       const resp = await hnftContract.mint(imageUrl, selectedLevel);
+  //       await resp.wait();
+  //       return resp;
+  //     } else {
+  //       await approveAD3(selectedLevel).then(async (res: any) => {
+  //         if (res) {
+  //           const resp = await hnftContract.mint(imageUrl, selectedLevel);
+  //           await resp.wait();
+  //           return resp;
+  //         }
+  //       });
+  //     }
+  //   }
+  // };
 
-  const createHnft = useCallback(
-    async (imageUrl: string) => {
-      if (hnftContract) {
-        try {
-          setCreateHnftLoading(true);
-          if (selectedLevel !== undefined) {
-            if (upgrade) {
-              await approveAD3(selectedLevel).then(async (res: any) => {
-                if (res) {
-                  const resp = await hnftContract.upgradeTo(
-                    hnft?.tokenId,
-                    selectedLevel
-                  );
-                  await resp.wait();
-                  onMintSuccess();
-                }
-              });
-            } else {
-              await mintHnftFromImage(selectedLevel).then((res: any) => {
-                if (res) {
-                  hnftContract.authorizeSlotTo(
-                    hnft?.tokenId,
-                    AuctionContractAddress
-                  );
-                  onMintSuccess();
-                }
-              });
-            }
-          }
-        } catch (e) {
-          notification.error({
-            message: 'Create HNFT Error',
-            description: JSON.stringify(e),
-          });
-          setCreateHnftLoading(false);
-        }
-      }
-    },
-    [hnftContract, selectedLevel]
-  );
+
+  // const createHnft = useCallback(
+  //   async (imageUrl: string) => {
+  //     try {
+  //       setCreateHnftLoading(true);
+  //       if (upgradeToLevel !== undefined) {
+  //         if (upgrade) {
+  //           await approveAD3(selectedLevel).then(async (res: any) => {
+  //             if (res) {
+  //               const resp = await hnftContract.upgradeTo(
+  //                 hnft?.tokenId,
+  //                 selectedLevel
+  //               );
+  //               await resp.wait();
+  //               onMintSuccess();
+  //             }
+  //           });
+  //         } else {
+  //           await mintHnftFromImage(selectedLevel).then((res: any) => {
+  //             if (res) {
+  //               hnftContract.authorizeSlotTo(
+  //                 hnft?.tokenId,
+  //                 AuctionContractAddress
+  //               );
+  //               onMintSuccess();
+  //             }
+  //           });
+  //         }
+  //       }
+  //     } catch (e) {
+  //       notification.error({
+  //         message: 'Create HNFT Error',
+  //         description: JSON.stringify(e),
+  //       });
+  //       setCreateHnftLoading(false);
+  //     }
+  //   },
+  //   [upgradeToLevel]
+  // );
 
   const props: UploadProps = {
     name: 'file',
@@ -224,7 +287,7 @@ export function CreateHnftModal({
     if (upgrade && Number(hnft?.level) >= Number(rank)) {
       return;
     }
-    setselectedLevel(rank);
+    setUpgradeToLevel(rank);
   };
 
   const renderCreateHNFT = () => (
@@ -267,7 +330,7 @@ export function CreateHnftModal({
                     upgrade &&
                       Number(hnft?.level) >= nftOption.level &&
                       'disabled',
-                    selectedLevel === nftOption.level && 'selected',
+                    upgradeToLevel === nftOption.level && 'selected',
                     nftOption?.rank
                   )}
                 >
@@ -300,9 +363,9 @@ export function CreateHnftModal({
               <Button
                 key='submit'
                 type='primary'
-                disabled={selectedLevel === undefined}
+                disabled={upgradeToLevel === undefined}
                 loading={createHnftLoading}
-                onClick={() => createHnft(imageUrl!)}
+                // onClick={() => createHnft(imageUrl!)}
               >
                 {upgrade ? 'Upgrade' : 'Create'}
               </Button>

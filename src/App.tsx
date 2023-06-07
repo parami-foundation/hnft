@@ -2,15 +2,15 @@ import { Layout } from 'antd';
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { useAccount } from 'wagmi';
 import './App.scss';
 import { NavBar } from './components/NavBar';
 
 const { Content, Footer } = Layout;
 
 function App() {
-  const { address, isConnected, status } = useAccount();
-  console.log(address, status, '---status---');
+  const { address, status } = useAccount();
+
   return (
     <div className='app'>
       <Layout>

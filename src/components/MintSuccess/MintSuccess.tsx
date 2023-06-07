@@ -9,7 +9,7 @@ import { useHNFT } from '../../hooks';
 import './MintSuccess.scss';
 
 const MintSuccess: FC<{ ref: any }> = forwardRef((props, ref) => {
-  const { hnft } = useHNFT();
+  const hnft = useHNFT();
   const [visible, setVisible] = useState(false);
   const navigate = useNavigate();
 
