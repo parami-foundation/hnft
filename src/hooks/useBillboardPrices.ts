@@ -20,5 +20,5 @@ export const useBillboardPrices = () => {
     ]
   });
 
-  return (data ?? []).map(res => (res ?? '0').toString());
+  return (data ?? []).map(res => (res.result ?? '0').toString());
 }

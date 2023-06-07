@@ -1,5 +1,5 @@
 import { createAvatar } from '@dicebear/core';
-import { lorelei } from '@dicebear/collection';
+import * as lorelei from '@dicebear/lorelei';
 import { Layout, Button, Avatar, Tooltip } from 'antd';
 import { useAccount, useConnect } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
@@ -16,8 +16,7 @@ export function NavBar() {
   function createAvatorUri(seed: string): string {
     return createAvatar(lorelei, {
       seed,
-      // ... other options
-    }).toString();
+    }).toDataUriSync();;
   }
 
   return (

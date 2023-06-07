@@ -63,6 +63,8 @@ export function CreateHnftModal({
   const blance = useAD3Balance();
   const prices = useBillboardPrices();
 
+  console.log(blance, prices[1], '---prices---');
+
   const {
     mint,
     isSuccess: mintSuccess,

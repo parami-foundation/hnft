@@ -5,7 +5,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
     "@dicebear/core": "^6.0.0",
-    "@dicebear/collection": "^6.0.0",
+    "@dicebear/lorelei": "^6.0.0",
     "@openzeppelin/contracts": "^4.7.0",
     "@openzeppelin/contracts-upgradeable": "^4.8.3",
     "@polkadot/util": "^12.2.1",
@@ -16,6 +16,7 @@
     "@web3modal/react": "^2.4.2",
     "antd": "^4.21.5",
     "antd-img-crop": "^4.2.4",
+    "browser-image-compression": "^2.0.0",
     "bs58": "^5.0.0",
     "classnames": "^2.3.2",
     "ethers": "^5.7.2",
@@ -30,8 +31,7 @@
     "typescript": "^5.0.4",
     "viem": "^0.3.44",
     "wagmi": "^1.0.9",
-    "web-vitals": "^2.1.4",
-    "metamask-react": "^2.4.0"
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "predeploy": "npm run build && cp CNAME build/",
@@ -67,6 +67,7 @@
     "@types/node": "^20.1.4",
     "@types/react": "^18.2.6",
     "@types/sinon-chai": "^3.2.3",
+    "@types/react-dom": "^18.0.11",
     "ethereum-waffle": "*",
     "hardhat": "^2.9.9"
   }

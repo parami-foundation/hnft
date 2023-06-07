@@ -1,3 +1,15 @@
+// export const PARAMI_AIRDROP = 'https://airdrop.parami.io';
+export const PARAMI_AIRDROP = 'https://staging.parami.io/airdrop';
+
+// export const PARAMI_WALLET = 'https://app.parami.io';
+export const PARAMI_WALLET = 'https://staging.parami.io';
+
+// export const PARAMI_SUBQUERY = 'https://graph.parami.io';
+export const PARAMI_SUBQUERY = 'https://staging.parami.io/graph/';
+
+export const IPFS_UPLOAD_ENDPOINT =
+  'https://ipfs.parami.io/api/v0/add?stream-channels=true';
+
 // https://github.com/parami-foundation/parami-erc721h/blob/main/scripts/.deployed/goerli.json
 
 export const EIP5489ForInfluenceMiningContractAddress =
