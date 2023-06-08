@@ -13,7 +13,7 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    // "allowImportingTsExtensions": true,
+    "allowImportingTsExtensions": true,
     "moduleResolution": "node",
     "noEmit": false,
     "noFallthroughCasesInSwitch": true,

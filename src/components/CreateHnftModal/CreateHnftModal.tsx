@@ -34,7 +34,6 @@ import {
   formatTwitterImageUrl,
 } from '../../utils/format.util';
 import { TwitterUser } from '../../services/twitter.service';
-import { useAuthorizeSlotTo } from '../../hooks/useAuthorizeSlotTo';
 
 const { Dragger } = Upload;
 
@@ -137,7 +136,6 @@ export function CreateHnftModal({
       onMintSuccess();
     }
   }, [mintSuccess, upgradeSuccess]);
-
 
   const onMintSuccess = () => {
     notification.success({

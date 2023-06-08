@@ -79,7 +79,7 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
   const bid_price = form.getFieldValue('bid_price') ?? 0;
 
   const { approve, isSuccess: approveSuccess } = useApproveAD3(
-    inputFloatStringToAmount(String(MIN_DEPOIST_FOR_PRE_BID + bid_price))
+    Number(inputFloatStringToAmount(String(MIN_DEPOIST_FOR_PRE_BID + bid_price)))
   );
   const {
     authorizeSlotTo,
