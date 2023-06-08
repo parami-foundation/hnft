@@ -11,7 +11,7 @@ const { Header } = Layout;
 
 export function NavBar() {
   const { address, isConnected } = useAccount();
-   const { open } = useWeb3Modal();
+  const { open } = useWeb3Modal();
   const { connect, connectors, isLoading } = useConnect({
     connector: new InjectedConnector(),
   });
@@ -19,7 +19,7 @@ export function NavBar() {
   function createAvatorUri(seed: string): string {
     return createAvatar(lorelei, {
       seed,
-    }).toDataUriSync();;
+    }).toDataUriSync();
   }
 
   const walletConnect = () => {

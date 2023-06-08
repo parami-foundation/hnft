@@ -79,7 +79,9 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
   const bid_price = form.getFieldValue('bid_price') ?? 0;
 
   const { approve, isSuccess: approveSuccess } = useApproveAD3(
-    Number(inputFloatStringToAmount(String(MIN_DEPOIST_FOR_PRE_BID + bid_price)))
+    Number(
+      inputFloatStringToAmount(String(MIN_DEPOIST_FOR_PRE_BID + bid_price))
+    )
   );
   const {
     authorizeSlotTo,
@@ -178,6 +180,8 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
     }
   }, [bidWithSig, commitBidReady]);
 
+  console.log(hnft, '---hnft---')
+
   useEffect(() => {
     if (commitBidSuccess) {
       // todo: refresh and clear state
@@ -252,7 +256,7 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
                 required
                 rules={[{ required: true, message: 'Please input content!' }]}
               >
-                <Input className='ad-form-item' bordered={false} />
+                <Input className='ad-form-item' />
               </Form.Item>
               <Form.Item
                 name='icon'
@@ -301,7 +305,6 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
                   style={{
                     width: '100%',
                   }}
-                  popupClassName={styles.lifetimePopup}
                   className='ad-form-item'
                 >
                   <Option value='nft'>NFT</Option>
@@ -315,12 +318,7 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
                 required
                 rules={[{ required: true, message: 'Please input score!' }]}
               >
-                <InputNumber
-                  min={1}
-                  max={100}
-                  className='ad-form-item'
-                  bordered={false}
-                />
+                <InputNumber min={1} max={100} className='ad-form-item' />
               </Form.Item>
               <Form.Item
                 name='url'
@@ -328,7 +326,7 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
                 required
                 rules={[{ required: true, message: 'Please input link!' }]}
               >
-                <Input className='ad-form-item' bordered={false} />
+                <Input className='ad-form-item' />
               </Form.Item>
               <Collapse ghost>
                 <Panel header='Advanced Settings' key='1'>
@@ -340,12 +338,7 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
                       { required: true, message: 'Please input reward rate!' },
                     ]}
                   >
-                    <InputNumber
-                      min={0}
-                      max={100}
-                      className='ad-form-item'
-                      bordered={false}
-                    />
+                    <InputNumber min={0} max={100} className='ad-form-item' />
                   </Form.Item>
                   <Form.Item
                     name='lifetime'
@@ -360,7 +353,6 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
                       style={{
                         width: '100%',
                       }}
-                      popupClassName={styles.lifetimePopup}
                       className='ad-form-item'
                     >
                       <Option value={1}>1 DAY</Option>
@@ -377,12 +369,7 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
                       { required: true, message: 'Please input payout base!' },
                     ]}
                   >
-                    <InputNumber
-                      min={0}
-                      max={100}
-                      className='ad-form-item'
-                      bordered={false}
-                    />
+                    <InputNumber min={0} max={100} className='ad-form-item' />
                   </Form.Item>
                   <Form.Item
                     name='payout_min'
@@ -392,12 +379,7 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
                       { required: true, message: 'Please input payout min!' },
                     ]}
                   >
-                    <InputNumber
-                      min={0}
-                      max={100}
-                      className='ad-form-item'
-                      bordered={false}
-                    />
+                    <InputNumber min={0} max={100} className='ad-form-item' />
                   </Form.Item>
                   <Form.Item
                     name='payout_max'
@@ -407,12 +389,7 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
                       { required: true, message: 'Please input payout max!' },
                     ]}
                   >
-                    <InputNumber
-                      min={0}
-                      max={100}
-                      className='ad-form-item'
-                      bordered={false}
-                    />
+                    <InputNumber min={0} max={100} className='ad-form-item' />
                   </Form.Item>
                 </Panel>
               </Collapse>
@@ -480,7 +457,6 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
                         min={minPrice}
                         max={1000000}
                         className='bid-nfts-body-input'
-                        bordered={false}
                       />
                     </Form.Item>
                   </div>

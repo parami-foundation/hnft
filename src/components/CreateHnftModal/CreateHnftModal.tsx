@@ -77,7 +77,7 @@ export function CreateHnftModal({
   } = useApproveAD3(price);
 
   useEffect(() => {
-    if (hnft || twitterUser) {
+    if (hnft.tokenId || twitterUser) {
       setimageUrl(
         hnft?.image || formatTwitterImageUrl(twitterUser?.profile_image_url)
       );
@@ -89,6 +89,7 @@ export function CreateHnftModal({
     if (mintLevel !== undefined) {
       // free mint
       if (mintLevel === 0 || (mintLevel === 1 && hnft.onWhitelist)) {
+        console.log('free mint')
         mint?.();
       } else {
         // approve ad3
@@ -126,6 +127,8 @@ export function CreateHnftModal({
       }
     }
   }, [upgrade, approveSuccess]);
+
+  console.log(mintSuccess, '---mintSuccess---');
 
   useEffect(() => {
     if (mintSuccess || upgradeSuccess) {
@@ -192,6 +195,8 @@ export function CreateHnftModal({
     showUploadList: false,
     disabled: loading || !!imageUrl,
   };
+
+  console.log(imageUrl, '---imageUrl---');
 
   const renderCreateHNFT = () => (
     <>

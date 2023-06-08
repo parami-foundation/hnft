@@ -26,7 +26,8 @@
 
       >span {
         font-size: 18px;
-        color: $text-gray-color;
+        color: #10121A;
+        opacity: 0.5;
         line-height: 21px;
       }
     }
@@ -34,9 +35,8 @@
     .ad-form,
     .ad-footer,
     .ad-preview {
-      border: 1px solid rgba(255, 255, 255, 0.05);
       border-radius: 20px;
-      background: #10121A;
+      border: 1px solid #CCCCCC;
     }
 
     .ad-content {
@@ -45,7 +45,6 @@
 
       .title {
         font-size: 24px;
-        color: #fff;
         font-family: 'Gilroy-Bold';
         margin-bottom: 64px;
       }
@@ -56,67 +55,39 @@
         margin-right: 32px;
         padding: 28px 20px 0 20px;
 
+        .ant-upload {
+          width: 100%;
+        }
+
         &-item,
         &-upload {
-          border-radius: 10px;
-          height: 60px;
           width: 100%;
           min-width: 300px;
+          height: 60px;
         }
 
         &-item {
-          color: #fff;
-          background: rgba(255, 255, 255, 0.05);
           font-size: 20px;
-
-          .ant-input-number-handler-wrap,
-          .ant-select-selector {
-            background-color: rgba(255, 255, 255, 0.05);
-            border: none;
-          }
-
-          .ant-input-number-input,
-          .ant-select-selector {
-            height: 60px;
-            font-size: 20px;
-          }
+          height: 60px;
 
           .ant-select-selector {
             @include flex();
             text-align: center;
+            height: 60px;
+
+            input {
+              height: 60px !important;
+            }
           }
-        }
 
-        &-upload {
-          border: 1px solid #1DA1F2;
-          color: #1DA1F2;
-          background: #10121A;
-        }
-
-        .ant-upload-list-item-name {
-          @include text-overflow(200px)
-        }
-
-        .follow-twitter {
-          background: #1DA1F2;
-          border: 1px solid #1DA1F2;
-          padding: 4px 8px;
-          border-radius: 8px;
-          color: #FFFFFF;
-        }
-
-        .instruction {
-          @include flex(space-between, center);
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 10px;
-          height: 60px;
-          padding: 0 18px;
+          .ant-input-number-input {
+            height: 60px;
+          }
         }
 
         .ant-form-item-required {
           font-family: 'Gilroy-Bold';
           font-size: 24px;
-          color: #fff;
 
           &::before {
             color: #1DA1F2 !important;
@@ -156,6 +127,8 @@
           flex-direction: column;
           flex: 1;
           padding: 20px;
+          margin-top: 0;
+          background: rgba(239, 240, 242, 1);
 
           .header {
             display: flex;
@@ -173,7 +146,8 @@
             margin-left: 12px;
 
             >span {
-              color: rgba(255, 255, 255, 0.5)
+              color: #10121A;
+              opacity: 0.5;
             }
           }
 
@@ -183,10 +157,10 @@
             border-radius: 10px;
             margin-top: 24px;
             font-size: 24px;
-            color: #fff;
             position: relative;
             display: flex;
             flex-direction: column;
+            background: white;
 
             .ad-title {
               padding: 24px 26px 10px 26px;
@@ -229,7 +203,7 @@
             left: 24px;
             top: -11px;
             z-index: 1;
-            background: #10121A;
+            background: white;
             border-top-left-radius: 5px;
             border-top: 1px solid rgba(255, 255, 255, 0.13);
             border-left: 1px solid rgba(255, 255, 255, 0.13);
@@ -242,6 +216,7 @@
       margin-top: 120px;
       padding: 35px 0;
       font-size: 24px;
+      font-weight: 700;
 
       .title {
         width: 100%;
@@ -262,11 +237,6 @@
           margin-top: 22px;
         }
 
-        // &-input {
-        //   background: rgba(255, 255, 255, 0.05);
-        //   border-radius: 10px;
-        //   height: 60px;
-        // }
         .bid-nfts-content {
           background: rgba(255, 255, 255, 0.05);
           border-radius: 10px;
@@ -325,7 +295,6 @@
 
         .bid-nfts-footer-btn {
           color: #ffffff;
-          background: #1DA1F2;
           width: 100%;
           max-width: 356px;
         }
@@ -335,9 +304,6 @@
 
 }
 
-.lifetimePopup {
-  background: black;
-}
 
 @media only screen and (max-width: 991px) {
   .bidAdContainer {
@@ -403,6 +369,22 @@
             height: 40px;
           }
 
+          &-item {
+            height: 40px;
+
+            .ant-select-selector {
+              height: 40px;
+
+              input {
+                height: 40px !important;
+              }
+            }
+
+            .ant-input-number-input {
+              height: 40px;
+            }
+          }
+
           &-content {
             font-size: 14px;
 
@@ -444,7 +426,6 @@
 
         .bid-nfts {
           padding: 0 20px;
-          // height: 44px;
 
           .bid-nfts-content {
 

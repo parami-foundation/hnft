@@ -88,6 +88,7 @@
     &-content {
       display: flex;
       flex-direction: column;
+      padding: 0;
     }
 
     &-header {
@@ -98,7 +99,7 @@
       .ant-modal-title {
         font-size: 36px;
         font-weight: 700;
-        line-height: 42px;
+        line-height: 68px;
       }
     }
 
