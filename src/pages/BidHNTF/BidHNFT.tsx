@@ -52,14 +52,6 @@ export interface UserInstruction {
   link?: string;
 }
 
-// const mockAdData = {
-//   icon: 'https://pbs.twimg.com/profile_images/1611305582367215616/4W9XpGpU.jpg',
-//   poster: 'https://pbs.twimg.com/media/FqlTSTOWYAA7yKN?format=jpg&name=small',
-//   title: 'Tweeting is Mining!',
-//   tag: 'twitter',
-//   url: 'https://twitter.com/ParamiProtocol',
-// };
-
 // todo: get form auction.sol, current this is private
 const MIN_DEPOIST_FOR_PRE_BID = 10;
 
@@ -240,270 +232,276 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
 
   return (
     <div className={styles.bidAdContainer}>
-      <div className='ad-header'>
-        <div>Bid on HNFT</div>
-        <span>Place your advertisement on HNFTs</span>
-      </div>
-      <Form
-        form={form}
-        layout='vertical'
-        autoComplete='off'
-        initialValues={{ remember: true }}
-      >
-        <div className='ad-content'>
-          <div className='ad-form'>
-            <div className='title'>Config your Ad</div>
-            <Form.Item
-              name='title'
-              label='Content'
-              required
-              rules={[{ required: true, message: 'Please input content!' }]}
-            >
-              <Input className='ad-form-item' bordered={false} />
-            </Form.Item>
-            <Form.Item
-              name='icon'
-              label='Ad icon'
-              required
-              rules={[{ required: true, message: 'Please upload icon!' }]}
-            >
-              <Upload
-                {...uploadProps}
-                fileList={iconUploadFiles}
-                listType='picture'
-                onChange={handleUploadOnChange(IMAGE_TYPE.ICON)}
-                beforeUpload={handleBeforeUpload(IMAGE_TYPE.ICON)}
-              >
-                <Button icon={<UploadOutlined />} className='ad-form-upload'>
-                  Click to Upload
-                </Button>
-              </Upload>
-            </Form.Item>
-            <Form.Item
-              name='poster'
-              label='Poster'
-              required
-              rules={[{ required: true, message: 'Please upload poster!' }]}
-            >
-              <Upload
-                {...uploadProps}
-                fileList={posterUploadFiles}
-                listType='picture'
-                onChange={handleUploadOnChange(IMAGE_TYPE.POSTER)}
-                beforeUpload={handleBeforeUpload(IMAGE_TYPE.POSTER)}
-              >
-                <Button icon={<UploadOutlined />} className='ad-form-upload'>
-                  Click to Upload
-                </Button>
-              </Upload>
-            </Form.Item>
-            <Form.Item
-              name='tag'
-              label='Tag'
-              required
-              rules={[{ required: true, message: 'Please select tag!' }]}
-            >
-              <Select
-                size='large'
-                style={{
-                  width: '100%',
-                }}
-                popupClassName={styles.lifetimePopup}
-                className='ad-form-item'
-              >
-                <Option value='nft'>NFT</Option>
-                <Option value='twitter'>Twitter</Option>
-                <Option value='deFi'>DeFi</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item
-              name='score'
-              label='Score'
-              required
-              rules={[{ required: true, message: 'Please input score!' }]}
-            >
-              <InputNumber
-                min={1}
-                max={100}
-                className='ad-form-item'
-                bordered={false}
-              />
-            </Form.Item>
-            <Form.Item
-              name='url'
-              label='Link'
-              required
-              rules={[{ required: true, message: 'Please input link!' }]}
-            >
-              <Input className='ad-form-item' bordered={false} />
-            </Form.Item>
-            <Collapse ghost>
-              <Panel header='Advanced Settings' key='1'>
-                <Form.Item
-                  name='reward_rate_in_100_percent'
-                  label='Reward Rate'
-                  required
-                  rules={[
-                    { required: true, message: 'Please input reward rate!' },
-                  ]}
-                >
-                  <InputNumber
-                    min={0}
-                    max={100}
-                    className='ad-form-item'
-                    bordered={false}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name='lifetime'
-                  label='lifetime'
-                  required
-                  rules={[
-                    { required: true, message: 'Please select lifetime!' },
-                  ]}
-                >
-                  <Select
-                    size='large'
-                    style={{
-                      width: '100%',
-                    }}
-                    popupClassName={styles.lifetimePopup}
-                    className='ad-form-item'
-                  >
-                    <Option value={1}>1 DAY</Option>
-                    <Option value={3}>3 DAYS</Option>
-                    <Option value={7}>7 DAYS</Option>
-                    <Option value={15}>15 DAYS</Option>
-                  </Select>
-                </Form.Item>
-                <Form.Item
-                  name='payout_base'
-                  label='Payout Base'
-                  required
-                  rules={[
-                    { required: true, message: 'Please input payout base!' },
-                  ]}
-                >
-                  <InputNumber
-                    min={0}
-                    max={100}
-                    className='ad-form-item'
-                    bordered={false}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name='payout_min'
-                  label='Payout Min'
-                  required
-                  rules={[
-                    { required: true, message: 'Please input payout min!' },
-                  ]}
-                >
-                  <InputNumber
-                    min={0}
-                    max={100}
-                    className='ad-form-item'
-                    bordered={false}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name='payout_max'
-                  label='Payout Max'
-                  required
-                  rules={[
-                    { required: true, message: 'Please input payout max!' },
-                  ]}
-                >
-                  <InputNumber
-                    min={0}
-                    max={100}
-                    className='ad-form-item'
-                    bordered={false}
-                  />
-                </Form.Item>
-              </Panel>
-            </Collapse>
-          </div>
-          <div className='ad-preview'>
-            <div className='title'>Ad Preview</div>
-            <div className='content'>
-              <div className='header'>
-                <UserAvatar
-                  src={iconUploadFiles?.[0]?.url || ''}
-                  className='avatar'
-                />
-                <div className='sponsor-desc'>
-                  <span>is sponsoring this hNFT. </span>
-                  <a className='bidLink' href='#' target='_blank'>
-                    Bid on this ad space
-                  </a>
-                </div>
-              </div>
-              <div className='section'>
-                <div className='arrow'></div>
-                <div className='ad-title' title={content}>
-                  {content}
-                </div>
-                <div className='ad-poster'>
-                  <img
-                    src={
-                      posterUploadFiles?.[0]?.url ||
-                      '/assets/images/rare_wall_bg.png'
-                    }
-                    referrerPolicy='no-referrer'
-                    alt=''
-                  ></img>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className='bid-ad-content'>
+        <div className='ad-header'>
+          <div>Bid on HNFT</div>
+          <span>Place your advertisement on HNFTs</span>
         </div>
-        <div className='ad-footer'>
-          <div className='title'>Bid your price</div>
-          <div className='bid-nfts'>
-            <div className='bid-nfts-title'>Nfts</div>
-            <div className='bid-nfts-content'>
-              <div className='bid-nfts-content-header'>
-                <div className='bid-nfts-content-header-item'>HNFT</div>
-                <div className='bid-nfts-content-header-item'>Min Price</div>
-                <div className='bid-nfts-content-header-item'>
-                  Offer a price
-                </div>
-              </div>
-              <div className='bid-nfts-content-body'>
-                <div className='bid-nfts-content-body-item'>{hnft?.name}</div>
-                <div className='bid-nfts-content-body-item'>{currentPrice}</div>
-                <div className='bid-nfts-content-body-item'>
+        <Form
+          form={form}
+          layout='vertical'
+          autoComplete='off'
+          initialValues={{ remember: true }}
+        >
+          <div className='ad-content'>
+            <div className='ad-form'>
+              <div className='title'>Config your Ad</div>
+              <Form.Item
+                name='title'
+                label='Content'
+                required
+                rules={[{ required: true, message: 'Please input content!' }]}
+              >
+                <Input className='ad-form-item' bordered={false} />
+              </Form.Item>
+              <Form.Item
+                name='icon'
+                label='Ad icon'
+                required
+                rules={[{ required: true, message: 'Please upload icon!' }]}
+              >
+                <Upload
+                  {...uploadProps}
+                  fileList={iconUploadFiles}
+                  listType='picture'
+                  onChange={handleUploadOnChange(IMAGE_TYPE.ICON)}
+                  beforeUpload={handleBeforeUpload(IMAGE_TYPE.ICON)}
+                >
+                  <Button icon={<UploadOutlined />} className='ad-form-upload'>
+                    Click to Upload
+                  </Button>
+                </Upload>
+              </Form.Item>
+              <Form.Item
+                name='poster'
+                label='Poster'
+                required
+                rules={[{ required: true, message: 'Please upload poster!' }]}
+              >
+                <Upload
+                  {...uploadProps}
+                  fileList={posterUploadFiles}
+                  listType='picture'
+                  onChange={handleUploadOnChange(IMAGE_TYPE.POSTER)}
+                  beforeUpload={handleBeforeUpload(IMAGE_TYPE.POSTER)}
+                >
+                  <Button icon={<UploadOutlined />} className='ad-form-upload'>
+                    Click to Upload
+                  </Button>
+                </Upload>
+              </Form.Item>
+              <Form.Item
+                name='tag'
+                label='Tag'
+                required
+                rules={[{ required: true, message: 'Please select tag!' }]}
+              >
+                <Select
+                  size='large'
+                  style={{
+                    width: '100%',
+                  }}
+                  popupClassName={styles.lifetimePopup}
+                  className='ad-form-item'
+                >
+                  <Option value='nft'>NFT</Option>
+                  <Option value='twitter'>Twitter</Option>
+                  <Option value='deFi'>DeFi</Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                name='score'
+                label='Score'
+                required
+                rules={[{ required: true, message: 'Please input score!' }]}
+              >
+                <InputNumber
+                  min={1}
+                  max={100}
+                  className='ad-form-item'
+                  bordered={false}
+                />
+              </Form.Item>
+              <Form.Item
+                name='url'
+                label='Link'
+                required
+                rules={[{ required: true, message: 'Please input link!' }]}
+              >
+                <Input className='ad-form-item' bordered={false} />
+              </Form.Item>
+              <Collapse ghost>
+                <Panel header='Advanced Settings' key='1'>
                   <Form.Item
-                    name='bid_price'
+                    name='reward_rate_in_100_percent'
+                    label='Reward Rate'
                     required
-                    rules={[{ required: true, message: 'Please input price!' }]}
+                    rules={[
+                      { required: true, message: 'Please input reward rate!' },
+                    ]}
                   >
                     <InputNumber
-                      min={minPrice}
-                      max={1000000}
-                      className='bid-nfts-body-input'
+                      min={0}
+                      max={100}
+                      className='ad-form-item'
                       bordered={false}
                     />
                   </Form.Item>
+                  <Form.Item
+                    name='lifetime'
+                    label='lifetime'
+                    required
+                    rules={[
+                      { required: true, message: 'Please select lifetime!' },
+                    ]}
+                  >
+                    <Select
+                      size='large'
+                      style={{
+                        width: '100%',
+                      }}
+                      popupClassName={styles.lifetimePopup}
+                      className='ad-form-item'
+                    >
+                      <Option value={1}>1 DAY</Option>
+                      <Option value={3}>3 DAYS</Option>
+                      <Option value={7}>7 DAYS</Option>
+                      <Option value={15}>15 DAYS</Option>
+                    </Select>
+                  </Form.Item>
+                  <Form.Item
+                    name='payout_base'
+                    label='Payout Base'
+                    required
+                    rules={[
+                      { required: true, message: 'Please input payout base!' },
+                    ]}
+                  >
+                    <InputNumber
+                      min={0}
+                      max={100}
+                      className='ad-form-item'
+                      bordered={false}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name='payout_min'
+                    label='Payout Min'
+                    required
+                    rules={[
+                      { required: true, message: 'Please input payout min!' },
+                    ]}
+                  >
+                    <InputNumber
+                      min={0}
+                      max={100}
+                      className='ad-form-item'
+                      bordered={false}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name='payout_max'
+                    label='Payout Max'
+                    required
+                    rules={[
+                      { required: true, message: 'Please input payout max!' },
+                    ]}
+                  >
+                    <InputNumber
+                      min={0}
+                      max={100}
+                      className='ad-form-item'
+                      bordered={false}
+                    />
+                  </Form.Item>
+                </Panel>
+              </Collapse>
+            </div>
+            <div className='ad-preview'>
+              <div className='title'>Ad Preview</div>
+              <div className='content'>
+                <div className='header'>
+                  <UserAvatar
+                    src={iconUploadFiles?.[0]?.url || ''}
+                    className='avatar'
+                  />
+                  <div className='sponsor-desc'>
+                    <span>is sponsoring this hNFT. </span>
+                    <a className='bidLink' href='#' target='_blank'>
+                      Bid on this ad space
+                    </a>
+                  </div>
+                </div>
+                <div className='section'>
+                  <div className='arrow'></div>
+                  <div className='ad-title' title={content}>
+                    {content}
+                  </div>
+                  <div className='ad-poster'>
+                    <img
+                      src={
+                        posterUploadFiles?.[0]?.url ||
+                        '/images/rare_wall_bg.png'
+                      }
+                      referrerPolicy='no-referrer'
+                      alt=''
+                    ></img>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className='bid-nfts-footer'>
-              <Button
-                type='primary'
-                shape='round'
-                htmlType='submit'
-                className='bid-nfts-footer-btn'
-                onClick={onFinish}
-                loading={bidLoading}
-              >
-                Bid
-              </Button>
+          </div>
+          <div className='ad-footer'>
+            <div className='title'>Bid your price</div>
+            <div className='bid-nfts'>
+              <div className='bid-nfts-title'>Nfts</div>
+              <div className='bid-nfts-content'>
+                <div className='bid-nfts-content-header'>
+                  <div className='bid-nfts-content-header-item'>HNFT</div>
+                  <div className='bid-nfts-content-header-item'>Min Price</div>
+                  <div className='bid-nfts-content-header-item'>
+                    Offer a price
+                  </div>
+                </div>
+                <div className='bid-nfts-content-body'>
+                  <div className='bid-nfts-content-body-item'>{hnft?.name}</div>
+                  <div className='bid-nfts-content-body-item'>
+                    {currentPrice}
+                  </div>
+                  <div className='bid-nfts-content-body-item'>
+                    <Form.Item
+                      name='bid_price'
+                      required
+                      rules={[
+                        { required: true, message: 'Please input price!' },
+                      ]}
+                    >
+                      <InputNumber
+                        min={minPrice}
+                        max={1000000}
+                        className='bid-nfts-body-input'
+                        bordered={false}
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+              </div>
+              <div className='bid-nfts-footer'>
+                <Button
+                  type='primary'
+                  shape='round'
+                  htmlType='submit'
+                  className='bid-nfts-footer-btn'
+                  onClick={onFinish}
+                  loading={bidLoading}
+                >
+                  Bid
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      </Form>
+        </Form>
+      </div>
     </div>
   );
 };

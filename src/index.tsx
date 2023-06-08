@@ -13,6 +13,7 @@ import { infuraProvider } from 'wagmi/providers/infura';
 import { goerli } from 'wagmi/chains';
 import { MyHNFT } from './pages/MyHNFT';
 import { IssueToken } from './pages/IssueToken';
+import BidHNFT from './pages/BidHNTF/BidHNFT';
 import App from './App.tsx';
 import './index.scss';
 
@@ -47,6 +48,7 @@ root.render(
           <Route path='/' element={<App />}>
             <Route path='' element={<MyHNFT />} />
             <Route path='/issue' element={<IssueToken />} />
+            <Route path='/bid' element={<BidHNFT />} />
           </Route>
         </Routes>
       </BrowserRouter>

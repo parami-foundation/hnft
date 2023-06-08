@@ -5,7 +5,7 @@ import {
 } from '../models/hnft';
 import AD3Contract from '../contracts/AD3.json';
 
-export const useApproveAD3 = (amount?: string) => {
+export const useApproveAD3 = (amount?: number) => {
   const { config, error: prepareError } = usePrepareContractWrite({
     address: AD3ContractAddress,
     abi: AD3Contract.abi,

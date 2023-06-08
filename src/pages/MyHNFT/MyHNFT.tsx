@@ -44,8 +44,7 @@ export function MyHNFT() {
       {status === 'connected' && chain?.id === 5 && (
         <div className='my-nfts-container'>
           <Spin spinning={!hnft} className='loading-container'>
-            {hnft && <Hnft config={hnft} />}
-            {!hnft && <MintHNFT />}
+            {hnft?.tokenId ? <Hnft config={hnft} /> : <MintHNFT />}
           </Spin>
         </div>
       )}

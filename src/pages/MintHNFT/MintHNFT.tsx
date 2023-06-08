@@ -109,7 +109,7 @@ export function MintHNFT({}: MintHNFTProps) {
         </div>
       </div>
 
-      {!hnft && (
+      {!hnft?.tokenId && (
         <div className='no-nfts-container'>
           <Image
             src='/network/vector.svg'

@@ -10,7 +10,7 @@ export interface HNFT {
   image?: string;
   name?: string;
   tokenId?: string;
-  level?: string;
+  level: number;
   rank?: string;
   miningPower?: number;
   onWhitelist?: boolean;
@@ -69,7 +69,7 @@ export const useHNFT = () => {
     });
 
   const token = tokenUri ? JSON.parse(atob(tokenUri.substring(29))) : {};
-  const levelString = Number(level?.toString());
+  const levelString = Number(level?.toString() ?? 0);
 
   const hnft: HNFT = {
     ...token,
