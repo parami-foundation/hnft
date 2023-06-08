@@ -12,11 +12,7 @@ import { CloudUploadOutlined } from '@ant-design/icons';
 import { isMobile } from 'react-device-detect';
 import ImgCrop from 'antd-img-crop';
 import cs from 'classnames';
-import {
-  HNFT_CONFIG,
-  BillboardLevel2Name,
-  AuctionContractAddress,
-} from '../../models/hnft';
+import { HNFT_CONFIG, BillboardLevel2Name } from '../../models/hnft';
 import { IPFS_ENDPOINT, IPFS_UPLOAD } from '../../models/wnft';
 import { BillboardNftImage } from '../../components/BillboardNftImage';
 import MobileDrawer from '../MobileDrawer/MobileDrawer';
@@ -57,7 +53,7 @@ export function CreateHnftModal({
   const [imageUrl, setimageUrl] = useState<string>();
   const [price, setPrice] = useState<number>();
   const [mintLevel, setMintLevel] = useState<number>();
-  const hnft  = useHNFT();
+  const hnft = useHNFT();
   const blance = useAD3Balance();
   const prices = useBillboardPrices();
 
