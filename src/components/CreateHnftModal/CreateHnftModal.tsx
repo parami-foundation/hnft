@@ -144,10 +144,10 @@ export function CreateHnftModal({
   };
 
   const handleSelectedLevel = (rank: number) => {
-    // if (Number(rank) > 1) {
-    //   message.info('coming soon');
-    //   return;
-    // }
+    if (Number(rank) > 1) {
+      message.info('coming soon');
+      return;
+    }
 
     // already superlative
     if (upgrade && Number(hnft?.level) >= Number(rank)) {
