@@ -1,5 +1,7 @@
 import { createAvatar } from '@dicebear/core';
 import * as lorelei from '@dicebear/lorelei';
+import { isMobile } from 'react-device-detect';
+import { useWeb3Modal } from '@web3modal/react';
 import { Layout, Button, Avatar, Tooltip } from 'antd';
 import { useAccount, useConnect } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
@@ -8,8 +10,9 @@ import './NavBar.scss';
 const { Header } = Layout;
 
 export function NavBar() {
-  const { address, status } = useAccount();
-  const { connect, connectors } = useConnect({
+  const { address, isConnected } = useAccount();
+   const { open } = useWeb3Modal();
+  const { connect, connectors, isLoading } = useConnect({
     connector: new InjectedConnector(),
   });
 
@@ -19,6 +22,14 @@ export function NavBar() {
     }).toDataUriSync();;
   }
 
+  const walletConnect = () => {
+    if (isMobile) {
+      open();
+    } else {
+      connect({ connector: connectors[0] });
+    }
+  };
+
   return (
     <Header className='nav-bar'>
       <div className='logo'>
@@ -26,15 +37,13 @@ export function NavBar() {
       </div>
 
       <div className='user'>
-        {status === 'disconnected' && (
-          <Button onClick={() => connect({ connector: connectors[0] })}>
-            Connect Wallet
+        {!isConnected && (
+          <Button onClick={walletConnect} loading={isLoading}>
+            {isLoading ? 'Connecting' : 'Connect Wallet'}
           </Button>
         )}
 
-        {status === 'connecting' && <Button loading>Connecting</Button>}
-
-        {status === 'connected' && address && (
+        {isConnected && address && (
           <Tooltip
             title={`${address.substring(0, 8)}...${address.substring(
               address.length - 6
