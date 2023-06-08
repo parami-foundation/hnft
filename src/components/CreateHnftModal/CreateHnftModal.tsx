@@ -114,6 +114,7 @@ export function CreateHnftModal({
 
   useEffect(() => {
     if (price && blance >= price && approve) {
+      console.log('approve')
       approve();
     }
   }, [price]);
@@ -127,8 +128,6 @@ export function CreateHnftModal({
       }
     }
   }, [upgrade, approveSuccess]);
-
-  console.log(mintSuccess, '---mintSuccess---');
 
   useEffect(() => {
     if (mintSuccess || upgradeSuccess) {
@@ -145,10 +144,10 @@ export function CreateHnftModal({
   };
 
   const handleSelectedLevel = (rank: number) => {
-    if (Number(rank) > 1) {
-      message.info('coming soon');
-      return;
-    }
+    // if (Number(rank) > 1) {
+    //   message.info('coming soon');
+    //   return;
+    // }
 
     // already superlative
     if (upgrade && Number(hnft?.level) >= Number(rank)) {
@@ -195,8 +194,6 @@ export function CreateHnftModal({
     showUploadList: false,
     disabled: loading || !!imageUrl,
   };
-
-  console.log(imageUrl, '---imageUrl---');
 
   const renderCreateHNFT = () => (
     <>
