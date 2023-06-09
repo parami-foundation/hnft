@@ -1,37 +1,62 @@
-import './NavBar.scss';
-import { createAvatar } from '@dicebear/avatars';
-import * as style from '@dicebear/avatars-identicon-sprites';
+import { createAvatar } from '@dicebear/core';
+import * as lorelei from '@dicebear/lorelei';
+import { isMobile } from 'react-device-detect';
+import { useWeb3Modal } from '@web3modal/react';
 import { Layout, Button, Avatar, Tooltip } from 'antd';
-import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
+import { useAccount, useConnect } from 'wagmi';
+import { InjectedConnector } from 'wagmi/connectors/injected';
+import './NavBar.scss';
 
 const { Header } = Layout;
 
 export function NavBar() {
-  const { status, connect, account } = useCustomMetaMask();
+  const { address, isConnected } = useAccount();
+  const { open } = useWeb3Modal();
+  const { connect, connectors, isLoading } = useConnect({
+    connector: new InjectedConnector(),
+  });
 
   function createAvatorUri(seed: string): string {
-    return createAvatar(style, {
+    return createAvatar(lorelei, {
       seed,
-      dataUri: true
-    });
+    }).toDataUriSync();
   }
+
+  const walletConnect = () => {
+    if (isMobile) {
+      open();
+    } else {
+      connect({ connector: connectors[0] });
+    }
+  };
 
   return (
     <Header className='nav-bar'>
-      <div className="logo">
-        <img src="/images/logo-text.svg" />
+      <div className='logo'>
+        <img src='/images/logo-text.svg' alt='' />
       </div>
 
       <div className='user'>
-        {status === 'notConnected' && (
-          <Button onClick={() => connect()}>Connect Wallet</Button>
+        {!isConnected && (
+          <Button onClick={walletConnect} loading={isLoading}>
+            {isLoading ? 'Connecting' : 'Connect Wallet'}
+          </Button>
         )}
 
-        {status === 'connecting' && <Button loading>Connecting</Button>}
-
-        {status === 'connected' && account && (
-          <Tooltip title={`${account.substring(0, 8)}...${account.substring(account.length - 6)}`} color="#ff5b00" placement="bottomLeft">
-            <Avatar className='avatar' shape="square" size={36} src={createAvatorUri(account)} />
+        {isConnected && address && (
+          <Tooltip
+            title={`${address.substring(0, 8)}...${address.substring(
+              address.length - 6
+            )}`}
+            color='#ff5b00'
+            placement='bottomLeft'
+          >
+            <Avatar
+              className='avatar'
+              shape='square'
+              size={36}
+              src={createAvatorUri(address)}
+            />
           </Tooltip>
         )}
       </div>

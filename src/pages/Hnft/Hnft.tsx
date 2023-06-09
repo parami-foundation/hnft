@@ -1,130 +1,80 @@
-import { Button, message, notification, Upload, Modal, Image as AntdImage } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
-import type { RcFile, UploadProps } from 'antd/es/upload/interface';
-import { CloudUploadOutlined } from '@ant-design/icons';
-import { ethers } from 'ethers';
-import { HNFTCollectionContractAddress } from '../../models/contract';
-import ERC721HCollection from '../../ERC721HCollection.json';
-import { IPFS_ENDPOINT, IPFS_UPLOAD } from '../../models/wnft';
+import React, { useState, useRef } from 'react';
+import { isMobile } from 'react-device-detect';
+import cs from 'classnames';
+import { Button } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { BillboardNftImage } from '../../components/BillboardNftImage';
+import { CreateHnftModal } from '../../components/CreateHnftModal';
+import { useAD3Balance, HNFT, useHNFT } from '../../hooks';
+import { BillboardLevel2Name } from '../../models/hnft';
+import MintSuccess from '../../components/MintSuccess/MintSuccess';
 import './Hnft.scss';
-import { useCustomMetaMask } from '../../hooks/useCustomMetaMask';
-import ImgCrop from 'antd-img-crop';
-
-const { Dragger } = Upload;
 
 export interface HnftProps {
-    onCancel: () => void,
-    onCreate: () => void
+  config: HNFT;
 }
 
-export function Hnft({ onCancel, onCreate }: HnftProps) {
-    const [loading, setLoading] = useState<boolean>(false);
-    const { ethereum, chainId } = useCustomMetaMask();
-    const [createHnftLoading, setCreateHnftLoading] = useState<boolean>(false);
-    const [hnftContract, setHnftContract] = useState<ethers.Contract>();
-    const [imageUri, setImageUri] = useState<string>();
+export function Hnft(props: HnftProps) {
+  const { config } = props;
+  const [visible, setVisible] = useState(false);
+  const mintSuccessRef = useRef<HTMLDivElement>() as any;
+  const hnft = useHNFT();
+  const blance = useAD3Balance();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        if (ethereum && (chainId === 1 || chainId === 4)) {
-            setHnftContract(new ethers.Contract(
-                HNFTCollectionContractAddress[chainId],
-                ERC721HCollection.abi,
-                new ethers.providers.Web3Provider(ethereum).getSigner()
-            ));
-        }
-    }, [ethereum, chainId]);
+  const onCreateSuccess = () => {
+    setVisible(false);
+    mintSuccessRef?.current?.onCreateSuccess();
+  };
 
-    const createHnft = useCallback(async (imageUri: string) => {
-        if (hnftContract && (chainId === 1 || chainId === 4)) {
-            try {
-                setCreateHnftLoading(true);
-                notification.info({
-                    message: 'Creating HNFT',
-                    description: 'Please confirm in your wallet'
-                });
-                const resp = await hnftContract.mint(imageUri);
-                await resp.wait();
-                notification.success({
-                    message: 'Create HNFT Success'
-                });
-                setCreateHnftLoading(false);
-                onCreate();
-            } catch (e) {
-                notification.error({
-                    message: 'Create HNFT Error',
-                    description: JSON.stringify(e)
-                });
-                setCreateHnftLoading(false);
-            }
-        }
-
-    }, [hnftContract, chainId]);
-
-    const props: UploadProps = {
-        name: 'file',
-        multiple: false,
-        action: IPFS_UPLOAD,
-        onChange(info) {
-            if (info.file.status === 'uploading') {
-                setLoading(true);
-                return;
-            }
-            if (info.file.status === 'done') {
-                const ipfsHash = info.file.response.Hash;
-                setImageUri(IPFS_ENDPOINT + ipfsHash);
-                return;
-            }
-            if (info.file.status === 'error') {
-                message.error('Upload Image Error');
-                setLoading(false);
-            }
-        },
-        beforeUpload(file: RcFile) {
-            const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-            if (!isJpgOrPng) {
-                notification.error({
-                    message: 'You can only upload JPG/PNG file!'
-                });
-            }
-            const isLt4M = file.size / 1024 / 1024 < 4;
-            if (!isLt4M) {
-                notification.error({
-                    message: 'Image must smaller than 4MB!'
-                });
-            }
-            return isJpgOrPng && isLt4M;
-        },
-        showUploadList: false,
-        disabled: loading || !!imageUri
-    };
-
-    return (<>
-        <Modal title='Create HNFT' centered visible onCancel={onCancel}
-            footer={[
-                <Button key="back" onClick={onCancel}>
-                    Cancel
-                </Button>,
-                <Button key="submit" type="primary" disabled={!imageUri} loading={createHnftLoading} onClick={() => createHnft(imageUri!)}>
-                    Create
-                </Button>
-            ]}
-        >
-            <ImgCrop quality={1}>
-                <Dragger {...props} className='upload-dragger'>
-                    {imageUri && (
-                        <AntdImage width={200} preview={false} src={imageUri}></AntdImage>
-                    )}
-                    {!imageUri && (<>
-                        <p className="ant-upload-drag-icon">
-                            <CloudUploadOutlined className='upload-icon' />
-                        </p>
-                        <p className="ant-upload-text">Upload Image to Create HNFT</p>
-                        <p className="ant-upload-hint">
-                            Click or drag file to this area to upload
-                        </p>
-                    </>)}
-                </Dragger>
-            </ImgCrop>
-        </Modal>
-    </>);
-};
+  return (
+    <>
+      <div className='hnft'>
+        <div className='my-hnft'>
+          <div className='title'>my hNFT</div>
+          <BillboardNftImage
+            upgrade
+            nftOption={config}
+            style={{ flexDirection: 'column', padding: 0 }}
+            className={cs(
+              `billboard-nft-${hnft?.rank}`,
+              isMobile && 'mobile-billboard-nft-image'
+            )}
+            description={`Upgrade to ${
+              BillboardLevel2Name[Number(config?.level) + 1]
+            } to unlock more features`}
+            onUpgrade={() => setVisible(true)}
+          />
+        </div>
+        <div className='my-token'>
+          <div className='title'>My Token</div>
+          <div className='token'>
+            <div className='token-detail'>
+              <div className='token-image'>
+                <img src='/nfts/triangle.svg' alt='' />
+              </div>
+              <div>
+                <div>$ AD3</div>
+                <div className='token-type'>Ethereum</div>
+              </div>
+            </div>
+            <div className='token-price'>{blance}</div>
+          </div>
+        </div>
+        {isMobile && (
+          <div className='issue-my-first-token token'>
+            <Button onClick={() => navigate('/issue')}>Issue my first token</Button>
+          </div>
+        )}
+      </div>
+      {visible && (
+        <CreateHnftModal
+          upgrade
+          onCreate={onCreateSuccess}
+          onCancel={() => setVisible(false)}
+        />
+      )}
+      <MintSuccess ref={mintSuccessRef} />
+    </>
+  );
+}

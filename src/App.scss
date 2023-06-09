@@ -1,15 +1,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap");
-@import "antd/dist/antd.css";
 @import "styles.scss";
 
 .app {
+  height: 100%;
+
   .ant-layout {
     background: #fff;
+    height: 100%;
   }
 
   .content {
-    padding: 50px 50px 0 50px;
     margin-top: 64px;
+    overflow: auto;
   }
 
   .footer {
@@ -33,16 +35,68 @@
     font-size: 16px;
     border: none;
     -webkit-box-shadow: 0 4px 14px 0 rgb(255 91 0 / 39%);
-    box-shadow: 0 4px 14px 0 rgba(255,91,0,.39);
-  
+    box-shadow: 0 4px 14px 0 rgba(255, 91, 0, .39);
+
     &:hover {
       background: $parami-red-hover;
     }
   }
-  
+
   .ant-card {
     border-radius: 16px !important;
-    -webkit-box-shadow: 0 25px 50px -12px rgb(0 0 0 / 25%);
-    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 25%);
+    // -webkit-box-shadow: 0 25px 50px -12px rgb(0 0 0 / 25%);
+    // box-shadow: 0 25px 50px -12px rgb(0 0 0 / 25%);
+    margin: 40px 0;
+  }
+
+  .mobile-footer {
+    background: #10121A;
+    border: 0.6px solid #1C1E25;
+    border-radius: 10px;
+    padding: 16px 80px;
+    font-size: 15px;
+    color: white;
+  }
+}
+
+#root {
+  height: 100%;
+}
+
+@media only screen and (max-width: 991px) {
+  .app {
+    .footer {
+      padding: 20px !important;
+      border-top: 1px solid #E2E2E2;
+    }
+
+    .ant-card {
+      border-radius: 0;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+      margin: 0;
+    }
+
+    .ant-card-head-title {
+      .title {
+        font-size: 32px;
+      }
+      .sub-title {
+        font-size: 12px;
+      }
+    }
+
+    .ant-card-bordered {
+      border: none;
+    }
+
+    .ant-card-head {
+      border: none;
+      min-height: 0;
+    }
+
+    .ant-card-head-title {
+      padding: 0;
+    }
   }
 }
