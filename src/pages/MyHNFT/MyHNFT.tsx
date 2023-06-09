@@ -11,7 +11,7 @@ import './MyHNFT.scss';
 
 export function MyHNFT() {
   const hnft = useHNFT();
-  const { status, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
   const { open } = useWeb3Modal();
@@ -28,7 +28,7 @@ export function MyHNFT() {
       });
       switchNetwork?.(5);
     }
-  }, [chain, status]);
+  }, [chain]);
 
   const walletConnect = () => {
     if (isMobile) {
