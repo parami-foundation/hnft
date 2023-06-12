@@ -185,9 +185,10 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
     const uploadRes = await uploadIPFS(values);
 
     // success && blance >= approve amount = min_deposite_amount + new_bid_price
-    // if (res && Number(ad3Balance) >= MIN_DEPOIST_FOR_PRE_BID + bid_price) {
-    //   approve?.();
-    // }
+    if (uploadRes && Number(ad3Balance) >= MIN_DEPOIST_FOR_PRE_BID + bid_price) {
+      approve?.();
+    }
+    
     const metadataUrl = `https://ipfs.parami.io/ipfs/${uploadRes.Hash}`
     setAdMetadataUrl(metadataUrl);
 
