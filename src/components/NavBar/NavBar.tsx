@@ -2,8 +2,8 @@ import { createAvatar } from '@dicebear/core';
 import * as lorelei from '@dicebear/lorelei';
 import { isMobile } from 'react-device-detect';
 import { useWeb3Modal } from '@web3modal/react';
-import { Layout, Button, Avatar, Tooltip } from 'antd';
-import { useAccount, useConnect } from 'wagmi';
+import { Layout, Button, Avatar, Tooltip, message } from 'antd';
+import { useAccount, useConnect, useNetwork } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
 import './NavBar.scss';
 
@@ -12,6 +12,7 @@ const { Header } = Layout;
 export function NavBar() {
   const { address, isConnected } = useAccount();
   const { open } = useWeb3Modal();
+  const { chain } = useNetwork();
   const { connect, connectors, isLoading } = useConnect({
     connector: new InjectedConnector(),
   });
@@ -23,6 +24,11 @@ export function NavBar() {
   }
 
   const walletConnect = () => {
+    if (chain?.id !== 5) {
+      message.info('Please switch to the test network goerli');
+      return;
+    }
+
     if (isMobile) {
       open();
     } else {
