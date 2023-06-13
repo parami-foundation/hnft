@@ -1,5 +1,5 @@
 import { PARAMI_AIRDROP } from "../models/hnft";
-import { fetchWithCredentials } from "../utils/api.util";
+import { fetchWithAuthorization, fetchWithCredentials } from "../utils/api.util";
 
 export interface BidWithSignature {
   id: string;
@@ -61,7 +61,7 @@ export interface CreateAdMetaInfo {
 export const createAdMeta = async (createAdMetaInfo: CreateAdMetaInfo) => {
   try {
     const postBody = JSON.stringify(createAdMetaInfo);
-    const resp = await fetchWithCredentials(`${PARAMI_AIRDROP}/relayer/api/ad_meta/create`, {
+    const resp = await fetchWithAuthorization(`${PARAMI_AIRDROP}/relayer/api/ad_meta/create`, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json'

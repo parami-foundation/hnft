@@ -176,12 +176,12 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
     }
   }, [commitBidSuccess]);
 
-  const onFinish = async (values: any) => {
+  const onFinish = async () => {
     console.log('bid process: upload ipfs, create adMeta, approve deposit');
     const formValues = await form.validateFields();
     setBidLoading(true);
-    const { bid_price } = values;
-    const uploadRes = await uploadIPFS(values);
+    const { bid_price } = formValues;
+    const uploadRes = await uploadIPFS(formValues);
 
     // success && blance >= approve amount = min_deposite_amount + new_bid_price
     if (uploadRes && Number(ad3Balance) >= MIN_DEPOIST_FOR_PRE_BID + bid_price) {
