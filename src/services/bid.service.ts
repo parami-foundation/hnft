@@ -13,7 +13,7 @@ export interface BidWithSignature {
   governance_token_remain?: bigint;
   active?: boolean;
   updated_at?: Date;
-  
+
   sig: string;
   last_bid_remain: string;
 };
@@ -45,6 +45,38 @@ export const createBid = async (bidderId: string, adId: number, hnftContractAddr
     return bidWithSig;
   } catch (e) {
     console.log('create bid error', e);
+    return;
+  }
+}
+
+export interface CreateAdMetaInfo {
+  meta_ipfs_uri: string;
+  reward_rate_in_100_percent: number;
+  payout_base: number;
+  payout_min: number;
+  payout_max: number;
+  tags: string[];
+}
+
+export const createAdMeta = async (createAdMetaInfo: CreateAdMetaInfo) => {
+  try {
+    const postBody = JSON.stringify(createAdMetaInfo);
+    const resp = await fetchWithCredentials(`${PARAMI_AIRDROP}/relayer/api/ad_meta/create`, {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: postBody
+    })
+
+    if (!resp) {
+      return;
+    }
+
+    const adMetaId = await resp.json() as number;
+    return adMetaId;
+  } catch (e) {
+    console.log('create ad meta error', e);
     return;
   }
 }

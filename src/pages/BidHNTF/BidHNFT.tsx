@@ -24,7 +24,7 @@ import { useAD3Balance } from '../../hooks/useAD3Balance';
 import { useApproveAD3 } from '../../hooks/useApproveAD3';
 import { useAuctionEvent } from '../../hooks/useAuctionEvent';
 import { useAuthorizeSlotTo } from '../../hooks/useAuthorizeSlotTo';
-import { BidWithSignature, createBid } from '../../services/bid.service';
+import { BidWithSignature, createAdMeta, createBid } from '../../services/bid.service';
 import { uploadIPFS } from '../../services/ipfs.service';
 import {
   AuctionContractAddress,
@@ -38,7 +38,7 @@ import {
 const { Panel } = Collapse;
 const { Option } = Select;
 
-interface BidHNFTProps {}
+interface BidHNFTProps { }
 
 export enum IMAGE_TYPE {
   ICON = 'icon',
@@ -66,6 +66,7 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
   const ad3Balance = useAD3Balance();
 
   const [adMetadataUrl, setAdMetadataUrl] = useState<string>();
+  const [adMetaId, setAdMetaId] = useState<number>();
   const [iconUploadFiles, setIconUploadFiles] = useState<UploadFile[]>([]);
   const [posterUploadFiles, setPosterUploadFiles] = useState<UploadFile[]>([]);
   const [bidLoading, setBidLoading] = useState<boolean>(false);
@@ -122,25 +123,12 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
   );
   const commitBidReady = !!commitBid;
 
-  // todo: check if kol is authorized bid
-  // useEffect(() => {
-  //   console.log('currentSlotManager', currentSlotManager);
-  // }, [currentSlotManager]);
-
-  // // if the authorizeSlotSuccess then pledge some of ad3s
-  // useEffect(() => {
-  //   if (authorizeSlotToSuccess) {
-  //     console.log('bid: pre bid after authorize');
-  //     preBid?.();
-  //   }
-  // }, [authorizeSlotToSuccess, preBid]);
-
   useEffect(() => {
     if (approveSuccess && preBidReady) {
-      if (
+      if ( // todo: check if currentSlotManager is auction contract BEFORE preBid
         currentSlotManager &&
         currentSlotManager.toLowerCase() ===
-          AuctionContractAddress.toLowerCase()
+        AuctionContractAddress.toLowerCase()
       ) {
         console.log('bid: pre bid direct');
         preBid?.();
@@ -157,13 +145,12 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
   }, [preBidPrepareError]);
 
   useEffect(() => {
-    if (bidPreparedEvent && bidPreparedEvent.bidder) {
+    if (bidPreparedEvent && bidPreparedEvent.bidder && adMetaId) {
       const bid_price = form.getFieldValue('bid_price');
-      // todo: create adMeta
       console.log('bid prepare event done. create bid now...');
       createBid(
-        imAccount?.id ?? '26',
-        1,
+        imAccount?.id ?? '26', // todo: use new account id
+        adMetaId,
         EIP5489ForInfluenceMiningContractAddress,
         tokenId,
         inputFloatStringToAmount(String(bid_price))
@@ -190,20 +177,31 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
     }
   }, [commitBidSuccess]);
 
-  const onFinish = (values: any) => {
-    form.validateFields().then(async (values: any) => {
-      setBidLoading(true);
-      const { bid_price } = values;
-      uploadIPFS(values).then((res) => {
-        console.log('upload ipfs res', res);
-        // success && blance >= approve amount = min_deposite_amount + new_bid_price
-        if (res && Number(ad3Balance) >= MIN_DEPOIST_FOR_PRE_BID + bid_price) {
-          approve?.();
-        }
-        setAdMetadataUrl(`https://ipfs.parami.io/ipfs/${res.Hash}`);
-        console.log('bid: handle bid');
-      });
+  const onFinish = async (values: any) => {
+    console.log('bid process: upload ipfs, create adMeta, approve deposit');
+    const formValues = await form.validateFields();
+    setBidLoading(true);
+    const { bid_price } = values;
+    const uploadRes = await uploadIPFS(values);
+
+    // success && blance >= approve amount = min_deposite_amount + new_bid_price
+    if (uploadRes && Number(ad3Balance) >= MIN_DEPOIST_FOR_PRE_BID + bid_price) {
+      approve?.();
+    }
+    
+    const metadataUrl = `https://ipfs.parami.io/ipfs/${uploadRes.Hash}`
+    setAdMetadataUrl(metadataUrl);
+
+    // create ad meta
+    const adMetaId = await createAdMeta({
+      meta_ipfs_uri: metadataUrl,
+      reward_rate_in_100_percent: formValues.reward_rate_in_100_percent,
+      payout_base: formValues.payout_base,
+      payout_max: formValues.payout_max,
+      payout_min: formValues.payout_min,
+      tags: [formValues.tag],
     });
+    setAdMetaId(adMetaId);
   };
 
   const handleBeforeUpload = (imageType: IMAGE_TYPE) => {
