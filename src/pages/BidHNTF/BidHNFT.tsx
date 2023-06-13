@@ -19,7 +19,6 @@ import { useHNFT } from '../../hooks/useHNFT';
 import { usePreBid } from '../../hooks/usePreBid';
 import { useCurBid } from '../../hooks/useCurrentBid';
 import { useCommitBid } from '../../hooks/useCommitBid';
-import { useImAccount } from '../../hooks/useImAccount';
 import { useAD3Balance } from '../../hooks/useAD3Balance';
 import { useApproveAD3 } from '../../hooks/useApproveAD3';
 import { useAuctionEvent } from '../../hooks/useAuctionEvent';
@@ -58,7 +57,7 @@ const MIN_DEPOIST_FOR_PRE_BID = 10;
 const BidHNFT: React.FC<BidHNFTProps> = (props) => {
   const [form] = Form.useForm();
   const content = Form.useWatch('title', form);
-  const { imAccount } = useImAccount();
+  // const { imAccount } = useImAccount();
   const [params] = useSearchParams();
   const tokenId = Number(params.get('tokenId') || '');
   const hnftAddress = params.get('hnftAddress') || '';
@@ -149,7 +148,7 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
       const bid_price = form.getFieldValue('bid_price');
       console.log('bid prepare event done. create bid now...');
       createBid(
-        imAccount?.id ?? '26', // todo: use new account id
+        '26', // todo: use new account id
         adMetaId,
         EIP5489ForInfluenceMiningContractAddress,
         tokenId,
@@ -159,7 +158,7 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
         setBidWithSig(bidWithSig);
       });
     }
-  }, [bidPreparedEvent, tokenId, imAccount?.id]);
+  }, [bidPreparedEvent, tokenId]);
 
   useEffect(() => {
     if (bidWithSig && commitBidReady) {

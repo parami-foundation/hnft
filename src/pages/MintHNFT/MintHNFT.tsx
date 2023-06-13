@@ -42,13 +42,10 @@ export function MintHNFT({}: MintHNFTProps) {
     }
   }, [searchParams]);
 
+  // todo: switch to oauth 2
   const handleConnectTwitter = async () => {
     const oauthUrl = await requestTwitterOauthUrl();
     if (oauthUrl) {
-      if (isMobile) {
-        window.location.href = `${oauthUrl}`;
-        return;
-      }
       // direct oauth
       window.location.href = oauthUrl;
     }

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { isMobile } from 'react-device-detect';
 import cs from 'classnames';
 import { Button } from 'antd';
@@ -40,9 +40,8 @@ export function Hnft(props: HnftProps) {
               `billboard-nft-${hnft?.rank}`,
               isMobile && 'mobile-billboard-nft-image'
             )}
-            description={`Upgrade to ${
-              BillboardLevel2Name[Number(config?.level) + 1]
-            } to unlock more features`}
+            description={`Upgrade to ${BillboardLevel2Name[Number(config?.level) + 1]
+              } to unlock more features`}
             onUpgrade={() => setVisible(true)}
           />
         </div>
