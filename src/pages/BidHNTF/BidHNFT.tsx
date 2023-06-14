@@ -35,6 +35,7 @@ import {
 } from '../../utils/format.util';
 import { useAuthorizeSlotTo } from '../../hooks/useAuthorizeSlotTo';
 import { useApproveGovernanceToken } from '../../hooks/useApproveGovernanceToken';
+import { useHnftGovernanceToken } from '../../hooks/useHnftGovernanceToken';
 
 const { Panel } = Collapse;
 const { Option } = Select;
@@ -63,7 +64,7 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
   const tokenId = Number(params.get('tokenId') || '');
   const hnftAddress = params.get('hnftAddress') || '';
   const hnft = useHNFT();
-  const ad3Balance = useAD3Balance();
+  const governanceToken = useHnftGovernanceToken(hnft.address, hnft.tokenId);
 
   const [adMetadataUrl, setAdMetadataUrl] = useState<string>();
   const [adMetaId, setAdMetaId] = useState<number>();
@@ -86,7 +87,7 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
   const {
     approve: approveGovernanceToken,
     isSuccess: approveGovernanceTokenSuccess
-  } = useApproveGovernanceToken(hnft.governanceTokenAddress as `0x${string}`, inputFloatStringToAmount(`${bid_price}`));
+  } = useApproveGovernanceToken(governanceToken.address as `0x${string}`, inputFloatStringToAmount(`${bid_price}`));
 
   const { currentSlotManager } = useAuthorizeSlotTo(tokenId, AuctionContractAddress);
   useEffect(() => {

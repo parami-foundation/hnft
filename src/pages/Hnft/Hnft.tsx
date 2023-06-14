@@ -5,10 +5,12 @@ import { Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { BillboardNftImage } from '../../components/BillboardNftImage';
 import { CreateHnftModal } from '../../components/CreateHnftModal';
-import { useAD3Balance, HNFT, useHNFT } from '../../hooks';
+import { HNFT, useHNFT } from '../../hooks';
 import { BillboardLevel2Name } from '../../models/hnft';
 import MintSuccess from '../../components/MintSuccess/MintSuccess';
 import './Hnft.scss';
+import { useHnftGovernanceToken } from '../../hooks/useHnftGovernanceToken';
+import { amountToFloatString } from '../../utils/format.util';
 
 export interface HnftProps {
   config: HNFT;
@@ -19,13 +21,14 @@ export function Hnft(props: HnftProps) {
   const [visible, setVisible] = useState(false);
   const mintSuccessRef = useRef<HTMLDivElement>() as any;
   const hnft = useHNFT();
-  const blance = useAD3Balance();
   const navigate = useNavigate();
 
   const onCreateSuccess = () => {
     setVisible(false);
     mintSuccessRef?.current?.onCreateSuccess();
   };
+
+  const governanceToken = useHnftGovernanceToken(hnft.address, hnft.tokenId);
 
   return (
     <>
@@ -53,14 +56,16 @@ export function Hnft(props: HnftProps) {
                 <img src='/nfts/triangle.svg' alt='' />
               </div>
               <div>
-                <div>$ AD3</div>
+                <div>$ {governanceToken.symbol}</div>
                 <div className='token-type'>Ethereum</div>
               </div>
             </div>
-            <div className='token-price'>{blance}</div>
+            <div className='token-price'>
+              {Number(Number(amountToFloatString(governanceToken.balance ?? '0', governanceToken.decimals)).toFixed(4)).toLocaleString('en-US')}
+            </div>
           </div>
         </div>
-        {isMobile && (
+        {governanceToken.isAD3 && (
           <div className='issue-my-first-token token'>
             <Button onClick={() => navigate('/issue')}>Issue my first token</Button>
           </div>
