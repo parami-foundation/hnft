@@ -1,15 +1,11 @@
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from "wagmi"
-import {
-  EIP5489ForInfluenceMiningContractAddress,
-  AD3ContractAddress,
-  AuctionContractAddress,
-} from '../models/hnft';
-import AD3Contract from '../contracts/AD3.json';
+import { AD3ContractAddress, AuctionContractAddress } from "../models/hnft";
+import GovernanceToken from '../contracts/HNFTGovernanceToken.json';
 
-export const useApproveAD3 = (amount?: string) => {
+export const useApproveGovernanceToken = (address?: `0x${string}`, amount?: string) => {
   const { config, error: prepareError } = usePrepareContractWrite({
-    address: AD3ContractAddress,
-    abi: AD3Contract.abi,
+    address: address ?? AD3ContractAddress,
+    abi: GovernanceToken.abi,
     functionName: 'approve',
     args: [AuctionContractAddress, amount]
   });

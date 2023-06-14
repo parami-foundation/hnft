@@ -1,7 +1,8 @@
 import { useAccount, useContractRead } from 'wagmi';
-import { BillboardLevel2Name } from '../models/hnft';
+import { BillboardLevel2Name, HNFTGovernanceContractAddress } from '../models/hnft';
 import { EIP5489ForInfluenceMiningContractAddress } from '../models/hnft';
 import EIP5489ForInfluenceMining from '../contracts/EIP5489ForInfluenceMining.json';
+import Governance from '../contracts/HNFTGovernance.json';
 
 export interface HNFT {
   address?: string;
@@ -14,6 +15,7 @@ export interface HNFT {
   rank?: string;
   miningPower?: number;
   onWhitelist?: boolean;
+  governanceTokenAddress?: string;
   refetch: () => void;
 }
 
@@ -60,6 +62,17 @@ export const useHNFT = () => {
     args: [tokenId],
   });
 
+  const { data: governanceTokenAddress, refetch: refetchGovernanceTokenAddress } = useContractRead<
+    unknown[],
+    string,
+    string
+  >({
+    address: HNFTGovernanceContractAddress,
+    abi: Governance.abi,
+    functionName: 'getGovernanceToken',
+    args: [EIP5489ForInfluenceMiningContractAddress, tokenId],
+  });
+
   const { data: onWhitelist, refetch: refetchWhitelistStatus } =
     useContractRead({
       address: EIP5489ForInfluenceMiningContractAddress,
@@ -79,12 +92,14 @@ export const useHNFT = () => {
     onWhitelist: onWhitelist,
     level: levelString,
     rank: BillboardLevel2Name[levelString],
+    governanceTokenAddress: governanceTokenAddress,
     refetch: () => {
       refetchBalance();
       refetchTokenId();
       refetchTokenUri();
       refetchLevel();
       refetchWhitelistStatus();
+      refetchGovernanceTokenAddress();
     },
   };
 
