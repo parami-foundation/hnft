@@ -32,23 +32,25 @@ export function MyHNFT() {
   }
 
   return (
-    <div className='my-nfts'>
-      {!isConnected && (
-        <div className='connect-wallet'>
-          <div>Own your own hNFT and claim your rewards</div>
-          <Button onClick={walletConnect} loading={isLoading}>
-            {isLoading ? 'Connecting' : 'Connect Wallet'}
-          </Button>
-        </div>
-      )}
+    <>
+      <div className='my-nfts'>
+        {!isConnected && (
+          <div className='connect-wallet'>
+            <div>Own your own hNFT and claim your rewards</div>
+            <Button onClick={walletConnect} loading={isLoading}>
+              {isLoading ? 'Connecting' : 'Connect Wallet'}
+            </Button>
+          </div>
+        )}
 
-      {isConnected && chain?.id === 5 && (
-        <div className='my-nfts-container'>
-          <Spin spinning={!hnft} className='loading-container'>
-            {hnft?.tokenId ? <Hnft config={hnft} /> : <MintHNFT />}
-          </Spin>
-        </div>
-      )}
-    </div>
+        {isConnected && chain?.id === 5 && (
+          <div className='my-nfts-container'>
+            <Spin spinning={!hnft} className='loading-container'>
+              {hnft?.tokenId ? <Hnft config={hnft} /> : <MintHNFT />}
+            </Spin>
+          </div>
+        )}
+      </div>
+    </>
   );
 }

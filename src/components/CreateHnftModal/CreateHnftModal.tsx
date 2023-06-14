@@ -28,6 +28,7 @@ import {
 import {
   amountToFloatString,
   formatTwitterImageUrl,
+  inputFloatStringToAmount,
 } from '../../utils/format.util';
 import { TwitterUser } from '../../services/twitter.service';
 
@@ -74,7 +75,7 @@ export function CreateHnftModal({
     isLoading: approveLoading,
     isSuccess: approveSuccess,
     error: approveError,
-  } = useApproveAD3(price);
+  } = useApproveAD3(inputFloatStringToAmount(`${price}`));
 
   useEffect(() => {
     if (hnft.tokenId || twitterUser) {

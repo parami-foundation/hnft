@@ -8,6 +8,7 @@ import {
   InputNumber,
   Collapse,
   Select,
+  notification,
 } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { compressImageFile, uploadProps } from '../../utils/upload.util';
@@ -19,11 +20,9 @@ import { useHNFT } from '../../hooks/useHNFT';
 import { usePreBid } from '../../hooks/usePreBid';
 import { useCurBid } from '../../hooks/useCurrentBid';
 import { useCommitBid } from '../../hooks/useCommitBid';
-import { useImAccount } from '../../hooks/useImAccount';
 import { useAD3Balance } from '../../hooks/useAD3Balance';
 import { useApproveAD3 } from '../../hooks/useApproveAD3';
 import { useAuctionEvent } from '../../hooks/useAuctionEvent';
-import { useAuthorizeSlotTo } from '../../hooks/useAuthorizeSlotTo';
 import { BidWithSignature, createAdMeta, createBid } from '../../services/bid.service';
 import { uploadIPFS } from '../../services/ipfs.service';
 import {
@@ -34,6 +33,9 @@ import {
   inputFloatStringToAmount,
   formatAd3Amount,
 } from '../../utils/format.util';
+import { useAuthorizeSlotTo } from '../../hooks/useAuthorizeSlotTo';
+import { useApproveGovernanceToken } from '../../hooks/useApproveGovernanceToken';
+import { useHnftGovernanceToken } from '../../hooks/useHnftGovernanceToken';
 
 const { Panel } = Collapse;
 const { Option } = Select;
@@ -58,12 +60,11 @@ const MIN_DEPOIST_FOR_PRE_BID = 10;
 const BidHNFT: React.FC<BidHNFTProps> = (props) => {
   const [form] = Form.useForm();
   const content = Form.useWatch('title', form);
-  const { imAccount } = useImAccount();
   const [params] = useSearchParams();
   const tokenId = Number(params.get('tokenId') || '');
   const hnftAddress = params.get('hnftAddress') || '';
   const hnft = useHNFT();
-  const ad3Balance = useAD3Balance();
+  const governanceToken = useHnftGovernanceToken(hnft.address, hnft.tokenId);
 
   const [adMetadataUrl, setAdMetadataUrl] = useState<string>();
   const [adMetaId, setAdMetaId] = useState<number>();
@@ -79,16 +80,26 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
   const minPrice = Math.max(currentPrice * 1.2, 1);
   const bid_price = form.getFieldValue('bid_price') ?? 0;
 
-  const { approve, isSuccess: approveSuccess } = useApproveAD3(
-    Number(
-      inputFloatStringToAmount(String(MIN_DEPOIST_FOR_PRE_BID + bid_price))
-    )
+  const { approve: approveDeposit, isSuccess: approveDepositSuccess } = useApproveAD3(
+    inputFloatStringToAmount(String(MIN_DEPOIST_FOR_PRE_BID))
   );
+
   const {
-    authorizeSlotTo,
-    isSuccess: authorizeSlotToSuccess,
-    currentSlotManager,
-  } = useAuthorizeSlotTo(tokenId, AuctionContractAddress);
+    approve: approveGovernanceToken,
+    isSuccess: approveGovernanceTokenSuccess
+  } = useApproveGovernanceToken(governanceToken.address as `0x${string}`, inputFloatStringToAmount(`${bid_price}`));
+
+  const { currentSlotManager } = useAuthorizeSlotTo(tokenId, AuctionContractAddress);
+  useEffect(() => {
+    if (currentSlotManager && currentSlotManager.toLowerCase() !== AuctionContractAddress.toLowerCase()) {
+      notification.warning({
+        duration: null,
+        message: 'This hNFT is not available for bidding.',
+        description: 'Please try another one'
+      })
+    }
+  }, [currentSlotManager])
+
   const {
     preBid,
     isSuccess: preBidSuccess,
@@ -124,19 +135,10 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
   const commitBidReady = !!commitBid;
 
   useEffect(() => {
-    if (approveSuccess && preBidReady) {
-      if ( // todo: check if currentSlotManager is auction contract BEFORE preBid
-        currentSlotManager &&
-        currentSlotManager.toLowerCase() ===
-        AuctionContractAddress.toLowerCase()
-      ) {
-        console.log('bid: pre bid direct');
-        preBid?.();
-      } else {
-        authorizeSlotTo?.();
-      }
+    if (approveDepositSuccess && approveGovernanceTokenSuccess && preBidReady) {
+      preBid?.();
     }
-  }, [approveSuccess, preBidReady, currentSlotManager]);
+  }, [approveDepositSuccess, approveGovernanceTokenSuccess, preBidReady]);
 
   useEffect(() => {
     if (preBidPrepareError) {
@@ -149,7 +151,6 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
       const bid_price = form.getFieldValue('bid_price');
       console.log('bid prepare event done. create bid now...');
       createBid(
-        imAccount?.id ?? '26', // todo: use new account id
         adMetaId,
         EIP5489ForInfluenceMiningContractAddress,
         tokenId,
@@ -159,15 +160,13 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
         setBidWithSig(bidWithSig);
       });
     }
-  }, [bidPreparedEvent, tokenId, imAccount?.id]);
+  }, [bidPreparedEvent, tokenId]);
 
   useEffect(() => {
     if (bidWithSig && commitBidReady) {
       commitBid?.();
     }
   }, [bidWithSig, commitBidReady]);
-
-  console.log(hnft, '---hnft---')
 
   useEffect(() => {
     if (commitBidSuccess) {
@@ -177,18 +176,22 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
     }
   }, [commitBidSuccess]);
 
-  const onFinish = async (values: any) => {
+  const onFinish = async () => {
     console.log('bid process: upload ipfs, create adMeta, approve deposit');
     const formValues = await form.validateFields();
     setBidLoading(true);
-    const { bid_price } = values;
-    const uploadRes = await uploadIPFS(values);
+    const uploadRes = await uploadIPFS({
+      ...formValues,
+      icon: formValues.icon.file.url,
+      poster: formValues.poster.file.url
+    });
 
-    // success && blance >= approve amount = min_deposite_amount + new_bid_price
-    if (uploadRes && Number(ad3Balance) >= MIN_DEPOIST_FOR_PRE_BID + bid_price) {
-      approve?.();
+    // todo: check ad3balance and governance token balance
+    if (uploadRes) {
+      approveDeposit?.();
+      approveGovernanceToken?.();
     }
-    
+
     const metadataUrl = `https://ipfs.parami.io/ipfs/${uploadRes.Hash}`
     setAdMetadataUrl(metadataUrl);
 

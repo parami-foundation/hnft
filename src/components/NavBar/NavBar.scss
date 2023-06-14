@@ -7,27 +7,33 @@
   background-color: #fff;
   -webkit-box-shadow: 0 1px 4px 0 rgb(0 21 41 / 12%);
   box-shadow: 0 1px 4px 0 rgba(0, 21, 41, .12);
+  display: flex;
 
-  .logo {
-    float: left;
-    width: 120px;
-    height: 31px;
+  .logo-container {
+    flex-grow: 1;
 
-    img {
-      width: 100%;
+    .logo {
+      float: left;
+      width: 120px;
+      height: 31px;
+
+      img {
+        width: 100%;
+      }
     }
   }
 
+  .login {
+    margin-right: 10px;
+  }
+
   .user {
-    margin-left: auto !important;
-    float: right;
-    
+    .avatar {
+      background-color: #f3f3f3;
+    }
+
     .avator-image {
       width: 40px;
     }
-  }  
-
-  .avatar {
-    background-color: #f3f3f3;
   }
 }

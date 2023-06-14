@@ -8,6 +8,7 @@ export interface TwitterUser {
   profile_image_url?: string;
 }
 
+// todo: switch to oauth 2
 export const requestTwitterOauthUrl = async () => {
   try {
     const resp = await fetch(`${PARAMI_AIRDROP}/twitter/api/oauth_url?callbackUrl=${window.origin}`);

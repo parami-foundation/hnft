@@ -13,6 +13,23 @@ export const generateSignedMessage = (address: string, expire: number): string =
   return `${address},${expire}`;
 };
 
+export const fetchWithAuthorization = async (input: RequestInfo | URL, init?: RequestInit) => {
+  const authorization = localStorage.getItem('authorization') as string;
+
+  if (!authorization) {
+    return;
+  }
+
+  const options = init ?? {};
+  return fetch(input, {
+    ...options,
+    headers: {
+      ...options.headers,
+      authorization
+    }
+  })
+}
+
 export const fetchWithCredentials = async (input: RequestInfo | URL, init?: RequestInit) => {
   const authcookiebytwitter = localStorage.getItem('authcookiebytwitter') as string;
   const expiretime = localStorage.getItem('expiretime') as string;

@@ -1,7 +1,9 @@
 import { useAccount, useContractRead } from 'wagmi';
-import { BillboardLevel2Name } from '../models/hnft';
+import { AD3ContractAddress, BillboardLevel2Name, HNFTGovernanceContractAddress } from '../models/hnft';
 import { EIP5489ForInfluenceMiningContractAddress } from '../models/hnft';
 import EIP5489ForInfluenceMining from '../contracts/EIP5489ForInfluenceMining.json';
+import Governance from '../contracts/HNFTGovernance.json';
+import { ethers } from 'ethers';
 
 export interface HNFT {
   address?: string;
