@@ -1,18 +1,40 @@
-import React from 'react';
-import { Breadcrumb, Button, Form, Input } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Breadcrumb, Button, Form, Input, notification } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import './IssueToken.scss';
+import { useIssueGovernanceToken } from '../../hooks/useIssueGovernanceToken';
+import { useHNFT } from '../../hooks';
 
-export interface IssueTokenProps {}
+export interface IssueTokenProps { }
 
-export function IssueToken({}: IssueTokenProps) {
+export function IssueToken({ }: IssueTokenProps) {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const hnft = useHNFT();
+  const [tokenInfo, setTokenInfo] = useState<{ name: string, symbol: string }>()
+  const { issueToken, isSuccess, isLoading } = useIssueGovernanceToken(hnft.address, hnft.tokenId, tokenInfo?.name, tokenInfo?.symbol);
+  const issueTokenReady = !!issueToken;
 
   const onFinish = () => {
-    form.validateFields().then(async (values: any) => {
+    form.validateFields().then((values: any) => {
+      setTokenInfo(values);
     });
   };
+
+  useEffect(() => {
+    if (issueTokenReady && tokenInfo) {
+      issueToken?.();
+    }
+  }, [issueTokenReady, tokenInfo]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      notification.success({
+        message: 'Issue Governance Token Success!'
+      });
+      navigate('/');
+    }
+  }, [isSuccess]);
 
   return (
     <>
@@ -47,7 +69,7 @@ export function IssueToken({}: IssueTokenProps) {
             </Form.Item>
           </Form>
           <div className='issue-token-footer'>
-            <Button onClick={onFinish}>Confirm</Button>
+            <Button onClick={onFinish} type="primary" loading={isLoading}>Confirm</Button>
           </div>
         </div>
       </div>
