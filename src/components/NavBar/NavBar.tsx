@@ -3,18 +3,20 @@ import * as lorelei from '@dicebear/lorelei';
 import { isMobile } from 'react-device-detect';
 import { useWeb3Modal } from '@web3modal/react';
 import { Layout, Button, Avatar, Tooltip, message, notification } from 'antd';
-import { useAccount, useConnect, useNetwork } from 'wagmi';
+import { useAccount, useConnect, useNetwork, useSignMessage } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
 import './NavBar.scss';
 import { useEffect, useState } from 'react';
 import SigninModal from '../SigninModal/SigninModal';
 import { useSearchParams } from 'react-router-dom';
-import { createAccountOrLogin, getAccount } from '../../services/relayer.service';
+import { bindWallet, createAccountOrLogin, getAccount } from '../../services/relayer.service';
+import { BIND_WALLET_MESSAGE } from '../../models/hnft';
 
 const { Header } = Layout;
 
 export function NavBar() {
   const [showLoginBtn, setShowLoginBtn] = useState<boolean>(false);
+  const [showBindWalletBtn, setShowBindWalletBtn] = useState<boolean>(false);
   const [signinModal, setSigninModal] = useState<boolean>(false);
   const { address, isConnected } = useAccount();
   const { open } = useWeb3Modal();
@@ -24,6 +26,15 @@ export function NavBar() {
   });
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const { data: signature, error: signMsgError, isLoading: signMsgLoading, signMessage } = useSignMessage()
+
+  useEffect(() => {
+    if (signMsgError) {
+      notification.warning({
+        message: signMsgError.message
+      })
+    }
+  }, [signMsgError])
 
   useEffect(() => {
     getAccount().then(res => {
@@ -31,9 +42,29 @@ export function NavBar() {
         setShowLoginBtn(true);
       } else {
         console.log('got user account', res);
+        if (!res.wallets.length) {
+          setShowBindWalletBtn(true);
+        }
       }
     })
   }, []);
+
+  useEffect(() => {
+    if (signature) {
+      bindWallet(address!, chain!.id, BIND_WALLET_MESSAGE, signature).then(res => {
+        if (res.success) {
+          notification.success({
+            message: 'bind wallet success'
+          });
+          setShowBindWalletBtn(false);
+        } else {
+          notification.warning({
+            message: `bind wallet error ${res.message ?? ''}`
+          })
+        }
+      })
+    }
+  }, [signature])
 
   useEffect(() => {
     if (searchParams) {
@@ -79,10 +110,19 @@ export function NavBar() {
         </div>
 
         {showLoginBtn && <>
-          <div className='login'>
+          <div className='action-btn-container'>
             <Button onClick={() => {
               setSigninModal(true);
             }} type="primary">login</Button>
+          </div>
+        </>}
+
+        {showBindWalletBtn && <>
+          <div className='action-btn-container'>
+            <Button onClick={() => {
+              // sign message and bind wallet
+              signMessage({ message: BIND_WALLET_MESSAGE })
+            }} type="primary">bind wallet</Button>
           </div>
         </>}
 

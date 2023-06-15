@@ -81,3 +81,5 @@ export enum MINT_NFT_TYPE {
   IMAGE = 'image',
   TWITTER = 'twitter',
 }
+
+export const BIND_WALLET_MESSAGE = 'hyperlink NFT bind wallet address';
