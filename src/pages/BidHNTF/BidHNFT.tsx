@@ -36,6 +36,7 @@ import {
 import { useAuthorizeSlotTo } from '../../hooks/useAuthorizeSlotTo';
 import { useApproveGovernanceToken } from '../../hooks/useApproveGovernanceToken';
 import { useHnftGovernanceToken } from '../../hooks/useHnftGovernanceToken';
+import { useNetwork } from 'wagmi';
 
 const { Panel } = Collapse;
 const { Option } = Select;
@@ -73,12 +74,23 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
   const [bidLoading, setBidLoading] = useState<boolean>(false);
   const [bidWithSig, setBidWithSig] = useState<BidWithSignature>();
   const [bidPreparedEvent, setBidPreparedEvent] = useState<any>();
+  const [bidPrice, setBidPrice] = useState<number>(0);
+  const { chain } = useNetwork();
+
+  useEffect(() => {
+    form.setFieldsValue({
+      reward_rate_in_100_percent: 10,
+      lifetime: 1,
+      payout_base: 1,
+      payout_max: 1,
+      payout_min: 1,
+    })
+  }, [])
 
   const currentPrice = Number(
     formatAd3Amount(useCurBid(hnftAddress, tokenId)?.amount)
   );
-  const minPrice = Math.max(currentPrice * 1.2, 1);
-  const bid_price = form.getFieldValue('bid_price') ?? 0;
+  const minPrice = Math.max(currentPrice * 1.2, 0);
 
   const { approve: approveDeposit, isSuccess: approveDepositSuccess } = useApproveAD3(
     inputFloatStringToAmount(String(MIN_DEPOIST_FOR_PRE_BID))
@@ -87,7 +99,7 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
   const {
     approve: approveGovernanceToken,
     isSuccess: approveGovernanceTokenSuccess
-  } = useApproveGovernanceToken(governanceToken.address as `0x${string}`, inputFloatStringToAmount(`${bid_price}`));
+  } = useApproveGovernanceToken(governanceToken.address as `0x${string}`, inputFloatStringToAmount(`${bidPrice}`));
 
   const { currentSlotManager } = useAuthorizeSlotTo(tokenId, AuctionContractAddress);
   useEffect(() => {
@@ -109,23 +121,22 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
 
   const { unwatch } = useAuctionEvent(
     'BidPrepared',
-    (
-      hNFTContractAddr: string,
-      curBidId: string,
-      preBidId: string,
-      bidder: string
-    ) => {
-      setBidPreparedEvent({
-        bidder,
-        curBidId,
-        preBidId,
-      });
+    (events: any[]) => {
+      if (events.length) {
+        const { bidder, curBidId, goverAddr, hNFTContractAddr, preBidId } = events[0].args;
+        console.log('Bid Prepared Event:', bidder, curBidId, preBidId);
+        setBidPreparedEvent({
+          bidder,
+          curBidId,
+          preBidId,
+        });
+      }
     }
   );
   const { commitBid, isSuccess: commitBidSuccess } = useCommitBid(
     tokenId,
     hnftAddress,
-    inputFloatStringToAmount(String(bid_price)),
+    inputFloatStringToAmount(String(bidPrice)),
     adMetadataUrl,
     bidWithSig?.sig,
     bidWithSig?.prev_bid_id,
@@ -147,14 +158,14 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
   }, [preBidPrepareError]);
 
   useEffect(() => {
-    if (bidPreparedEvent && bidPreparedEvent.bidder && adMetaId) {
-      const bid_price = form.getFieldValue('bid_price');
+    if (bidPreparedEvent && bidPreparedEvent.bidder) {
       console.log('bid prepare event done. create bid now...');
       createBid(
-        adMetaId,
+        adMetaId!,
         EIP5489ForInfluenceMiningContractAddress,
         tokenId,
-        inputFloatStringToAmount(String(bid_price))
+        inputFloatStringToAmount(String(bidPrice)),
+        chain!.id
       ).then((bidWithSig) => {
         console.log('create bid got sig', bidWithSig);
         setBidWithSig(bidWithSig);
@@ -176,35 +187,48 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
     }
   }, [commitBidSuccess]);
 
-  const onFinish = async () => {
-    console.log('bid process: upload ipfs, create adMeta, approve deposit');
-    const formValues = await form.validateFields();
-    setBidLoading(true);
-    const uploadRes = await uploadIPFS({
-      ...formValues,
-      icon: formValues.icon.file.url,
-      poster: formValues.poster.file.url
-    });
-
-    // todo: check ad3balance and governance token balance
-    if (uploadRes) {
+  useEffect(() => {
+    if (adMetaId) {
+      // todo: check ad3balance and governance token balance
       approveDeposit?.();
       approveGovernanceToken?.();
     }
+  }, [adMetaId])
 
-    const metadataUrl = `https://ipfs.parami.io/ipfs/${uploadRes.Hash}`
-    setAdMetadataUrl(metadataUrl);
+  const onFinish = async () => {
+    try {
+      console.log('bid process: upload ipfs, create adMeta, approve deposit');
+      await form.validateFields();
+      const formValues = form.getFieldsValue(true);
+      setBidPrice(formValues.bid_price);
+      console.log('submit form values', formValues);
+      setBidLoading(true);
+      const uploadRes = await uploadIPFS({
+        ...formValues,
+        icon: formValues.icon.file.url,
+        poster: formValues.poster.file.url
+      });
 
-    // create ad meta
-    const adMetaId = await createAdMeta({
-      meta_ipfs_uri: metadataUrl,
-      reward_rate_in_100_percent: formValues.reward_rate_in_100_percent,
-      payout_base: formValues.payout_base,
-      payout_max: formValues.payout_max,
-      payout_min: formValues.payout_min,
-      tags: [formValues.tag],
-    });
-    setAdMetaId(adMetaId);
+      const metadataUrl = `https://ipfs.parami.io/ipfs/${uploadRes.Hash}`
+      setAdMetadataUrl(metadataUrl);
+
+      // create ad meta
+      const adMetaId = await createAdMeta({
+        meta_ipfs_uri: metadataUrl,
+        reward_rate_in_100_percent: formValues.reward_rate_in_100_percent,
+        payout_base: formValues.payout_base,
+        payout_max: formValues.payout_max,
+        payout_min: formValues.payout_min,
+        tags: [formValues.tag],
+      });
+      setAdMetaId(adMetaId);
+    } catch (e) {
+      console.log('prepare ad meta error', e);
+      notification.warning({
+        message: 'Create Ad metadata error'
+      })
+      setBidLoading(false);
+    }
   };
 
   const handleBeforeUpload = (imageType: IMAGE_TYPE) => {
@@ -455,6 +479,7 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
                       ]}
                     >
                       <InputNumber
+                        step={0.0001}
                         min={minPrice}
                         max={1000000}
                         className='bid-nfts-body-input'

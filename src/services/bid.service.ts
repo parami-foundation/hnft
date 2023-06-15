@@ -18,15 +18,14 @@ export interface BidWithSignature {
   last_bid_remain: string;
 };
 
-export const createBid = async (adId: number, hnftContractAddress: string, tokenId: number, governanceTokenAmount: string) => {
+export const createBid = async (adId: number, hnftContractAddress: string, tokenId: number, governanceTokenAmount: string, chain_id: number) => {
   try {
     const data = JSON.stringify({
-      bidder_id: '1', // todo: remove bidder_id
       ad_id: adId,
       hnft_contract: hnftContractAddress,
       hnft_token_id: tokenId,
       governance_token_amount: governanceTokenAmount,
-      flag: 1
+      chain_id
     });
 
     const resp = await fetchWithAuthorization(`${PARAMI_AIRDROP}/relayer/api/advertiser/auction/bid`, {
