@@ -54,3 +54,35 @@ export const getAccount = async () => {
     return;
   }
 }
+
+export const bindWallet = async (wallet: string, chainId: number, message: string, signature: string) => {
+  try {
+    const postBody = JSON.stringify({
+      type: 'wallet',
+      wallet,
+      chainId,
+      message,
+      signature
+    });
+    const resp = await fetchWithAuthorization(`${PARAMI_AIRDROP}/relayer/api/user/bind`, {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: postBody,
+    })
+
+    if (resp?.ok) {
+      return {
+        success: true
+      }
+    }
+    return {
+      success: false,
+      message: await resp?.json()
+    }
+  } catch (e) {
+    console.log('bind wallet error', e);
+    return { success: false }
+  }
+}
