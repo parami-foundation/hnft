@@ -42,8 +42,9 @@ export function NavBar() {
         setShowLoginBtn(true);
       } else {
         console.log('got user account', res);
-        // if not bind wallet
-        setShowBindWalletBtn(true);
+        if (!res.wallets.length) {
+          setShowBindWalletBtn(true);
+        }
       }
     })
   }, []);
