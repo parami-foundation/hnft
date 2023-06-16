@@ -88,7 +88,7 @@ export function NavBar() {
   }
 
   const walletConnect = () => {
-    if (chain?.id !== 5) {
+    if (chain?.id && chain.id !== 5) {
       message.info('Please switch to the test network goerli');
       return;
     }
@@ -128,7 +128,7 @@ export function NavBar() {
 
         <div className='user'>
           {!isConnected && (
-            <Button onClick={walletConnect} loading={isLoading}>
+            <Button onClick={walletConnect} loading={isLoading} type="primary">
               {isLoading ? 'Connecting' : 'Connect Wallet'}
             </Button>
           )}
