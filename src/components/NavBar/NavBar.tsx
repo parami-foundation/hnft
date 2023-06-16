@@ -8,13 +8,14 @@ import { InjectedConnector } from 'wagmi/connectors/injected';
 import './NavBar.scss';
 import { useEffect, useState } from 'react';
 import SigninModal from '../SigninModal/SigninModal';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { bindWallet, createAccountOrLogin, getAccount } from '../../services/relayer.service';
-import { BIND_WALLET_MESSAGE } from '../../models/hnft';
+import { BIND_WALLET_MESSAGE, CLAIM_AD_STATE_PREFIX } from '../../models/hnft';
 
 const { Header } = Layout;
 
 export function NavBar() {
+  const navigate = useNavigate();
   const [showLoginBtn, setShowLoginBtn] = useState<boolean>(false);
   const [showBindWalletBtn, setShowBindWalletBtn] = useState<boolean>(false);
   const [signinModal, setSigninModal] = useState<boolean>(false);
@@ -69,12 +70,17 @@ export function NavBar() {
   useEffect(() => {
     if (searchParams) {
       const code = searchParams.get('code');
+      const state = searchParams.get('state');
       if (code) {
         createAccountOrLogin(code).then((res) => {
           if (!res.success) {
             notification.warning({
               message: `Login Error ${res.message}`,
             })
+            return;
+          }
+          if (state && state.startsWith(CLAIM_AD_STATE_PREFIX)) {
+            navigate(`/claim?bidId=${state.slice(CLAIM_AD_STATE_PREFIX.length)}`);
           }
         })
       }

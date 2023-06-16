@@ -1,5 +1,5 @@
 import { PARAMI_AIRDROP } from "../models/hnft";
-import { fetchWithAuthorization, fetchWithCredentials } from "../utils/api.util";
+import { fetchWithAuthorization } from "../utils/api.util";
 
 export interface BidWithSignature {
   id: string;

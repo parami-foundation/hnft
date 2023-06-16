@@ -1,6 +1,8 @@
 import { Button, Modal } from 'antd';
 import React, { useEffect } from 'react';
 import { isMobile } from 'react-device-detect';
+import { useSearchParams } from 'react-router-dom';
+import { CLAIM_AD_STATE_PREFIX } from '../../models/hnft';
 import { getTwitterOauthUrl } from '../../services/relayer.service';
 import MobileDrawer from '../MobileDrawer/MobileDrawer';
 import './SigninModal.scss';
@@ -10,13 +12,13 @@ export interface SigninModalProps {
 }
 
 function SigninModal({ onClose }: SigninModalProps) {
+    const [params] = useSearchParams();
     const handleConnectTwitter = async () => {
-        const oauthUrl = await getTwitterOauthUrl();
+        const bidId = params.get('bidId');
+        const oauthUrl = await getTwitterOauthUrl(bidId ? `${CLAIM_AD_STATE_PREFIX}${bidId}` : '');
 
         if (oauthUrl) {
             window.open(oauthUrl);
-            // direct oauth
-            // window.location.href = oauthUrl;
         }
     }
     return <>

@@ -83,3 +83,5 @@ export enum MINT_NFT_TYPE {
 }
 
 export const BIND_WALLET_MESSAGE = 'hyperlink NFT bind wallet address';
+
+export const CLAIM_AD_STATE_PREFIX = 'bid-';

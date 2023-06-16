@@ -17,6 +17,7 @@ import BidHNFT from './pages/BidHNTF/BidHNFT';
 import App from './App.tsx';
 import './index.scss';
 import Reward from './pages/Reward/Reward';
+import ClaimAd from './pages/ClaimAd/ClaimAd';
 
 const projectId = '2e586b0807500a0da3a4f7b66418295e';
 const INFURA_API_KEY = '46cdd1b1481049b992a90914cc17b52f';
@@ -51,6 +52,7 @@ root.render(
             <Route path='/issue' element={<IssueToken />} />
             <Route path='/bid' element={<BidHNFT />} />
             <Route path='/reward' element={<Reward />} />
+            <Route path='/claim' element={<ClaimAd />} />
           </Route>
         </Routes>
       </BrowserRouter>
