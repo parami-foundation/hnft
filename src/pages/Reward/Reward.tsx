@@ -3,28 +3,23 @@ import React, { useEffect, useState } from 'react';
 import LoadingBar from '../../components/LoadingBar/LoadingBar';
 import UserAvatar from '../../components/UserAvatar/UserAvatar';
 import { useNFTTokenUris } from '../../hooks/useNFTTokenUris';
-import { getRewardTokenBalances, RewardTokenBalance } from '../../services/relayer.service';
+import { getRewardTokenBalances, RewardTokenBalance, withdrawGovernanceTokenReward } from '../../services/relayer.service';
 import { amountToFloatString } from '../../utils/format.util';
 import './Reward.scss';
+import { useNetwork } from 'wagmi';
 
 export interface RewardProps { }
 
 function Reward({ }: RewardProps) {
     const [rewardTokens, setRewardTokens] = useState<RewardTokenBalance[]>();
+    const { chain } = useNetwork();
 
     const hnfts = useNFTTokenUris((rewardTokens ?? []).map(rewardToken => rewardToken.hnft_token_id));
 
     useEffect(() => {
         getRewardTokenBalances().then(res => {
             if (res) {
-                // setRewardTokens(res);
-                // mock data
-                setRewardTokens([{
-                    user_id: 1,
-                    hnft_contract_addr: '',
-                    hnft_token_id: 140,
-                    balance: '10000000000000'
-                }])
+                setRewardTokens(res);
             }
         })
     }, [])
@@ -68,9 +63,17 @@ function Reward({ }: RewardProps) {
                                             {amountToFloatString(rewardToken.balance)}
                                         </div>
                                         <div className='btn-container'>
-                                            <Button type="primary" onClick={() => {
-                                                console.log('claim reward')
-                                            }}>Claim</Button>
+                                            {!!Number(rewardToken.balance) && <>
+                                                <Button type="primary" onClick={() => {
+                                                    withdrawGovernanceTokenReward(rewardToken.hnft_token_id, chain!.id, rewardToken.balance).then(res => {
+                                                        console.log('got withdraw signature', res);
+                                                    })
+                                                }}>Claim</Button>
+                                            </>}
+
+                                            {!Number(rewardToken.balance) && <>
+                                                <Button type="primary" disabled>Claim</Button>
+                                            </>}
                                         </div>
                                     </div>
                                 </>

@@ -37,8 +37,13 @@
     -webkit-box-shadow: 0 4px 14px 0 rgb(255 91 0 / 39%);
     box-shadow: 0 4px 14px 0 rgba(255, 91, 0, .39);
 
-    &:hover {
+    &:not(:disabled):hover {
       background: $parami-red-hover;
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: default;
     }
   }
 
