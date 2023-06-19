@@ -16,6 +16,16 @@ export interface Account {
   wallets: AccountWallet[];
 }
 
+export interface RewardTokenBalance {
+  id?: number;
+  user_id: number;
+  hnft_contract_addr: string;
+  hnft_token_id: number;
+  balance: string;
+  created_at?: Date;
+  updated_at?: Date;
+}
+
 export const createAccountOrLogin = async (ticket: string) => {
   const data = JSON.stringify({
     type: 'twitter',
@@ -102,10 +112,22 @@ export const bindWallet = async (wallet: string, chainId: number, message: strin
   }
 }
 
-export const claimToken = async (bidId: string, tags: string[]) => {
+export const getRewardTokenBalances = async () => {
+  try {
+    const resp = await fetchWithAuthorization(`${PARAMI_AIRDROP}/relayer/api/user/balances`);
+    if (!resp) {
+      return null;
+    }
+    return await resp.json() as RewardTokenBalance[];
+  } catch (e) {
+    console.log('fetch reward token balances error', e);
+    return null;
+  }
+}
+
+export const claimToken = async (bidId: string) => {
   const data = {
     bidId,
-    tags,
   }
 
   const resp = await fetchWithAuthorization(`${PARAMI_AIRDROP}/relayer/api/viewer/claim_ad_reward`, {

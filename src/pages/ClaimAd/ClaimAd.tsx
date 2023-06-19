@@ -15,10 +15,8 @@ function ClaimAd({ }: ClaimAdProps) {
     useEffect(() => {
         if (params) {
             const bidId = params.get('bidId');
-            const tagsParams = params.get('tags');
             if (bidId) {
-                const tags = tagsParams ? tagsParams.split(',') : [];
-                claimToken(bidId, tags).then(res => {
+                claimToken(bidId).then(res => {
                     if (res === null) {
                         setShowSigninModal(true);
                         return;

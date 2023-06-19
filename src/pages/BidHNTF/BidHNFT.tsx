@@ -64,8 +64,7 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
   const [params] = useSearchParams();
   const tokenId = Number(params.get('tokenId') || '');
   const hnftAddress = params.get('hnftAddress') || '';
-  const hnft = useHNFT();
-  const governanceToken = useHnftGovernanceToken(hnft.address, hnft.tokenId);
+  const governanceToken = useHnftGovernanceToken(hnftAddress, `${tokenId}`);
 
   const [adMetadataUrl, setAdMetadataUrl] = useState<string>();
   const [adMetaId, setAdMetaId] = useState<number>();
@@ -456,7 +455,6 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
           <div className='ad-footer'>
             <div className='title'>Bid your price</div>
             <div className='bid-nfts'>
-              <div className='bid-nfts-title'>Nfts</div>
               <div className='bid-nfts-content'>
                 <div className='bid-nfts-content-header'>
                   <div className='bid-nfts-content-header-item'>HNFT</div>
@@ -466,7 +464,7 @@ const BidHNFT: React.FC<BidHNFTProps> = (props) => {
                   </div>
                 </div>
                 <div className='bid-nfts-content-body'>
-                  <div className='bid-nfts-content-body-item'>{hnft?.name}</div>
+                  <div className='bid-nfts-content-body-item'>{`hNFT # ${tokenId}`}</div>
                   <div className='bid-nfts-content-body-item'>
                     {currentPrice}
                   </div>
