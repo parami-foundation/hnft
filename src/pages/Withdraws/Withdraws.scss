@@ -1,0 +1,35 @@
+.withdraws-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: center;
+  padding: 40px;
+
+  .withdraws-content {
+    width: 100%;
+    max-width: 780px;
+    color: #10121A;
+  }
+
+  .header {
+    .title {
+      font-size: 36px;
+      line-height: 42px;
+      font-family: Gilroy-bold;
+    }
+
+    .description {
+      font-family: Gilroy-bold;
+      font-size: 20px;
+      line-height: 23px;
+    }
+  }
+
+  .withdraw-txn-card {
+    .txn-info-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+}

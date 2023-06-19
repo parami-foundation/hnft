@@ -16,6 +16,36 @@ export interface Account {
   wallets: AccountWallet[];
 }
 
+export interface RewardTokenBalance {
+  id?: number;
+  user_id: number;
+  hnft_contract_addr: string;
+  hnft_token_id: number;
+  balance: string;
+  created_at?: Date;
+  updated_at?: Date;
+}
+
+export interface GovernanceTokenRewardTxn {
+  id: bigint;
+  user_id: number;
+  diff: bigint;
+  withdraw_nonce: bigint;
+  hnft_id: number;
+  chain_id: number;
+  nonce: bigint;
+  wallet: string;
+  created_time: string;
+}
+
+export interface WithdrawSignature {
+  to: string;
+  chain_id: string;
+  amount: string;
+  nonce: string;
+  sig: string;
+}
+
 export const createAccountOrLogin = async (ticket: string) => {
   const data = JSON.stringify({
     type: 'twitter',
@@ -100,4 +130,94 @@ export const bindWallet = async (wallet: string, chainId: number, message: strin
     console.log('bind wallet error', e);
     return { success: false }
   }
+}
+
+export const getRewardTokenBalances = async () => {
+  try {
+    const resp = await fetchWithAuthorization(`${PARAMI_AIRDROP}/relayer/api/user/balances`);
+    if (!resp) {
+      return null;
+    }
+    return await resp.json() as RewardTokenBalance[];
+  } catch (e) {
+    console.log('fetch reward token balances error', e);
+    return null;
+  }
+}
+
+export const claimToken = async (bidId: string) => {
+  const data = {
+    bidId,
+  }
+
+  const resp = await fetchWithAuthorization(`${PARAMI_AIRDROP}/relayer/api/viewer/claim_ad_reward`, {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data),
+  })
+
+  if (!resp) {
+    return null;
+  }
+
+  if (resp.ok) {
+    return {
+      success: true,
+    }
+  }
+
+  return await resp.json();
+}
+
+export const getWithdrawTxns = async () => {
+  const resp = await fetchWithAuthorization(`${PARAMI_AIRDROP}/relayer/api/reward/transactions`);
+  if (!resp) {
+    return null;
+  }
+  const txns = await resp.json() as GovernanceTokenRewardTxn[];
+  return txns.filter(tx => Number(tx.diff) < 0);
+}
+
+export const withdrawGovernanceTokenReward = async (hnft_id: number, chain_id: number, amount: string) => {
+  const data = {
+    hnft_id,
+    amount,
+    chain_id
+  }
+
+  const resp = await fetchWithAuthorization(`${PARAMI_AIRDROP}/relayer/api/reward/withdrawal`, {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data),
+  })
+
+  if (!resp) {
+    return null;
+  }
+
+  return await resp.json() as WithdrawSignature;
+}
+
+export const getWithdrawSigOfTxn = async (txnId: string) => {
+  const data = {
+    txn_id: txnId,
+  }
+
+  const resp = await fetchWithAuthorization(`${PARAMI_AIRDROP}/relayer/api/reward/transaction_signature`, {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data),
+  })
+
+  if (!resp) {
+    return null;
+  }
+
+  return await resp.json() as WithdrawSignature;
 }

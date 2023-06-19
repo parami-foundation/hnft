@@ -1,5 +1,5 @@
 import { PARAMI_AIRDROP } from "../models/hnft";
-import { fetchWithAuthorization, fetchWithCredentials } from "../utils/api.util";
+import { fetchWithAuthorization } from "../utils/api.util";
 
 export interface BidWithSignature {
   id: string;
@@ -51,9 +51,9 @@ export const createBid = async (adId: number, hnftContractAddress: string, token
 export interface CreateAdMetaInfo {
   meta_ipfs_uri: string;
   reward_rate_in_100_percent: number;
-  payout_base: number;
-  payout_min: number;
-  payout_max: number;
+  payout_base: string;
+  payout_min: string;
+  payout_max: string;
   tags: string[];
 }
 

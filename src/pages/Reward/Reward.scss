@@ -1,0 +1,74 @@
+.reward-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: center;
+  padding: 40px;
+
+  .reward-content {
+    width: 100%;
+    max-width: 780px;
+    color: #10121A;
+  }
+
+  .header {
+    .title {
+      font-size: 36px;
+      line-height: 42px;
+      font-family: Gilroy-bold;
+    }
+
+    .description {
+      font-family: Gilroy-bold;
+      font-size: 20px;
+      line-height: 23px;
+    }
+  }
+
+  .token-reward {
+    box-sizing: border-box;
+    background: #FFFFFF;
+    border: 1px solid rgba(16, 17, 26, 0.11);
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    .token-info {
+      display: flex;
+      flex-direction: row;
+
+      .token-icon {
+        margin-right: 10px;
+        .hnft-image {
+          width: 80px;
+        }
+      }
+
+      .token {
+        display: flex;
+        flex-direction: column;
+
+        .token-symbol {
+          font-weight: 600;
+          font-size: 28px;
+          line-height: 39px;
+        }
+
+        .chain-info {
+          font-size: 28px;
+          line-height: 33px;
+          color: rgba(28, 34, 45, 0.2);
+        }
+      }
+    }
+
+    .reward-amount {
+      font-size: 24px;
+      line-height: 28px;
+      opacity: 0.5;
+    }
+  }
+}
