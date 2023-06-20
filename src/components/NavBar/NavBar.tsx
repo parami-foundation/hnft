@@ -8,7 +8,7 @@ import { InjectedConnector } from 'wagmi/connectors/injected';
 import './NavBar.scss';
 import { useEffect, useState } from 'react';
 import SigninModal from '../SigninModal/SigninModal';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { bindWallet, createAccountOrLogin, getAccount } from '../../services/relayer.service';
 import { BIND_WALLET_MESSAGE, CLAIM_AD_STATE_PREFIX } from '../../models/hnft';
 
@@ -16,6 +16,7 @@ const { Header } = Layout;
 
 export function NavBar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [showLoginBtn, setShowLoginBtn] = useState<boolean>(false);
   const [showBindWalletBtn, setShowBindWalletBtn] = useState<boolean>(false);
   const [signinModal, setSigninModal] = useState<boolean>(false);
@@ -27,7 +28,9 @@ export function NavBar() {
   });
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const { data: signature, error: signMsgError, isLoading: signMsgLoading, signMessage } = useSignMessage()
+  const { data: signature, error: signMsgError, isLoading: signMsgLoading, signMessage } = useSignMessage();
+
+  const isRewardTab = location.pathname && location.pathname.startsWith('/reward');
 
   useEffect(() => {
     if (signMsgError) {
@@ -112,6 +115,21 @@ export function NavBar() {
         <div className='logo-container'>
           <div className='logo'>
             <img src='/images/logo-text.svg' alt='' />
+          </div>
+        </div>
+
+        <div className='nav-item-container'>
+          <div className={`nav-item ${!isRewardTab ? 'active' : ''}`} onClick={() => {
+            navigate('');
+          }}>
+            <span className='label'>hNFT</span>
+            <span className='marker'></span>
+          </div>
+          <div className={`nav-item ${isRewardTab ? 'active' : ''}`} onClick={() => {
+            navigate('/reward');
+          }}>
+            <span className='label'>Reward</span>
+            <span className='marker'></span>
           </div>
         </div>
 
