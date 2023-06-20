@@ -21,17 +21,19 @@ export interface RewardTokenBalance {
   user_id: number;
   hnft_contract_addr: string;
   hnft_token_id: number;
+  governance_token_contract: string;
   balance: string;
   created_at?: Date;
   updated_at?: Date;
 }
 
 export interface GovernanceTokenRewardTxn {
-  id: bigint;
+  id: string;
   user_id: number;
   diff: bigint;
   withdraw_nonce: bigint;
-  hnft_id: number;
+  governance_token_contract: string;
+  hnft_token_id: number;
   chain_id: number;
   nonce: bigint;
   wallet: string;
@@ -39,8 +41,8 @@ export interface GovernanceTokenRewardTxn {
 }
 
 export interface WithdrawSignature {
+  token_contract: string;
   to: string;
-  chain_id: string;
   amount: string;
   nonce: string;
   sig: string;
@@ -180,11 +182,12 @@ export const getWithdrawTxns = async () => {
   return txns.filter(tx => Number(tx.diff) < 0);
 }
 
-export const withdrawGovernanceTokenReward = async (hnft_id: number, chain_id: number, amount: string) => {
+export const withdrawGovernanceTokenReward = async (hnft_id: number, chain_id: number, amount: string, governance_token_contract: string) => {
   const data = {
     hnft_id,
     amount,
-    chain_id
+    chain_id,
+    governance_token_contract
   }
 
   const resp = await fetchWithAuthorization(`${PARAMI_AIRDROP}/relayer/api/reward/withdrawal`, {

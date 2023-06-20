@@ -1,16 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { isMobile } from 'react-device-detect';
 import cs from 'classnames';
-import { Button } from 'antd';
+import { Button, notification } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { BillboardNftImage } from '../../components/BillboardNftImage';
 import { CreateHnftModal } from '../../components/CreateHnftModal';
 import { HNFT, useHNFT } from '../../hooks';
-import { BillboardLevel2Name } from '../../models/hnft';
+import { AuctionContractAddress, BillboardLevel2Name } from '../../models/hnft';
 import MintSuccess from '../../components/MintSuccess/MintSuccess';
 import './Hnft.scss';
 import { useHnftGovernanceToken } from '../../hooks/useHnftGovernanceToken';
 import { amountToFloatString } from '../../utils/format.util';
+import { useAuthorizeSlotTo } from '../../hooks/useAuthorizeSlotTo';
 
 export interface HnftProps {
   config: HNFT;
@@ -22,6 +23,16 @@ export function Hnft(props: HnftProps) {
   const mintSuccessRef = useRef<HTMLDivElement>() as any;
   const hnft = useHNFT();
   const navigate = useNavigate();
+
+  const { currentSlotManager, authorizeSlotTo, isSuccess } = useAuthorizeSlotTo(Number(hnft.tokenId), AuctionContractAddress);
+
+  useEffect(() => {
+    if (isSuccess) {
+      notification.success({
+        message: 'Authorize hNFT slot success'
+      })
+    }
+  }, [isSuccess])
 
   const onCreateSuccess = () => {
     setVisible(false);
@@ -47,6 +58,13 @@ export function Hnft(props: HnftProps) {
               } to unlock more features`}
             onUpgrade={() => setVisible(true)}
           />
+          {currentSlotManager !== AuctionContractAddress && <>
+            <div className='auth-btn-container'>
+              <Button type='primary' onClick={() => {
+                authorizeSlotTo?.();
+              }}>Authorize</Button>
+            </div>
+          </>}
         </div>
         <div className='my-token'>
           <div className='title'>My Token</div>
@@ -67,7 +85,7 @@ export function Hnft(props: HnftProps) {
         </div>
         {governanceToken.isAD3 && (
           <div className='issue-my-first-token token'>
-            <Button onClick={() => navigate('/issue')} type="primary">Issue my first token</Button>
+            <Button onClick={() => navigate('/issue')} type="primary">Issue my token</Button>
           </div>
         )}
       </div>
