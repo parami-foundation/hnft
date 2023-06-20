@@ -1,18 +1,48 @@
-import { Button, Card } from 'antd';
+import { Button, Card, notification } from 'antd';
 import React, { useEffect, useState } from 'react';
 import LoadingBar from '../../components/LoadingBar/LoadingBar';
 import UserAvatar from '../../components/UserAvatar/UserAvatar';
 import { useNFTTokenUris } from '../../hooks/useNFTTokenUris';
-import { getRewardTokenBalances, RewardTokenBalance, withdrawGovernanceTokenReward } from '../../services/relayer.service';
+import { getRewardTokenBalances, RewardTokenBalance, withdrawGovernanceTokenReward, WithdrawSignature } from '../../services/relayer.service';
 import { amountToFloatString } from '../../utils/format.util';
 import './Reward.scss';
 import { useNetwork } from 'wagmi';
+import { useAuctionWithdrawToken } from '../../hooks/useAuctionWithdrawToken';
 
 export interface RewardProps { }
 
 function Reward({ }: RewardProps) {
     const [rewardTokens, setRewardTokens] = useState<RewardTokenBalance[]>();
     const { chain } = useNetwork();
+    const [withdrawSig, setWithdrawSig] = useState<WithdrawSignature>();
+
+    const { withdrawToken, isSuccess, isError, error } = useAuctionWithdrawToken(withdrawSig);
+    const withdrawReady = !!withdrawToken;
+
+    useEffect(() => {
+        if (isError) {
+            notification.warning({
+                message: 'Withdraw Token Error',
+                description: error?.message
+            })
+            setWithdrawSig(undefined);
+        }
+    }, [isError]);
+
+    useEffect(() => {
+        if (withdrawSig && withdrawReady) {
+            withdrawToken?.();
+        }
+    }, [withdrawSig, withdrawReady])
+
+    useEffect(() => {
+        if (isSuccess) {
+            notification.success({
+                message: 'Withdraw Token Success'
+            })
+            setWithdrawSig(undefined);
+        }
+    }, [isSuccess])
 
     const hnfts = useNFTTokenUris((rewardTokens ?? []).map(rewardToken => rewardToken.hnft_token_id));
 
@@ -21,8 +51,8 @@ function Reward({ }: RewardProps) {
             if (res) {
                 setRewardTokens(res);
             }
-        })
-    }, [])
+        });
+    }, []);
 
     return <>
         <div className='reward-container'>
@@ -65,8 +95,10 @@ function Reward({ }: RewardProps) {
                                         <div className='btn-container'>
                                             {!!Number(rewardToken.balance) && <>
                                                 <Button type="primary" onClick={() => {
-                                                    withdrawGovernanceTokenReward(rewardToken.hnft_token_id, chain!.id, rewardToken.balance).then(res => {
-                                                        console.log('got withdraw signature', res);
+                                                    withdrawGovernanceTokenReward(rewardToken.hnft_token_id, chain!.id, rewardToken.balance, rewardToken.governance_token_contract).then(res => {
+                                                        if (res) {
+                                                            setWithdrawSig(res);
+                                                        }
                                                     })
                                                 }}>Claim</Button>
                                             </>}

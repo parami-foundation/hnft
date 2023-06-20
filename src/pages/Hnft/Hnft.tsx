@@ -85,7 +85,7 @@ export function Hnft(props: HnftProps) {
         </div>
         {governanceToken.isAD3 && (
           <div className='issue-my-first-token token'>
-            <Button onClick={() => navigate('/issue')} type="primary">Issue my first token</Button>
+            <Button onClick={() => navigate('/issue')} type="primary">Issue my token</Button>
           </div>
         )}
       </div>
