@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, HashRouter } from 'react-router-dom';
 import {
   EthereumClient,
   w3mConnectors,
@@ -46,7 +46,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <>
     <WagmiConfig config={wagmiConfig}>
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           <Route path='/' element={<App />}>
             <Route path='' element={<MyHNFT />} />
@@ -55,9 +55,11 @@ root.render(
             <Route path='/reward' element={<Reward />} />
             <Route path='/reward/withdraws' element={<Withdraws />} />
             <Route path='/claim' element={<ClaimAd />} />
+
+            <Route path='*' element={<Navigate to='/' />} />
           </Route>
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </WagmiConfig>
 
     <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
