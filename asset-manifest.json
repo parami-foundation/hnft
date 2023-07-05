@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.6e0798ac.css",
-    "main.js": "/static/js/main.5de32e80.js",
+    "main.css": "/static/css/main.ba3bfc9e.css",
+    "main.js": "/static/js/main.7b6e3f01.js",
     "static/js/629.7804b800.chunk.js": "/static/js/629.7804b800.chunk.js",
     "static/js/866.699c9746.chunk.js": "/static/js/866.699c9746.chunk.js",
     "static/js/485.8822c022.chunk.js": "/static/js/485.8822c022.chunk.js",
@@ -17,8 +17,8 @@
     "static/media/Gilroy-Regular.ttf": "/static/media/Gilroy-Regular.319e0b95c15165640999.ttf",
     "static/media/Gilroy-Bold.ttf": "/static/media/Gilroy-Bold.bf181b073b4773f45c8e.ttf",
     "index.html": "/index.html",
-    "main.6e0798ac.css.map": "/static/css/main.6e0798ac.css.map",
-    "main.5de32e80.js.map": "/static/js/main.5de32e80.js.map",
+    "main.ba3bfc9e.css.map": "/static/css/main.ba3bfc9e.css.map",
+    "main.7b6e3f01.js.map": "/static/js/main.7b6e3f01.js.map",
     "629.7804b800.chunk.js.map": "/static/js/629.7804b800.chunk.js.map",
     "866.699c9746.chunk.js.map": "/static/js/866.699c9746.chunk.js.map",
     "485.8822c022.chunk.js.map": "/static/js/485.8822c022.chunk.js.map",
@@ -31,7 +31,7 @@
     "648.f3c7a40f.chunk.js.map": "/static/js/648.f3c7a40f.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.6e0798ac.css",
-    "static/js/main.5de32e80.js"
+    "static/css/main.ba3bfc9e.css",
+    "static/js/main.7b6e3f01.js"
   ]
 }
