@@ -1,0 +1,12 @@
+.chatbot-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  .chatbot-content {
+    min-height: 100vh;
+    min-width: 80%;
+    max-width: 1000px;
+    padding-top: 20px;
+  }
+}

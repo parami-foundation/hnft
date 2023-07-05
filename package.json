@@ -6,6 +6,7 @@
     "@ant-design/icons": "^5.0.1",
     "@dicebear/core": "^6.0.0",
     "@dicebear/lorelei": "^6.0.0",
+    "@minchat/react-chat-ui": "^0.4.3",
     "@openzeppelin/contracts": "^4.7.0",
     "@openzeppelin/contracts-upgradeable": "^4.8.3",
     "@polkadot/util": "^12.2.1",
@@ -66,8 +67,8 @@
     "@nomiclabs/hardhat-waffle": "^2.0.3",
     "@types/node": "^20.1.4",
     "@types/react": "^18.2.6",
-    "@types/sinon-chai": "^3.2.3",
     "@types/react-dom": "^18.0.11",
+    "@types/sinon-chai": "^3.2.3",
     "ethereum-waffle": "*",
     "hardhat": "^2.9.9"
   }
