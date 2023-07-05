@@ -19,6 +19,7 @@ import './index.scss';
 import Reward from './pages/Reward/Reward';
 import ClaimAd from './pages/ClaimAd/ClaimAd';
 import Withdraws from './pages/Withdraws/Withdraws';
+import Chatbot from './pages/Chatbot/Chatbot.tsx';
 
 const projectId = '2e586b0807500a0da3a4f7b66418295e';
 const INFURA_API_KEY = '46cdd1b1481049b992a90914cc17b52f';
@@ -55,6 +56,8 @@ root.render(
             <Route path='/reward' element={<Reward />} />
             <Route path='/reward/withdraws' element={<Withdraws />} />
             <Route path='/claim' element={<ClaimAd />} />
+            
+            <Route path='/chatbot' element={<Chatbot />} />
 
             <Route path='*' element={<Navigate to='/' />} />
           </Route>
