@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.ba3bfc9e.css",
-    "main.js": "/static/js/main.7b6e3f01.js",
+    "main.js": "/static/js/main.ab8bf350.js",
     "static/js/629.7804b800.chunk.js": "/static/js/629.7804b800.chunk.js",
     "static/js/866.699c9746.chunk.js": "/static/js/866.699c9746.chunk.js",
     "static/js/485.8822c022.chunk.js": "/static/js/485.8822c022.chunk.js",
@@ -18,7 +18,7 @@
     "static/media/Gilroy-Bold.ttf": "/static/media/Gilroy-Bold.bf181b073b4773f45c8e.ttf",
     "index.html": "/index.html",
     "main.ba3bfc9e.css.map": "/static/css/main.ba3bfc9e.css.map",
-    "main.7b6e3f01.js.map": "/static/js/main.7b6e3f01.js.map",
+    "main.ab8bf350.js.map": "/static/js/main.ab8bf350.js.map",
     "629.7804b800.chunk.js.map": "/static/js/629.7804b800.chunk.js.map",
     "866.699c9746.chunk.js.map": "/static/js/866.699c9746.chunk.js.map",
     "485.8822c022.chunk.js.map": "/static/js/485.8822c022.chunk.js.map",
@@ -32,6 +32,6 @@
   },
   "entrypoints": [
     "static/css/main.ba3bfc9e.css",
-    "static/js/main.7b6e3f01.js"
+    "static/js/main.ab8bf350.js"
   ]
 }
