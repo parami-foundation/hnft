@@ -32,3 +32,19 @@ export const chatWithSocialAgent = async (kolId: string, message: string) => {
     };
   }
 }
+
+export const getAudioOfText = async (text: string) => {
+  const postBody = JSON.stringify({
+    text
+  });
+
+  const resp = await fetch(`${PARAMI_AIRDROP}/socialagent/api/tts`, {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: postBody
+  });
+  const audioData = await resp.arrayBuffer();
+  return audioData;
+}
