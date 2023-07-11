@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './Chatbot.scss';
 import { MainContainer } from "@minchat/react-chat-ui";
 import MessageType from '@minchat/react-chat-ui/dist/MessageType';
-import { chatWithSocialAgent } from '../../services/ai.service';
+import { chatWithSocialAgent, getAudioOfText } from '../../services/ai.service';
 import { notification } from 'antd';
 
 export interface ChatbotProps { }
@@ -20,10 +20,24 @@ const elon = {
 
 function Chatbot({ }: ChatbotProps) {
     const [messages, setMessages] = useState<MessageType[]>([]);
+    const [audioURL, setAudioURL] = useState<string>();
+
+    const generateNewAudio = async (text: string) => {
+        setAudioURL(undefined);
+        const audioData = await getAudioOfText(text);
+        if (audioData) {
+            // Create a new Blob object from the audio data with MIME type 'audio/mpeg'
+            const blob = new Blob([audioData as any], { type: 'audio/mpeg' });
+            // Create a URL for the blob object
+            const url = URL.createObjectURL(blob);
+            setAudioURL(url);
+        }
+    }
 
     useEffect(() => {
         chatWithSocialAgent('elon_musk', '').then(res => {
             if (res.success) {
+                generateNewAudio(res.message ?? '');
                 setMessages([{
                     user: elon,
                     text: res.message
@@ -40,6 +54,7 @@ function Chatbot({ }: ChatbotProps) {
         setMessages(currentMessages)
         const resp = await chatWithSocialAgent('elon_musk', text);
         if (resp.success) {
+            generateNewAudio(resp.message ?? '');
             setMessages([...currentMessages, {
                 user: elon,
                 text: resp.message
@@ -84,6 +99,14 @@ function Chatbot({ }: ChatbotProps) {
                         onBack: () => { }
                     }}
                 ></MainContainer>
+
+                <div>
+                    {audioURL && (
+                        <audio autoPlay controls>
+                            <source src={audioURL} type="audio/mpeg" />
+                        </audio>
+                    )}
+                </div>
             </div>
         </div>
     </>;
