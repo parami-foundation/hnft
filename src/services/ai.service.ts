@@ -48,3 +48,9 @@ export const getAudioOfText = async (text: string) => {
   const audioData = await resp.arrayBuffer();
   return audioData;
 }
+
+export const getAgentInfo = async (agentId: string) => {
+  const resp = await fetch(`${PARAMI_AIRDROP}/socialagent/api/agentInfo/${agentId}`);
+  const agentInfo = await resp.json();
+  return agentInfo;
+}
