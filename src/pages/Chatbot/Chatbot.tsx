@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './Chatbot.scss';
-import { MainContainer } from "@minchat/react-chat-ui";
-import MessageType from '@minchat/react-chat-ui/dist/MessageType';
-import { chatWithSocialAgent, getAgentInfo, getAudioOfText } from '../../services/ai.service';
-import { notification } from 'antd';
+import { getAgentInfo } from '../../services/ai.service';
 import { useRef } from 'react';
+import { Avatar, Message, MessageInput, MessageList } from '@chatscope/chat-ui-kit-react';
 
 export interface ChatbotProps { }
 
@@ -32,12 +30,11 @@ const selectCharacter = () => {
 }
 
 function Chatbot({ }: ChatbotProps) {
-    const [agentInfo, setAgentInfo] = useState<any>();
     const [audioQueue, setAudioQueue] = useState<any[]>([]);
     const [currentAudio, setCurrentAudio] = useState<any>();
     const audioPlayer = useRef<HTMLAudioElement>(null);
 
-    const [messages, setMessages] = useState<MessageType[]>([]);
+    const [messages, setMessages] = useState<{user: any, text: string}[]>([]);
     const [newMessage, setNewMessage] = useState<string>('');
 
     const handleMessageStream = (msg: string) => {
@@ -103,9 +100,6 @@ function Chatbot({ }: ChatbotProps) {
     }
 
     useEffect(() => {
-        getAgentInfo(elonMuskId).then(res => {
-            setAgentInfo(res);
-        })
         connectSocket();
     }, [])
 
@@ -149,36 +143,42 @@ function Chatbot({ }: ChatbotProps) {
     return <>
         <div className='chatbot-container'>
             <div className='chatbot-content'>
-                <MainContainer
-                    inbox={{
-                        onScrollToBottom: () => { },
-                        themeColor: "#6ea9d7",
-                        conversations: [{
-                            id: "1",
-                            title: "Elon Musk",
-                            avatar: "https://pbs.twimg.com/profile_images/1590968738358079488/IY9Gx6Ok.jpg",
-                            lastMessage: {
-                                seen: false,
-                                text: "What's up?",
-                                user: {
-                                    id: "elon",
-                                    name: "Elon",
-                                }
-                            }
-                        }],
-                        loading: !agentInfo,
-                        onConversationClick: () => console.log("onChat click"),
-                        selectedConversationId: "1"
-                    }}
-                    selectedConversation={{
-                        themeColor: "#6ea9d7",
-                        messages: newMessage ? [...messages, { user: elon, text: newMessage }] : messages,
-                        header: "Elon Musk",
-                        currentUserId: "user_1",
-                        onSendMessage: handleSendMessage,
-                        onBack: () => { }
-                    }}
-                ></MainContainer>
+                <MessageList>
+                    {messages.length > 0 && <>
+                        {messages.map((message, index) => {
+                            const isElon = message.user?.id === elon.id;
+                            return <>
+                                <Message
+                                    model={{
+                                        direction: isElon ? "incoming" : "outgoing",
+                                        position: "single",
+                                        message: message.text
+                                    }}
+                                    key={`msg-${index}`}
+                                >
+                                    {isElon && <Avatar src={elon.avatar}></Avatar>}
+                                </Message>
+                            </>
+                        })}
+                    </>}
+
+                    {!!newMessage && <>
+                        <Message
+                            model={{
+                                message: newMessage,
+                                direction: "incoming",
+                                position: "last"
+                            }}
+                        >
+                            <Avatar src={elon.avatar} name="Elon" />
+                        </Message>
+                    </>}
+                    <div className='message-input'>
+                        <MessageInput onSend={text => {
+                            handleSendMessage(text);
+                        }} />
+                    </div>
+                </MessageList>
 
                 <div className='audio-container'>
                     <audio className="audio-player" ref={audioPlayer}>
