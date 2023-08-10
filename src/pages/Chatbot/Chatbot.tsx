@@ -112,24 +112,24 @@ function Chatbot({ }: ChatbotProps) {
 
     useEffect(() => {
         if (currentAudio) {
-            playAudio(currentAudio).then(res => {
-                setCurrentAudio(undefined);
-            })
+            // playAudio(currentAudio).then(res => {
+            //     setCurrentAudio(undefined);
+            // })
         }
     }, [currentAudio])
 
     const playAudio = (data: any) => {
-        let blob = new Blob([data], { type: 'audio/mp3' });
-        let audioUrl = URL.createObjectURL(blob);
-        const player = audioPlayer.current as HTMLAudioElement;
-        return new Promise((resolve) => {
-            player.src = audioUrl;
-            player.muted = true;  // Start muted
-            player.onended = resolve;
-            player.play().then(() => {
-                player.muted = false;  // Unmute after playback starts
-            }).catch(error => alert(`Playback failed because: ${error}`));
-        });
+        // let blob = new Blob([data], { type: 'audio/mp3' });
+        // let audioUrl = URL.createObjectURL(blob);
+        // const player = audioPlayer.current as HTMLAudioElement;
+        // return new Promise((resolve) => {
+        //     player.src = audioUrl;
+        //     player.muted = true;  // Start muted
+        //     player.onended = resolve;
+        //     player.play().then(() => {
+        //         player.muted = false;  // Unmute after playback starts
+        //     }).catch(error => alert(`Playback failed because: ${error}`));
+        // });
     }
 
     const handleSendMessage = async (text: string) => {
