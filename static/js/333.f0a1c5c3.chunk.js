@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunknft_ring_tool_react=self.webpackChunknft_ring_tool_react||[]).push([[333],{35333:function(n,t,e){e.r(t),e.d(t,{WalletsView:function(){return u},default:function(){return u}});var r=e(45279),u=function(){return(0,r.jsx)("p",{children:"Wallets View"})}}}]);
+//# sourceMappingURL=333.f0a1c5c3.chunk.js.map

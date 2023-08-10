@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunknft_ring_tool_react=self.webpackChunknft_ring_tool_react||[]).push([[987],{27987:function(n,e,r){r.r(e),r.d(e,{ProfileView:function(){return i},default:function(){return i}});var t=r(45279),i=function(){return(0,t.jsx)("p",{children:"Profile View"})}}}]);
+//# sourceMappingURL=987.e15f89b9.chunk.js.map
