@@ -1,4 +1,3 @@
-import { Button } from 'antd';
 import React, { useEffect } from 'react';
 import { useDynamicContext } from '@dynamic-labs/sdk-react';
 import jwt_decode from "jwt-decode";
@@ -27,11 +26,6 @@ function UserLogin({ }: UserLoginProps) {
     }, [authToken, setShowAuthFlow])
 
     return <>
-        {/* <div>
-            AuthToken:
-            {authToken}
-        </div>
-        <Button onClick={() => setShowAuthFlow(true)}>Show Auth Flow</Button> */}
     </>;
 };
 

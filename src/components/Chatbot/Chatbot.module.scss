@@ -1,0 +1,173 @@
+.chatbotContainer {
+  width: 300px;
+  height: 300px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 0 0 1px rgba(53, 72, 91, .07), 0 2px 2px rgba(0, 0, 0, .01), 0 4px 4px rgba(0, 0, 0, .02), 0 10px 8px rgba(0, 0, 0, .03), 0 15px 15px rgba(0, 0, 0, .03), 0 30px 30px rgba(0, 0, 0, .04), 0 70px 65px rgba(0, 0, 0, .05);
+  overflow: hidden;
+  position: relative;
+
+  .backgroundContainer {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    top: 0;
+
+    .background {
+      width: 100%;
+    }
+  }
+
+  .contentContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+    position: relative;
+
+    .header {
+      width: 100%;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .name {
+        color: #ffffff;
+        text-shadow: 1px 1px 2px #000000;
+        font-weight: 500;
+        margin: 0 5px;
+        display: flex;
+        align-items: center;
+
+        .audioButton {
+          margin-left: 6px;
+          padding: 2px 6px;
+          border-radius: 20px;
+          background-color: rgba(55, 55, 55, .15);
+          backdrop-filter: blur(5px);
+
+          &:hover {
+            cursor: pointer;
+            background-color: rgba(55, 55, 55, .45);
+          }
+        }
+      }
+
+      .token {
+        border-radius: 34px;
+        height: 34px;
+        background-color: rgba(55, 55, 55, .15);
+        backdrop-filter: blur(5px);
+        padding: 0 6px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        &:hover {
+          cursor: pointer;
+          background-color: rgba(55, 55, 55, .45);
+        }
+
+        .tokenIcon {
+          width: 24px;
+          height: 24px;
+          border-radius: 100%;
+        }
+
+        .tokenPrice {
+          color: #ffffff;
+          font-weight: 500;
+          margin: 0 4px;
+        }
+
+        .dropdownArrow {}
+      }
+    }
+
+    .chat {
+      flex-grow: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+
+      .messageListContainer {
+        width: 100%;
+        max-height: 62px;
+        overflow: scroll;
+
+        .messages {
+          width: 100%;
+
+          .message {
+            color: #ffffff;
+            font-weight: 500;
+            text-shadow: 1px 1px 2px #000000;
+          }
+        }
+      }
+
+      .messageInput {
+        width: 100%;
+        box-sizing: border-box;
+        margin-bottom: 5px;
+
+        .textInput {
+          width: 100%;
+          box-sizing: border-box;
+          font-size: 16px;
+          border: none;
+          background: none;
+          color: #ffffff;
+          font-weight: 500;
+          text-shadow: 1px 1px 2px #000000;
+          padding: 0;
+
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+    }
+
+    .footer {
+      width: 100%;
+
+      .button {
+        width: 100%;
+        border-radius: 34px;
+        border: 1px solid rgba(130, 130, 130, 0.6705882353);
+        height: 34px;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(55, 55, 55, .15);
+        backdrop-filter: blur(5px);
+        box-sizing: border-box;
+
+        &:hover {
+          cursor: pointer;
+          background-color: rgba(55, 55, 55, .45);
+        }
+
+        &.questionOption {
+          justify-content: space-between;
+          padding: 0 10px;
+        }
+      }
+    }
+  }
+
+  .audioContainer {
+    display: none;
+  }
+}

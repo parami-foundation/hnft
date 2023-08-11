@@ -20,6 +20,8 @@ import Reward from './pages/Reward/Reward';
 import ClaimAd from './pages/ClaimAd/ClaimAd';
 import Withdraws from './pages/Withdraws/Withdraws';
 import TestPage from './pages/TestPage/TestPage.tsx';
+import AIME from './pages/AIME/AIME.tsx';
+import { DynamicContextProvider } from '@dynamic-labs/sdk-react';
 
 declare global {
   namespace JSX {
@@ -55,21 +57,27 @@ const root = ReactDOM.createRoot(
 root.render(
   <>
     <WagmiConfig config={wagmiConfig}>
-      <HashRouter>
-        <Routes>
-          <Route path='/' element={<App />}>
-            <Route path='' element={<MyHNFT />} />
-            <Route path='/issue' element={<IssueToken />} />
-            <Route path='/bid' element={<BidHNFT />} />
-            <Route path='/reward' element={<Reward />} />
-            <Route path='/reward/withdraws' element={<Withdraws />} />
-            <Route path='/claim' element={<ClaimAd />} />
-            <Route path='/login' element={<TestPage />} />
+      <DynamicContextProvider
+        settings={{
+          environmentId: '6b6e3b91-f00e-4339-b1a4-a589ae64291b',
+        }}>
+        <HashRouter>
+          <Routes>
+            <Route path='/' element={<App />}>
+              <Route path='' element={<MyHNFT />} />
+              <Route path='/issue' element={<IssueToken />} />
+              <Route path='/bid' element={<BidHNFT />} />
+              <Route path='/reward' element={<Reward />} />
+              <Route path='/reward/withdraws' element={<Withdraws />} />
+              <Route path='/claim' element={<ClaimAd />} />
+              <Route path='/aime/:handle' element={<AIME />} />
+              <Route path='/login' element={<TestPage />} />
 
-            <Route path='*' element={<Navigate to='/' />} />
-          </Route>
-        </Routes>
-      </HashRouter>
+              <Route path='*' element={<Navigate to='/' />} />
+            </Route>
+          </Routes>
+        </HashRouter>
+      </DynamicContextProvider>
     </WagmiConfig>
 
     <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
