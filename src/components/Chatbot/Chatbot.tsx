@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import styles from './Chatbot.module.scss';
 import { useRef } from 'react';
 import { SoundFilled, CaretDownOutlined, ArrowRightOutlined } from '@ant-design/icons';
-import { Character } from '../../models/character';
+import { Character, characters } from '../../models/character';
 import { useDynamicContext } from '@dynamic-labs/sdk-react';
+import { getChatHistory } from '../../services/ai.service';
 
 export interface ChatbotProps {
     character: Character;
@@ -12,6 +13,9 @@ export interface ChatbotProps {
 
 // todo: change this
 const GREETING = 'Hi, my friend, what brings you here today?';
+
+// todo: remove mock message
+const MOCK_FIRST_MSG = 'Who are you?';
 
 let socket: WebSocket;
 
@@ -34,47 +38,14 @@ function Chatbot({ character }: ChatbotProps) {
     const audioPlayer = useRef<HTMLAudioElement>(null);
     const msgList = useRef<HTMLDivElement>(null);
 
+    const [historyMessages, setHistoryMessages] = useState<{ name: string, msg: string }[]>([]);
     const [messages, setMessages] = useState<{ name: string, msg: string }[]>([]);
     const [newMessage, setNewMessage] = useState<string>('');
     const [inputValue, setInputValue] = useState<string>();
-    // const [authToken, setAuthToken] = useState<string>();
 
-    // const getAuthTokenFromStorage = () => {
-    //     chrome.storage.sync.get('jwt').then(value => {
-    //         console.log('extension: jwt from storage', value);
-    //         if (value.jwt) {
-    //             setAuthToken(value.jwt);
-    //         }
-    //     });
-    // }
-
-    // useEffect(() => {
-    //     // todo: remove this?
-    //     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    //         if (request.method === 'jwt') {
-    //             setAuthToken(request.jwt);
-    //         }
-    //         return true;
-    //     });
-
-    //     getAuthTokenFromStorage();
-    // }, []);
+    const characterInfo = characters.find(c => c.handle === character.twitter_handle);
 
     const { authToken, setShowAuthFlow } = useDynamicContext();
-
-    // useEffect(() => {
-    //     window.addEventListener('message', (event) => {
-    //         if (event.origin !== 'https://hnft.parami.io' && event.origin !== 'http://localhost') {
-    //             return;
-    //         }
-    //         if (event.data) {
-    //             if (typeof event.data.startsWith === 'function' && event.data.startsWith(`parami`)) {
-    //                 // try get token from storage
-    //                 getAuthTokenFromStorage();
-    //             }
-    //         }
-    //     });
-    // }, [])
 
     const [questionOption, setQuestionOption] = useState<string>();
 
@@ -85,7 +56,7 @@ function Chatbot({ character }: ChatbotProps) {
     }
 
     useEffect(() => {
-        const question = pickOneQuestion(character.questions);
+        const question = pickOneQuestion(characterInfo?.questions ?? [`What's up?`]);
         setQuestionOption(question);
     }, []);
 
@@ -117,11 +88,10 @@ function Chatbot({ character }: ChatbotProps) {
     }, [newMessage]);
 
     const connectSocket = (authToken: string) => {
-        // chatWindow.value = "";
         const clientId = Math.floor(Math.random() * 1010000);
         // var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
         const ws_scheme = "wss";
-        const ws_path = ws_scheme + '://' + `${wsEndpoint}` + `/ws/${clientId}?token=${authToken}`;
+        const ws_path = `${ws_scheme}://${wsEndpoint}/ws/${clientId}?token=${authToken}&character_id=${character.character_id}`;
         socket = new WebSocket(ws_path);
         socket.binaryType = 'arraybuffer';
 
@@ -136,11 +106,10 @@ function Chatbot({ character }: ChatbotProps) {
                 const message = event.data;
                 console.log('[message]', message);
                 if (message.startsWith('Select')) {
-                    selectCharacter();
-                    // setLoading(false);
+                    // todo: no need to select charater
                 } else if (message.startsWith(GREETING)) {
                     // mock user first message
-                    socket.send('Who are you?');
+                    socket.send(MOCK_FIRST_MSG);
                 } else if (message.startsWith('[+]')) {
                     // [+] indicates the transcription is done. stop playing audio
                     //   chatWindow.value += `\nYou> ${message}\n`;
@@ -169,15 +138,30 @@ function Chatbot({ character }: ChatbotProps) {
         };
     }
 
-    const selectCharacter = () => {
-        socket.send(character.id);
-    }
-
     useEffect(() => {
         if (authToken) {
-            console.log('authToken:', authToken);
             console.log('connecting ws...');
             connectSocket(authToken);
+
+            getChatHistory(authToken, character.character_id).then(res => {
+                if (res?.length) {
+                    const messages = [] as { name: string, msg: string }[];
+                    res.filter(chatHistory => {
+                        return chatHistory.client_message_unicode !== MOCK_FIRST_MSG
+                    }).forEach(chat => {
+                        messages.push({
+                            name: 'Y',
+                            msg: chat.client_message_unicode
+                        });
+                        messages.push({
+                            name: character.name[0],
+                            msg: chat.server_message_unicode
+                        });
+                    })
+                    console.log('loaded history messages', messages);
+                    setHistoryMessages(messages);
+                }
+            })
         }
     }, [authToken])
 
@@ -229,7 +213,7 @@ function Chatbot({ character }: ChatbotProps) {
         <div className={`${styles.chatbotContainer}`}>
             {character && <>
                 <div className={`${styles.backgroundContainer}`}>
-                    <img className={`${styles.background}`} src={character.background} referrerPolicy='no-referrer'></img>
+                    <img className={`${styles.background}`} src={characterInfo?.background} referrerPolicy='no-referrer'></img>
                 </div>
                 <div className={`${styles.contentContainer}`}>
                     <div className={`${styles.header}`}>
@@ -244,7 +228,7 @@ function Chatbot({ character }: ChatbotProps) {
                         </div>
 
                         <div className={`${styles.token}`}>
-                            <img className={`${styles.tokenIcon}`} src={character.tokenIcon} referrerPolicy='no-referrer'></img>
+                            <img className={`${styles.tokenIcon}`} src={characterInfo?.tokenIcon} referrerPolicy='no-referrer'></img>
                             <div className={`${styles.tokenPrice}`}>
                                 86 ETH
                             </div>
@@ -258,6 +242,16 @@ function Chatbot({ character }: ChatbotProps) {
                         {!!authToken && <>
                             <div className={`${styles.messageListContainer}`} ref={msgList}>
                                 <div className={`${styles.messages}`}>
+                                    {historyMessages.length > 0 && <>
+                                        {historyMessages.map(message => {
+                                            return <>
+                                                <div className={`${styles.message}`}>
+                                                    {message.name}: {message.msg}
+                                                </div>
+                                            </>
+                                        })}
+                                    </>}
+                                    
                                     {messages.length > 0 && <>
                                         {messages.map(message => {
                                             return <>
@@ -307,7 +301,7 @@ function Chatbot({ character }: ChatbotProps) {
                                 if (questionOption) {
                                     handleSendMessage(questionOption);
                                 }
-                                const question = pickOneQuestion(character.questions);
+                                const question = pickOneQuestion(characterInfo?.questions ?? [`Sir wen moon?`]);
                                 setQuestionOption(question);
                             }}>
                                 <div>{questionOption}</div>

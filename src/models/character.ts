@@ -1,4 +1,16 @@
 export interface Character {
+  author_name?: string;
+  avatar_id?: string;
+  avatar_url: string;
+  character_id: string;
+  image_url?: string; // todo: what is this?
+  name: string;
+  source: string;
+  twitter_handle: string;
+  voice_id: string;
+}
+
+export interface CharacterInfo {
   name: string;
   handle: string;
   id: string;
@@ -9,7 +21,20 @@ export interface Character {
   questions: string[];
 }
 
-export const characters: Character[] = [
+export interface ChatHistory {
+  character_id: string;
+  client_message_unicode: string;
+  message_id: string;
+  platform: string;
+  server_message_unicode: string;
+  session_id: string;
+  timestamp: string;
+  user_id: string;
+  // other props not listed here
+}
+
+// todo: move this to server
+export const characters: CharacterInfo[] = [
   {
     name: 'Sam Altman',
     handle: 'sama',

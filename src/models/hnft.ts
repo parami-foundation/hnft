@@ -1,6 +1,8 @@
 // export const PARAMI_AIRDROP = 'https://airdrop.parami.io';
 export const PARAMI_AIRDROP = 'https://staging.parami.io/airdrop';
 
+export const PARAMI_AI = 'https://ai.parami.io';
+
 // export const PARAMI_WALLET = 'https://app.parami.io';
 export const PARAMI_WALLET = 'https://staging.parami.io';
 
