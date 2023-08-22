@@ -23,6 +23,7 @@ import TestPage from './pages/TestPage/TestPage.tsx';
 import AIME from './pages/AIME/AIME.tsx';
 import { DynamicContextProvider } from '@dynamic-labs/sdk-react';
 import BidAiAd from './pages/BidAiAd/BidAiAd.tsx';
+import AiPowerReward from './pages/AiPowerReward/AiPowerReward.tsx';
 
 declare global {
   namespace JSX {
@@ -73,6 +74,7 @@ root.render(
               <Route path='/claim' element={<ClaimAd />} />
               <Route path='/aime/:handle' element={<AIME />} />
               <Route path='/aime/bid/:handle' element={<BidAiAd />} />
+              <Route path='/aime/powers' element={<AiPowerReward />} />
               <Route path='/login' element={<TestPage />} />
 
               <Route path='*' element={<Navigate to='/' />} />
