@@ -22,6 +22,7 @@ import Withdraws from './pages/Withdraws/Withdraws';
 import TestPage from './pages/TestPage/TestPage.tsx';
 import AIME from './pages/AIME/AIME.tsx';
 import { DynamicContextProvider } from '@dynamic-labs/sdk-react';
+import BidAiAd from './pages/BidAiAd/BidAiAd.tsx';
 
 declare global {
   namespace JSX {
@@ -71,6 +72,7 @@ root.render(
               <Route path='/reward/withdraws' element={<Withdraws />} />
               <Route path='/claim' element={<ClaimAd />} />
               <Route path='/aime/:handle' element={<AIME />} />
+              <Route path='/aime/bid/:handle' element={<BidAiAd />} />
               <Route path='/login' element={<TestPage />} />
 
               <Route path='*' element={<Navigate to='/' />} />

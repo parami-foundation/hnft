@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import './AIME.scss';
 import { useParams } from 'react-router-dom';
 import Chatbot from '../../components/Chatbot/Chatbot';
-import { Character, characters } from '../../models/character';
-import { getCharaters, queryCharacter } from '../../services/ai.service';
+import { Character } from '../../models/character';
+import { queryCharacter } from '../../services/ai.service';
 import { notification } from 'antd';
 
 export interface AIMEProps { }
@@ -25,12 +25,6 @@ function AIME({ }: AIMEProps) {
             })
         }
     }, [handle])
-
-    // useEffect(() => {
-    //     getCharaters().then(chars => {
-    //         console.log('got characters', chars);
-    //     })
-    // }, [])
 
     return <>
         <div className='aime-container'>
