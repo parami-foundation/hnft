@@ -4,8 +4,6 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
-    "@chatscope/chat-ui-kit-react": "^1.10.1",
-    "@chatscope/chat-ui-kit-styles": "^1.4.0",
     "@dicebear/core": "^6.0.0",
     "@dicebear/lorelei": "^6.0.0",
     "@dynamic-labs/sdk-react": "^0.17.31",
@@ -40,11 +38,11 @@
   },
   "scripts": {
     "predeploy": "npm run build && cp CNAME build/",
-    "start": "PORT=8080 react-scripts start",
-    "build": "react-scripts build",
-    "deploy": "gh-pages -d build",
-    "test": "react-scripts test",
+    "start": "PORT=8080 react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject",
+    "deploy": "gh-pages -d build",
     "compile": "hardhat compile"
   },
   "eslintConfig": {
@@ -73,7 +71,12 @@
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.0.11",
     "@types/sinon-chai": "^3.2.3",
+    "@web3auth/metamask-adapter": "^6.1.7",
+    "@web3auth/modal": "^6.1.8",
+    "buffer": "^6.0.3",
     "ethereum-waffle": "*",
-    "hardhat": "^2.9.9"
+    "hardhat": "^2.9.9",
+    "process": "^0.11.10",
+    "react-app-rewired": "^2.2.1"
   }
 }
