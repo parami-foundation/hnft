@@ -8,6 +8,7 @@ export interface LoginTestProps { }
 function LoginTest({ }: LoginTestProps) {
     const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
     const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
+    const [loggedIn, setLoggedIn] = useState(false);
 
     const init = async () => {
         //Initialize within your constructor
@@ -15,8 +16,8 @@ function LoginTest({ }: LoginTestProps) {
             clientId: "BJ9n3fjw9ktpiBEhDmjmXJYjSSukqDKNcksPiXMJ0-OSKqOOvupv9AlUjA_wXqCHftZJCr85e5I8O10hWn6pFT4", // Get your Client ID from Web3Auth Dashboard
             chainConfig: {
                 chainNamespace: "eip155",
-                chainId: "0x1", // Please use 0x5 for Goerli Testnet
-                rpcTarget: "https://rpc.ankr.com/eth",
+                chainId: "0x5", // Please use 0x5 for Goerli Testnet
+                rpcTarget: "https://rpc.ankr.com/eth_goerli",
             },
             uiConfig: {
                 appName: "AIME",
@@ -25,24 +26,37 @@ function LoginTest({ }: LoginTestProps) {
                 loginMethodsOrder: ["twitter", "google", "apple"],
                 defaultLanguage: "en", // en, de, ja, ko, zh, es, fr, pt, nl
                 loginGridCol: 3,
-                primaryButton: "externalLogin", // "externalLogin" | "socialLogin" | "emailLogin"
+                // primaryButton: "externalLogin", // "externalLogin" | "socialLogin" | "emailLogin"
             }
         });
 
         await web3auth.initModal();
-        const web3authProvider = await web3auth.connect();
+        // const web3authProvider = await web3auth.connect();
 
         if (web3auth.connected) {
-            console.log('user is loggedin')
-        }
-
-        if (web3authProvider) {
-            const provider = new ethers.providers.Web3Provider(web3authProvider);
-            setProvider(provider);
+            setLoggedIn(true);
         }
 
         setWeb3auth(web3auth);
     }
+
+    const login = async () => {
+        if (!web3auth) {
+            console.log("web3auth not initialized yet");
+            return;
+        }
+        try {
+            const web3authProvider = await web3auth.connect();
+            if (web3authProvider) {
+                const provider = new ethers.providers.Web3Provider(web3authProvider, 5);
+                setProvider(provider);
+            }
+        } catch (e) {
+            console.log('set provider error', e);
+        }
+        
+        setLoggedIn(true);
+    };
 
     const logout = async () => {
         if (!web3auth) {
@@ -51,6 +65,7 @@ function LoginTest({ }: LoginTestProps) {
         }
         await web3auth.logout();
         setProvider(null);
+        setLoggedIn(false)
     };
 
     useEffect(() => {
@@ -97,7 +112,14 @@ function LoginTest({ }: LoginTestProps) {
 
     return <>
         <div className='login-test-page'>
-            login...
+            {loggedIn && <>You have logged in</>}
+            {!loggedIn && <>
+                <div>
+                    <Button type='default' onClick={() => {
+                        login();
+                    }}>Please Login</Button>
+                </div>
+            </>}
             <div>
                 <Button type='primary' onClick={() => {
                     authenticateUser();
