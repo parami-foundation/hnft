@@ -1,141 +1,89 @@
 import React, { useEffect, useState } from 'react';
-import { Web3Auth } from "@web3auth/modal";
-import { Button } from 'antd';
+// import { Web3Auth } from "@web3auth/modal";
+import { Button, notification } from 'antd';
 import { ethers } from "ethers";
+import { SignIn, useAuth, useUser, useClerk } from "@clerk/clerk-react";
+import { useAccount, useConnect, useNetwork, useSignMessage } from 'wagmi';
+import { BIND_WALLET_MESSAGE } from '../../models/aime';
+import { useWeb3Modal } from '@web3modal/react';
 
 export interface LoginTestProps { }
 
 function LoginTest({ }: LoginTestProps) {
-    const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
-    const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
-    const [loggedIn, setLoggedIn] = useState(false);
+    // const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
+    // const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
 
-    const init = async () => {
-        //Initialize within your constructor
-        const web3auth = new Web3Auth({
-            clientId: "BJ9n3fjw9ktpiBEhDmjmXJYjSSukqDKNcksPiXMJ0-OSKqOOvupv9AlUjA_wXqCHftZJCr85e5I8O10hWn6pFT4", // Get your Client ID from Web3Auth Dashboard
-            chainConfig: {
-                chainNamespace: "eip155",
-                chainId: "0x5", // Please use 0x5 for Goerli Testnet
-                rpcTarget: "https://rpc.ankr.com/eth_goerli",
-            },
-            uiConfig: {
-                appName: "AIME",
-                appLogo: "https://web3auth.io/images/w3a-L-Favicon-1.svg", // Your App Logo Here
-                theme: "light",
-                loginMethodsOrder: ["twitter", "google", "apple"],
-                defaultLanguage: "en", // en, de, ja, ko, zh, es, fr, pt, nl
-                loginGridCol: 3,
-                // primaryButton: "externalLogin", // "externalLogin" | "socialLogin" | "emailLogin"
-            }
-        });
-
-        await web3auth.initModal();
-        // const web3authProvider = await web3auth.connect();
-
-        if (web3auth.connected) {
-            setLoggedIn(true);
-        }
-
-        setWeb3auth(web3auth);
-    }
-
-    const login = async () => {
-        if (!web3auth) {
-            console.log("web3auth not initialized yet");
-            return;
-        }
-        try {
-            const web3authProvider = await web3auth.connect();
-            if (web3authProvider) {
-                const provider = new ethers.providers.Web3Provider(web3authProvider, 5);
-                setProvider(provider);
-            }
-        } catch (e) {
-            console.log('set provider error', e);
-        }
-        
-        setLoggedIn(true);
-    };
-
-    const logout = async () => {
-        if (!web3auth) {
-            console.log("web3auth not initialized yet");
-            return;
-        }
-        await web3auth.logout();
-        setProvider(null);
-        setLoggedIn(false)
-    };
+    const [requestUserSig, setRequestUserSig] = useState<boolean>(false);
+    const [showBindWalletBtn, setShowBindWalletBtn] = useState<boolean>(false);
+    const { isSignedIn, user } = useUser();
+    const { isLoaded, userId, sessionId, getToken } = useAuth();
+    const { signOut } = useClerk();
+    const { data: signature, error: signMsgError, isLoading: signMsgLoading, signMessage } = useSignMessage();
+    const { open } = useWeb3Modal();
+    const { address, isConnected } = useAccount();
 
     useEffect(() => {
-        init();
+        if (requestUserSig) {
+            if (!isConnected) {
+                open();
+            } else {
+                signMessage({ message: BIND_WALLET_MESSAGE })
+            }
+        }
+    }, [requestUserSig, isConnected])
+
+    useEffect(() => {
+        if (signature) {
+            console.log('got sig from user', signature);
+            notification.success({
+                message: 'bind wallet success'
+            })
+            setShowBindWalletBtn(false);
+            setRequestUserSig(false);
+        }
+    }, [signature])
+
+
+    useEffect(() => {
+        getToken().then(token => {
+            console.log('clerk token:', token);
+        })
     }, [])
 
     useEffect(() => {
-        if (provider) {
-            console.log('we have provider here', provider);
-            const signer = provider.getSigner();
-            signer.getAddress().then(address => {
-                console.log('user address', address);
-            });
+        if (user) {
+            console.log('clerk user:', user);
+            if (user.primaryWeb3Wallet) {
+                setShowBindWalletBtn(false);
+            } else {
+                setShowBindWalletBtn(true);
+            }
         }
-    }, [provider])
-
-    const authenticateUser = async () => {
-        if (!web3auth) {
-            console.log("web3auth not initialized yet");
-            return;
-        }
-        const idToken = await web3auth.authenticateUser();
-        console.log(idToken);
-    };
-
-    const getUserInfo = async () => {
-        if (!web3auth) {
-            console.log("web3auth not initialized yet");
-            return;
-        }
-        const user = await web3auth.getUserInfo();
-        console.log(user);
-    };
-
-    // const getAccounts = async () => {
-    //     if (!provider) {
-    //         console.log("provider not initialized yet");
-    //         return;
-    //     }
-    //     const rpc = new RPC(provider);
-    //     const address = await rpc.getAccounts();
-    //     uiConsole(address);
-    // };
+    }, [user])
 
     return <>
         <div className='login-test-page'>
-            {loggedIn && <>You have logged in</>}
-            {!loggedIn && <>
+            {!isSignedIn && <>
+                Signing in...
+                <SignIn></SignIn>
+            </>}
+            {isSignedIn && <>
+                Welcome!
+
+                {showBindWalletBtn && <>
+                    <div>
+                        <Button type='primary' onClick={() => {
+                            setRequestUserSig(true);
+                        }}>Bind Wallet</Button>
+                    </div>
+                </>}
+
                 <div>
-                    <Button type='default' onClick={() => {
-                        login();
-                    }}>Please Login</Button>
+                    <Button type='primary' onClick={() => {
+                        signOut();
+                    }}>sign out</Button>
                 </div>
             </>}
-            <div>
-                <Button type='primary' onClick={() => {
-                    authenticateUser();
-                }}>authenticate</Button>
-            </div>
-            <div>
-                <Button type='primary' onClick={() => {
-                    getUserInfo();
-                }}>User Info</Button>
-            </div>
-
-            <div>
-                <Button type='default' onClick={() => {
-                    logout();
-                }}>Logout</Button>
-            </div>
         </div>
     </>;
 };

@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
+    "@clerk/clerk-react": "^4.24.0",
     "@dicebear/core": "^6.0.0",
     "@dicebear/lorelei": "^6.0.0",
     "@dynamic-labs/sdk-react": "^0.17.31",
@@ -38,9 +39,9 @@
   },
   "scripts": {
     "predeploy": "npm run build && cp CNAME build/",
-    "start": "PORT=8080 react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
+    "start": "PORT=8080 react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy": "gh-pages -d build",
     "compile": "hardhat compile"

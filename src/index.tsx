@@ -25,6 +25,7 @@ import { DynamicContextProvider } from '@dynamic-labs/sdk-react';
 import BidAiAd from './pages/BidAiAd/BidAiAd.tsx';
 import AiPowerReward from './pages/AiPowerReward/AiPowerReward.tsx';
 import LoginTest from './pages/LoginTest/LoginTest.tsx';
+import { ClerkProvider } from "@clerk/clerk-react";
 
 declare global {
   namespace JSX {
@@ -54,16 +55,18 @@ const wagmiConfig = createConfig({
 
 const ethereumClient = new EthereumClient(wagmiConfig, chains);
 
+if (!process.env.REACT_APP_CLERK_PUBLISHABLE_KEY) {
+  throw new Error("Missing Publishable Key")
+}
+const clerkPubKey = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <>
     <WagmiConfig config={wagmiConfig}>
-      <DynamicContextProvider
-        settings={{
-          environmentId: '6b6e3b91-f00e-4339-b1a4-a589ae64291b',
-        }}>
+      <ClerkProvider publishableKey={clerkPubKey}>
         <HashRouter>
           <Routes>
             <Route path='/' element={<App />}>
@@ -73,17 +76,17 @@ root.render(
               <Route path='/reward' element={<Reward />} />
               <Route path='/reward/withdraws' element={<Withdraws />} />
               <Route path='/claim' element={<ClaimAd />} />
-              <Route path='/aime/:handle' element={<AIME />} />
               <Route path='/aime/bid/:handle' element={<BidAiAd />} />
               <Route path='/aime/powers' element={<AiPowerReward />} />
               <Route path='/aime/login' element={<LoginTest />} />
+              {/* <Route path='/aime/:handle' element={<AIME />} /> */}
               <Route path='/login' element={<TestPage />} />
 
               <Route path='*' element={<Navigate to='/' />} />
             </Route>
           </Routes>
         </HashRouter>
-      </DynamicContextProvider>
+      </ClerkProvider>
     </WagmiConfig>
 
     <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
