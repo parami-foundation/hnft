@@ -28,10 +28,11 @@ function AIME({ }: AIMEProps) {
     const { data: signature, error: signMsgError, isLoading: signMsgLoading, signMessage } = useSignMessage();
     const { address, isConnected } = useAccount();
 
+
     useEffect(() => {
         if (requestUserSig) {
             if (!isConnected) {
-                open();
+                open().catch(e => console.log(e));
             } else {
                 signMessage({ message: BIND_WALLET_MESSAGE })
             }
@@ -114,7 +115,7 @@ function AIME({ }: AIMEProps) {
                 </>}
 
                 {showBindWalletBtn && <>
-                    <div style={{marginBottom: '20px'}}>
+                    <div style={{ marginBottom: '20px' }}>
                         <Button type='primary' onClick={() => {
                             setRequestUserSig(true);
                         }}>Bind Wallet</Button>
