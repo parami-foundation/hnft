@@ -4,8 +4,11 @@ import { useParams } from 'react-router-dom';
 import Chatbot from '../../components/Chatbot/Chatbot';
 import { Character } from '../../models/character';
 import { getCharaters, queryCharacter } from '../../services/ai.service';
-import { Button } from 'antd';
+import { Button, notification } from 'antd';
 import { useAuth, useClerk, useUser } from '@clerk/clerk-react';
+import { useAccount, useSignMessage } from 'wagmi';
+import { useWeb3Modal } from '@web3modal/react';
+import { BIND_WALLET_MESSAGE } from '../../models/aime';
 
 export interface AIMEProps { }
 
@@ -19,6 +22,32 @@ function AIME({ }: AIMEProps) {
     const { isSignedIn } = useUser();
     const { signOut, openSignIn } = useClerk();
     const [characters, setCharacters] = useState<Character[]>();
+    const [showBindWalletBtn, setShowBindWalletBtn] = useState<boolean>(true);
+    const [requestUserSig, setRequestUserSig] = useState<boolean>(false);
+    const { open } = useWeb3Modal();
+    const { data: signature, error: signMsgError, isLoading: signMsgLoading, signMessage } = useSignMessage();
+    const { address, isConnected } = useAccount();
+
+    useEffect(() => {
+        if (requestUserSig) {
+            if (!isConnected) {
+                open();
+            } else {
+                signMessage({ message: BIND_WALLET_MESSAGE })
+            }
+        }
+    }, [requestUserSig, isConnected])
+
+    useEffect(() => {
+        if (signature) {
+            console.log('got sig from user', signature);
+            notification.success({
+                message: 'bind wallet success'
+            })
+            setShowBindWalletBtn(false);
+            setRequestUserSig(false);
+        }
+    }, [signature])
 
     useEffect(() => {
         if (isSignedIn) {
@@ -81,6 +110,14 @@ function AIME({ }: AIMEProps) {
                 {character && authToken && <>
                     <div className='chat-container'>
                         <Chatbot character={character} ></Chatbot>
+                    </div>
+                </>}
+
+                {showBindWalletBtn && <>
+                    <div style={{marginBottom: '20px'}}>
+                        <Button type='primary' onClick={() => {
+                            setRequestUserSig(true);
+                        }}>Bind Wallet</Button>
                     </div>
                 </>}
 

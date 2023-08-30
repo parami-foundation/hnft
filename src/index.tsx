@@ -67,29 +67,30 @@ root.render(
   <>
     <WagmiConfig config={wagmiConfig}>
       <ClerkProvider publishableKey={clerkPubKey}>
-        <HashRouter>
+        <BrowserRouter>
           <Routes>
             <Route path='/' element={<App />}>
-              <Route path='' element={<MyHNFT />} />
-              <Route path='/issue' element={<IssueToken />} />
-              <Route path='/bid' element={<BidHNFT />} />
-              <Route path='/reward' element={<Reward />} />
-              <Route path='/reward/withdraws' element={<Withdraws />} />
-              <Route path='/claim' element={<ClaimAd />} />
-              
+              <Route path='' element={<AIME />} />
+              {/* <Route path='' element={<MyHNFT />} /> */}
+              {/* <Route path='/issue' element={<IssueToken />} /> */}
+              {/* <Route path='/bid' element={<BidHNFT />} /> */}
+              {/* <Route path='/reward' element={<Reward />} /> */}
+              {/* <Route path='/reward/withdraws' element={<Withdraws />} /> */}
+              {/* <Route path='/claim' element={<ClaimAd />} /> */}
+
               {/* <Route path='/aime' element={<LoginTest />} /> */}
               <Route path='/aime' element={<AIME />} />
               <Route path='/aime/:handle' element={<AIME />} />
 
               <Route path='/aime/bid/:handle' element={<BidAiAd />} />
               <Route path='/aime/powers' element={<AiPowerReward />} />
-              
+
               <Route path='/login' element={<TestPage />} />
 
               <Route path='*' element={<Navigate to='/' />} />
             </Route>
           </Routes>
-        </HashRouter>
+        </BrowserRouter>
       </ClerkProvider>
     </WagmiConfig>
 
