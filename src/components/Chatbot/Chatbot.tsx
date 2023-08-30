@@ -3,12 +3,12 @@ import styles from './Chatbot.module.scss';
 import { useRef } from 'react';
 import { SoundFilled, CaretDownOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { Character, characters } from '../../models/character';
-import { useDynamicContext } from '@dynamic-labs/sdk-react';
 import { getChatHistory } from '../../services/ai.service';
+import { useAuth } from '@clerk/clerk-react';
+import { getAuthToken } from '@dynamic-labs/sdk-react';
 
 export interface ChatbotProps {
     character: Character;
-    jwt?: string;
 }
 
 // todo: change this
@@ -42,10 +42,9 @@ function Chatbot({ character }: ChatbotProps) {
     const [messages, setMessages] = useState<{ name: string, msg: string }[]>([]);
     const [newMessage, setNewMessage] = useState<string>('');
     const [inputValue, setInputValue] = useState<string>();
+    const { getToken } = useAuth();
 
-    const characterInfo = characters.find(c => c.handle === character.twitter_handle);
-
-    const { authToken, setShowAuthFlow } = useDynamicContext();
+    const characterInfo = characters.find(c => c.name === character.name);
 
     const [questionOption, setQuestionOption] = useState<string>();
 
@@ -139,31 +138,33 @@ function Chatbot({ character }: ChatbotProps) {
     }
 
     useEffect(() => {
-        if (authToken) {
-            console.log('connecting ws...');
-            connectSocket(authToken);
+        getToken().then(authToken => {
+            if (authToken) {
+                console.log('connecting ws...');
+                connectSocket(authToken);
 
-            getChatHistory(authToken, character.character_id).then(res => {
-                if (res?.length) {
-                    const messages = [] as { name: string, msg: string }[];
-                    res.filter(chatHistory => {
-                        return chatHistory.client_message_unicode !== MOCK_FIRST_MSG
-                    }).forEach(chat => {
-                        messages.push({
-                            name: 'Y',
-                            msg: chat.client_message_unicode
-                        });
-                        messages.push({
-                            name: character.name[0],
-                            msg: chat.server_message_unicode
-                        });
-                    })
-                    console.log('loaded history messages', messages);
-                    setHistoryMessages(messages);
-                }
-            })
-        }
-    }, [authToken])
+                getChatHistory(authToken, character.character_id).then(res => {
+                    if (res?.length) {
+                        const messages = [] as { name: string, msg: string }[];
+                        res.filter(chatHistory => {
+                            return chatHistory.client_message_unicode !== MOCK_FIRST_MSG
+                        }).forEach(chat => {
+                            messages.push({
+                                name: 'Y',
+                                msg: chat.client_message_unicode
+                            });
+                            messages.push({
+                                name: character.name[0],
+                                msg: chat.server_message_unicode
+                            });
+                        })
+                        console.log('loaded history messages', messages);
+                        setHistoryMessages(messages);
+                    }
+                })
+            }
+        });
+    }, [])
 
     useEffect(() => {
         if (audioQueue.length > 0 && !currentAudio) {
@@ -239,77 +240,65 @@ function Chatbot({ character }: ChatbotProps) {
                     </div>
 
                     <div className={`${styles.chat}`}>
-                        {!!authToken && <>
-                            <div className={`${styles.messageListContainer}`} ref={msgList}>
-                                <div className={`${styles.messages}`}>
-                                    {historyMessages.length > 0 && <>
-                                        {historyMessages.map(message => {
-                                            return <>
-                                                <div className={`${styles.message}`}>
-                                                    {message.name}: {message.msg}
-                                                </div>
-                                            </>
-                                        })}
-                                    </>}
-                                    
-                                    {messages.length > 0 && <>
-                                        {messages.map(message => {
-                                            return <>
-                                                <div className={`${styles.message}`}>
-                                                    {message.name}: {message.msg}
-                                                </div>
-                                            </>
-                                        })}
-                                    </>}
+                        <div className={`${styles.messageListContainer}`} ref={msgList}>
+                            <div className={`${styles.messages}`}>
+                                {historyMessages.length > 0 && <>
+                                    {historyMessages.map(message => {
+                                        return <>
+                                            <div className={`${styles.message}`}>
+                                                {message.name}: {message.msg}
+                                            </div>
+                                        </>
+                                    })}
+                                </>}
 
-                                    {newMessage.length > 0 && <>
-                                        <div className={`${styles.message}`}>
-                                            {character.name[0]}: {newMessage}
-                                        </div>
-                                    </>}
-                                </div>
+                                {messages.length > 0 && <>
+                                    {messages.map(message => {
+                                        return <>
+                                            <div className={`${styles.message}`}>
+                                                {message.name}: {message.msg}
+                                            </div>
+                                        </>
+                                    })}
+                                </>}
+
+                                {newMessage.length > 0 && <>
+                                    <div className={`${styles.message}`}>
+                                        {character.name[0]}: {newMessage}
+                                    </div>
+                                </>}
                             </div>
-                            <div className={`${styles.messageInput}`}>
-                                <input className={`${styles.textInput}`} value={inputValue} autoFocus={true}
-                                    onChange={(event) => {
-                                        setInputValue(event.target.value);
-                                    }}
-                                    onKeyDown={(event) => {
-                                        if (event.key === 'Enter') {
-                                            event.preventDefault();
-                                            const msg = (event.target as HTMLInputElement).value;
-                                            setInputValue('');
-                                            handleSendMessage(msg);
-                                        }
-                                    }}
-                                ></input>
-                            </div>
-                        </>}
+                        </div>
+                        <div className={`${styles.messageInput}`}>
+                            <input className={`${styles.textInput}`} value={inputValue} autoFocus={true}
+                                onChange={(event) => {
+                                    setInputValue(event.target.value);
+                                }}
+                                onKeyDown={(event) => {
+                                    if (event.key === 'Enter') {
+                                        event.preventDefault();
+                                        const msg = (event.target as HTMLInputElement).value;
+                                        setInputValue('');
+                                        handleSendMessage(msg);
+                                    }
+                                }}
+                            ></input>
+                        </div>
                     </div>
 
                     <div className={`${styles.footer}`}>
-                        {!authToken && <>
-                            <div className={`${styles.button}`} onClick={() => {
-                                setShowAuthFlow(true);
-                            }}>
-                                Connect Wallet to Talk
+                        <div className={`${styles.button} ${styles.questionOption}`} onClick={() => {
+                            if (questionOption) {
+                                handleSendMessage(questionOption);
+                            }
+                            const question = pickOneQuestion(characterInfo?.questions ?? [`Sir wen moon?`]);
+                            setQuestionOption(question);
+                        }}>
+                            <div>{questionOption}</div>
+                            <div className={`${styles.icon}`}>
+                                <ArrowRightOutlined />
                             </div>
-                        </>}
-
-                        {!!authToken && <>
-                            <div className={`${styles.button} ${styles.questionOption}`} onClick={() => {
-                                if (questionOption) {
-                                    handleSendMessage(questionOption);
-                                }
-                                const question = pickOneQuestion(characterInfo?.questions ?? [`Sir wen moon?`]);
-                                setQuestionOption(question);
-                            }}>
-                                <div>{questionOption}</div>
-                                <div className={`${styles.icon}`}>
-                                    <ArrowRightOutlined />
-                                </div>
-                            </div>
-                        </>}
+                        </div>
                     </div>
                 </div>
             </>}

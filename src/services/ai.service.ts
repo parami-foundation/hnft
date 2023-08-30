@@ -25,7 +25,7 @@ export interface WithdrawSignature {
 export const getCharaters = async () => {
   const resp = await fetch(`${PARAMI_AI}/characters`);
   const characters = await resp.json();
-  return characters;
+  return characters as Character[];
 }
 
 export const queryCharacter = async (query: {avatar_url?: string, twitter_handle?: string}) => {

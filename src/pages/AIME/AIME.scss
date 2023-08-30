@@ -4,4 +4,25 @@
   align-items: center;
   justify-content: center;
   margin-top: 20px;
+
+  .logo {
+    width: 200px;
+    height: 200px;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+
+  .characters-container {
+    display: flex;
+    justify-content: space-around;
+    min-width: 400px;
+    margin-bottom: 20px;
+  }
+
+  .chat-container {
+    margin-bottom: 40px;
+  }
 }
