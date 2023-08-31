@@ -119,7 +119,7 @@ export function NavBar() {
         </div>
 
         <div className='nav-item-container'>
-          <div className={`nav-item ${!isRewardTab ? 'active' : ''}`} onClick={() => {
+          {/* <div className={`nav-item ${!isRewardTab ? 'active' : ''}`} onClick={() => {
             navigate('');
           }}>
             <span className='label'>hNFT</span>
@@ -130,48 +130,49 @@ export function NavBar() {
           }}>
             <span className='label'>Reward</span>
             <span className='marker'></span>
-          </div>
+          </div> */}
         </div>
 
         {showLoginBtn && <>
-          <div className='action-btn-container'>
+          {/* <div className='action-btn-container'>
             <Button onClick={() => {
               setSigninModal(true);
             }} type="primary">login</Button>
-          </div>
+          </div> */}
         </>}
 
         {showBindWalletBtn && <>
-          <div className='action-btn-container'>
+          {/* <div className='action-btn-container'>
             <Button onClick={() => {
               // sign message and bind wallet
               signMessage({ message: BIND_WALLET_MESSAGE })
             }} type="primary">bind wallet</Button>
-          </div>
+          </div> */}
         </>}
 
         <div className='user'>
-          {!isConnected && (
+          {/* {!isConnected && (
             <Button onClick={walletConnect} loading={isLoading} type="primary">
               {isLoading ? 'Connecting' : 'Connect Wallet'}
             </Button>
-          )}
+          )} */}
 
           {isConnected && address && (
-            <Tooltip
-              title={`${address.substring(0, 8)}...${address.substring(
-                address.length - 6
-              )}`}
-              color='#ff5b00'
-              placement='bottomLeft'
-            >
-              <Avatar
-                className='avatar'
-                shape='square'
-                size={36}
-                src={createAvatorUri(address)}
-              />
-            </Tooltip>
+            // <Tooltip
+            //   title={`${address.substring(0, 8)}...${address.substring(
+            //     address.length - 6
+            //   )}`}
+            //   color='#ff5b00'
+            //   placement='bottomLeft'
+            // >
+            //   <Avatar
+            //     className='avatar'
+            //     shape='square'
+            //     size={36}
+            //     src={createAvatorUri(address)}
+            //   />
+            // </Tooltip>
+            <></>
           )}
         </div>
       </Header>

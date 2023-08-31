@@ -5,7 +5,6 @@ import { SoundFilled, CaretDownOutlined, ArrowRightOutlined } from '@ant-design/
 import { Character, characters } from '../../models/character';
 import { getChatHistory } from '../../services/ai.service';
 import { useAuth } from '@clerk/clerk-react';
-import { getAuthToken } from '@dynamic-labs/sdk-react';
 
 export interface ChatbotProps {
     character: Character;
@@ -140,7 +139,7 @@ function Chatbot({ character }: ChatbotProps) {
     useEffect(() => {
         getToken().then(authToken => {
             if (authToken) {
-                console.log('connecting ws...');
+                console.log('connecting ws...with authToken:', authToken);
                 connectSocket(authToken);
 
                 getChatHistory(authToken, character.character_id).then(res => {
