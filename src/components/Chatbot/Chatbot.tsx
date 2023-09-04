@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import styles from './Chatbot.module.scss';
+// import styles from './Chatbot.module.scss';
+import './Chatbot.scss';
 import { useRef } from 'react';
 import { SoundFilled, CaretDownOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { Character, characters } from '../../models/character';
@@ -30,6 +31,32 @@ const removeEndMarker = (msg: string) => {
     return msg.replace(endMarkerPattern, '');
 }
 
+const mockMessages = [{
+    name: 'SBF',
+    msg: `Hi, my friend, what brings you here today?`
+}, {
+    name: 'User',
+    msg: `Couldn't be better man!`
+}, {
+    name: 'SBF',
+    msg: `You just need to continue chatting with me and I will give you more surprises.`
+}, {
+    name: 'User',
+    msg: `Couldn't be better man!`
+}, {
+    name: 'SBF',
+    msg: `Remember to come chat with me again tomorrow, I will give you more surprises, night. 👋😴`
+}, {
+    name: 'User',
+    msg: `Couldn't be better man!`
+}, {
+    name: 'SBF',
+    msg: `Purchase Successful, 10 SBF Power have placed in your wallet. 🎉🎉🎉`
+}, {
+    name: 'User',
+    msg: `Couldn't be better man!`
+}]
+
 function Chatbot({ character }: ChatbotProps) {
     const [audioEnabled, setAudioEnabled] = useState<boolean>(false);
     const [audioQueue, setAudioQueue] = useState<any[]>([]);
@@ -38,7 +65,7 @@ function Chatbot({ character }: ChatbotProps) {
     const msgList = useRef<HTMLDivElement>(null);
 
     const [historyMessages, setHistoryMessages] = useState<{ name: string, msg: string }[]>([]);
-    const [messages, setMessages] = useState<{ name: string, msg: string }[]>([]);
+    const [messages, setMessages] = useState<{ name: string, msg: string }[]>(mockMessages);
     const [newMessage, setNewMessage] = useState<string>('');
     const [inputValue, setInputValue] = useState<string>();
     const { getToken } = useAuth();
@@ -210,8 +237,50 @@ function Chatbot({ character }: ChatbotProps) {
     }, [messages])
 
     return <>
-        <div className={`${styles.chatbotContainer}`}>
-            {character && <>
+        <div className='chatbot-container'>
+            <div className='header'>
+                <div className='return-btn'>
+                    <img src='./images/return_icon.svg' alt=''></img>
+                </div>
+                <div className='name'>
+                    {character.name}
+                </div>
+            </div>
+
+            <div className='avatar-section'>
+                <div className='avatar-container'>
+                    <img src={character.avatar} alt=''></img>
+                </div>
+
+                <div className='name'>
+                    {character.name}
+                </div>
+            </div>
+
+            <div className='message-section'>
+                <div className='overlay'></div>
+                <div className='messages'>
+                    {messages.map(message => {
+                        return <>
+                            <div className='message'>
+                                <div className='name'>{message.name}</div>
+                                <div className='msg'>{message.msg}</div>
+                            </div>
+                        </>
+                    })}
+                </div>
+            </div>
+
+            <div className='input-container'>
+                <input placeholder='generated question...'></input>
+                <div className='enter-btn' onClick={() => {
+                    // enter message
+                }}>
+                    <img src='./images/enter_icon.svg' alt=''></img>
+                </div>
+            </div>
+
+            {/* {false && <>
                 <div className={`${styles.backgroundContainer}`}>
                     <img className={`${styles.background}`} src={characterInfo?.background} referrerPolicy='no-referrer'></img>
                 </div>
@@ -300,9 +369,9 @@ function Chatbot({ character }: ChatbotProps) {
                         </div>
                     </div>
                 </div>
-            </>}
+            </>} */}
 
-            <div className={`${styles.audioContainer}`}>
+            <div className='audio-container'>
                 <audio className="audio-player" ref={audioPlayer}>
                     <source src="" type="audio/mp3" />
                 </audio>

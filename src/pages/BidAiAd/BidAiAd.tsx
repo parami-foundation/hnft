@@ -69,7 +69,7 @@ function BidAiAd({ }: BidAiAdProps) {
             </>}
             {character && <>
                 <div className='avatar-container'>
-                    <img className='avatar' src={character.avatar_url} referrerPolicy='no-referrer'></img>
+                    <img className='avatar' src={character.avatar} referrerPolicy='no-referrer'></img>
                 </div>
 
                 <div className='form-container'>

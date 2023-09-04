@@ -14,13 +14,13 @@ function App() {
   return (
     <div className='app'>
       <Layout>
-        <NavBar />
+        {/* <NavBar /> */}
 
         <Content className='content'>
           <Outlet></Outlet>
         </Content>
 
-        <Footer className='footer'>
+        {/* <Footer className='footer'>
           {isMobile && status === 'connected' && address ? (
             <div className='mobile-footer'>{`${address.substring(
               0,
@@ -29,7 +29,7 @@ function App() {
           ) : (
             'Made with ❤️ by Parami Foundation'
           )}
-        </Footer>
+        </Footer> */}
       </Layout>
     </div>
   );

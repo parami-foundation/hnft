@@ -3,26 +3,152 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 20px;
+  width: 100%;
+  height: 100%;
+  max-width: 390px;
 
-  .logo {
-    width: 200px;
-    height: 200px;
-    border: 1px solid black;
+  .logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+
+    .logo {
+      width: 94px;
+      height: 94px;
+      border-radius: 34px;
+      background-color: greenyellow;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .sub-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+  }
+
+  .button-container {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 40px;
+    margin-bottom: 100px;
+
+    .btn-large {
+      width: 345px;
+      height: 60px;
+      border-radius: 22px;
+      color: #ffffff;
+      background-color: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
   }
 
-  .characters-container {
+  .select-character-container {
     display: flex;
-    justify-content: space-around;
-    min-width: 400px;
-    margin-bottom: 20px;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+
+    .header {
+      margin-top: 60px;
+      margin-bottom: 20px;
+      font-size: 26px;
+      font-weight: 700;
+      width: 70%;
+      text-align: center;
+    }
+
+    .characters-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
+
+      .character-card {
+        width: 165px;
+        height: 265px;
+        border-radius: 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 25px rgba($color: #000000, $alpha: 0.05);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-evenly;
+
+        .power-balance {
+          width: fit-content;
+          min-width: 92px;
+          height: 24px;
+          border-radius: 12px;
+          background: rgba(0, 0, 0, 0.1);
+          display: flex;
+          align-items: center;
+          padding: 0 5px;
+
+          .power-icon-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 5px;
+          }
+        }
+
+        .avatar {
+          border-radius: 50%;
+          overflow: hidden;
+          width: 114px;
+          height: 114px;
+
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+
+        .name-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          .name {
+            font-size: 14px;
+            font-weight: 500;
+          }
+
+          .rewards-count {
+            font-size: 12px;
+            opacity: 0.5;
+          }
+        }
+
+        .chat-btn {
+          width: 135px;
+          height: 36px;
+          border-radius: 15px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: #EAFE53;
+        }
+      }
+    }
   }
 
   .chat-container {
-    margin-bottom: 40px;
+    height: 100%;
+    width: 100%;
   }
+
 }

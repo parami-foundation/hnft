@@ -23,9 +23,32 @@ export interface WithdrawSignature {
 }
 
 export const getCharaters = async () => {
-  const resp = await fetch(`${PARAMI_AI}/characters`);
-  const characters = await resp.json();
-  return characters as Character[];
+  // mock
+  return [
+    {
+      name: 'Elon Musk',
+      character_id: 'elon_musk',
+      avatar: './images/elon_avatar.jpg',
+    },
+    {
+      name: 'SBF',
+      character_id: 'sbf',
+      avatar: './images/sbf_avatar.png'
+    },
+    {
+      name: 'CZ',
+      character_id: 'cz',
+      avatar: './images/cz_avatar.png'
+    },
+    {
+      name: 'Justin Sun',
+      character_id: 'justin_sum',
+      avatar: './images/sun_avatar.png'
+    }
+  ] as Character[];
+  // const resp = await fetch(`${PARAMI_AI}/characters`);
+  // const characters = await resp.json();
+  // return characters as Character[];
 }
 
 export const queryCharacter = async (query: {avatar_url?: string, twitter_handle?: string}) => {
